@@ -1,0 +1,22 @@
+/** \mainpage
+
+The CLARA framework uses SOA to enhance the efficiency, agility, and
+productivity of data processing applications. Services are the primary means
+through which data processing logic is implemented. CLARA application services
+are running in a context that is agnostic to the global data processing
+application logic. Services are loosely coupled and can participate in multiple
+algorithmic compositions. Legacy processes or applications can also be presented
+as services and integrated into a data processing application. Services can be
+linked together and presented as one, complex, composite service. This framework
+provides a federation of services, so that service-based data processing
+applications can be united while maintaining their individual autonomy and
+self-governance. CLARA is a multilingual framework that supports services
+written in Java, Python and C++ languages.
+
+For assistance contact authors:
+
+- Vardan Gyurjyan    (<gurjyan@jlab.org>)
+- Sebastián Mancilla (<smancill@jlab.org>)
+- Ricardo Oyarzún    (<oyarzun@jlab.org>)
+ */
+/* vim: set ft=cpp ts=8 sts=4 et sw=4 tw=80: */

@@ -1,6 +1,14 @@
 set(CLARA_SRC
+  base.cpp
+  component.cpp
+  container.cpp
+  data_utils.cpp
+  dpe.cpp
   engine_data.cpp
   engine_data_type.cpp
+  service.cpp
+  service_engine.cpp
+  utils.cpp
 )
 
 add_library(clara SHARED ${CLARA_SRC})
@@ -12,14 +20,14 @@ target_include_directories(clara PUBLIC
   ${XMSG_INCLUDE_DIRS}
 )
 
-# add_executable(clara-cpp-dpe runDPE.cpp)
-# target_link_libraries(clara-cpp-dpe clara)
-
-# install(FILES ${CLARA_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(TARGETS clara DESTINATION ${CMAKE_INSTALL_LIBDIR})
-# install(TARGETS clara-cpp-dpe DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(TARGETS clara
   ARCHIVE  DESTINATION lib
   LIBRARY  DESTINATION lib
   RUNTIME  DESTINATION bin)  # This is for Windows
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/clara DESTINATION include)
+
+
+add_executable(c_dpe run_dpe.cpp)
+target_link_libraries(c_dpe clara)
+
+install(TARGETS c_dpe DESTINATION ${CMAKE_INSTALL_BINDIR})

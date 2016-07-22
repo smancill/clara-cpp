@@ -33,9 +33,10 @@ Service::Service(const Component& self,
                  const Component& frontend,
                  const ServiceParameters& params)
   : Base{self, frontend}
-  , service_{std::make_unique<ServiceEngine>(self, frontend, nullptr)}
+  , loader_{params.engine_lib}
+  , service_{std::make_unique<ServiceEngine>(self, frontend, loader_.get())}
 {
-    LOGGER->info("engine loading not implemetend (service = %s)", name());
+    // nop
 }
 
 
@@ -107,6 +108,8 @@ void Service::callback(xmsg::Message& msg)
         }
     } catch (std::exception& e) {
         LOGGER->error(e.what());
+    } catch (...) {
+        LOGGER->error("%s callback: unexpected exception", name());
     }
 }
 

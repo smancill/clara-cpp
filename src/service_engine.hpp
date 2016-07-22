@@ -28,6 +28,8 @@
 #include <clara/engine.hpp>
 
 #include "base.hpp"
+#include "composition.hpp"
+#include "engine_data_helper.hpp"
 
 #include <memory>
 #include <mutex>
@@ -39,7 +41,7 @@ class ServiceEngine : public Base
 public:
     ServiceEngine(const Component& self,
                   const Component& frontend,
-                  std::unique_ptr<Engine>&& engine);
+                  Engine* engine);
 
     ServiceEngine(const ServiceEngine&) = delete;
     ServiceEngine& operator=(const ServiceEngine&) = delete;
@@ -54,10 +56,47 @@ public:
     void execute(xmsg::Message& msg);
 
 private:
+    EngineData configure_engine(EngineData& input);
+
+    EngineData execute_engine(EngineData& input);
+
+private:
+    EngineData get_engine_data(xmsg::Message& msg);
+
+    xmsg::Message put_engine_data(EngineData& msg, const std::string& receiver);
+
+    void update_metadata(const EngineData& input, EngineData& output);
+
+private:
+    void parse_composition(const EngineData& input);
+
+    std::set<std::string> get_links(const EngineData& input, const EngineData& output);
+
+private:
+    void send_result(EngineData& output, const std::set<std::string> links);
+
+    void report_problem(EngineData& output);
+
+    void report(const std::string& topic_prefix, EngineData& output);
+
+private:
     std::mutex mutex_;
 
-    std::unique_ptr<Engine> engine_;
+    Engine* engine_;
+    EngineDataAccessor accessor_;
+
+    decltype(engine_->input_data_types()) input_types_;
+    decltype(engine_->output_data_types()) output_types_;
+
+    composition::SimpleCompiler compiler_;
+    std::string prev_composition_;
 };
+
+namespace util {
+
+EngineData build_error_data(const char* msg, int severity, const std::exception& ex);
+
+} // end namespace util
 
 } // end namespace clara
 

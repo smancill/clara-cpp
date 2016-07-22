@@ -24,9 +24,37 @@
 
 #include "utils.hpp"
 
+#include "constants.hpp"
+
+#include <xmsg/constants.h>
+#include <xmsg/topic.h>
+
 #include <ctime>
 #include <iomanip>
+#include <stdexcept>
 #include <sstream>
+
+namespace {
+
+const char SEPARATOR = ':';
+
+int get_port(const std::string& full_name, int index)
+{
+    switch (full_name[index]) {
+        case 'j': case 'J':
+            return clara::constants::java_port;
+        case 'c': case 'C':
+            return clara::constants::cpp_port;
+        case 'p': case 'P':
+            return clara::constants::python_port;
+        default:
+            throw std::invalid_argument{"invalid language:" + full_name};
+    }
+}
+
+}
+
+
 
 namespace clara {
 namespace util {
@@ -40,6 +68,76 @@ std::string get_current_time()
     oss << std::put_time(tm, "%Y-%m-%d %H:%M:%S");
     return oss.str();
 }
+
+
+std::string get_dpe_name(const std::string& canonical_name)
+{
+    return xmsg::Topic::raw(canonical_name).domain();
+}
+
+
+std::string get_container_name(const std::string& canonical_name)
+{
+    return xmsg::Topic::raw(canonical_name).subject();
+}
+
+
+std::string get_container_canonical_name(const std::string& canonical_name)
+{
+    auto first = canonical_name.find(SEPARATOR);
+    if (first == std::string::npos) {
+        throw std::invalid_argument{"not a container or service name"};
+    }
+    auto second = canonical_name.find(SEPARATOR, first + 1);
+    if (second == std::string::npos) {
+        return canonical_name;
+    }
+    return canonical_name.substr(0, second);
+}
+
+
+std::string get_engine_name(const std::string& canonical_name)
+{
+    return xmsg::Topic::raw(canonical_name).type();
+}
+
+
+std::string get_dpe_host(const std::string& canonical_name)
+{
+    auto port_sep = canonical_name.find(constants::port_sep);
+    if (port_sep == std::string::npos) {
+        auto lang_sep = canonical_name.find(constants::lang_sep);
+        return canonical_name.substr(0, lang_sep);
+    } else {
+        return canonical_name.substr(0, port_sep);
+    }
+}
+
+int get_dpe_port(const std::string& canonical_name)
+{
+    auto port_sep = canonical_name.find(constants::port_sep);
+    auto lang_sep = canonical_name.find(constants::lang_sep);
+    if (port_sep == std::string::npos) {
+        return get_port(canonical_name, lang_sep + 1);
+    } else {
+        std::string port = canonical_name.substr(port_sep + 1, lang_sep);
+        return std::stoi(port);
+    }
+}
+
+
+std::string get_dpe_lang(const std::string& canonical_name)
+{
+    auto dpe_name = get_dpe_name(canonical_name);
+    return dpe_name.substr(dpe_name.find(constants::lang_sep) + 1);
+}
+
+
+int get_default_port(const std::string& lang)
+{
+    return get_port(lang, 0);
+}
+
 
 } // end namespace util
 } // end namespace clara

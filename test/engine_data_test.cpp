@@ -119,7 +119,7 @@ TEST(EngineData, MoveConstruction)
     EXPECT_THAT(c.data<std::vector<std::int32_t>>(), Eq(v));
     EXPECT_THAT(c.description(), Eq("numbers"));
 
-    EXPECT_THAT(e.metadata(d), Eq(nullptr));
+    EXPECT_THAT(e.view_meta(d), Eq(nullptr));
 }
 
 

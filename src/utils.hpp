@@ -32,6 +32,23 @@ namespace util {
 
 std::string get_current_time();
 
+
+std::string get_dpe_name(const std::string& canonical_name);
+
+std::string get_container_name(const std::string& canonical_name);
+
+std::string get_container_canonical_name(const std::string& canonical_name);
+
+std::string get_engine_name(const std::string& canonical_name);
+
+std::string get_dpe_host(const std::string& canonical_name);
+
+int get_dpe_port(const std::string& canonical_name);
+
+std::string get_dpe_lang(const std::string& canonical_name);
+
+int get_default_port(const std::string& lang);
+
 } // end namespace util
 } // end namespace clara
 

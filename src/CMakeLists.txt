@@ -1,6 +1,7 @@
 set(CLARA_SRC
   base.cpp
   component.cpp
+  composition.cpp
   container.cpp
   data_utils.cpp
   dpe.cpp

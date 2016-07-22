@@ -22,63 +22,31 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-#ifndef CLARA_SERVICE_HPP
-#define CLARA_SERVICE_HPP
+#ifndef CLARA_COMPOSITION_COMPILER_HPP
+#define CLARA_COMPOSITION_COMPILER_HPP
 
-#include <clara/engine.hpp>
-
-#include "base.hpp"
-#include "service_engine.hpp"
-#include "service_loader.hpp"
-
-#include <mutex>
+#include <list>
+#include <set>
+#include <string>
 
 namespace clara {
+namespace composition {
 
-struct ServiceParameters
-{
-    std::string engine_name;
-    std::string engine_lib;
-    std::string initial_state;
-    std::string description;
-    int pool_size;
-};
-
-
-class Service : public Base
-{
+class SimpleCompiler {
 public:
-    Service(const Component& self,
-            const Component& frontend,
-            const ServiceParameters& params);
+    SimpleCompiler(std::string service_name);
 
-    Service(const Service&) = delete;
-    Service& operator=(const Service&) = delete;
+    void compile(const std::string& composition);
 
-    ~Service();
-
-public:
-    void start();
-
-    void stop();
-
-    void setup(xmsg::Message& msg);
-
-    void configure(xmsg::Message& msg);
-
-    void execute(xmsg::Message& msg);
-
-    void callback(xmsg::Message& msg);
+    std::set<std::string> outputs();
 
 private:
-    std::mutex mutex_;
-    std::mutex cb_mutex_;
-
-    ServiceLoader loader_;
-    std::unique_ptr<ServiceEngine> service_;
-    std::unique_ptr<xmsg::Subscription> sub_;
+    std::string service_name_;
+    std::list<std::string> prev_;
+    std::list<std::string> next_;
 };
 
+} // end namespace composition
 } // end namespace clara
 
-#endif // end of include guard: CLARA_SERVICE_HPP
+#endif // end of include guard: CLARA_COMPOSITION_COMPILER_HPP

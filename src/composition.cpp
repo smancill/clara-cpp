@@ -22,63 +22,52 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-#ifndef CLARA_SERVICE_HPP
-#define CLARA_SERVICE_HPP
+#include "composition.hpp"
 
-#include <clara/engine.hpp>
-
-#include "base.hpp"
-#include "service_engine.hpp"
-#include "service_loader.hpp"
-
-#include <mutex>
+#include <sstream>
 
 namespace clara {
+namespace composition {
 
-struct ServiceParameters
+SimpleCompiler::SimpleCompiler(std::string service_name)
+ : service_name_{service_name}
 {
-    std::string engine_name;
-    std::string engine_lib;
-    std::string initial_state;
-    std::string description;
-    int pool_size;
-};
+    // nop
+}
 
+void SimpleCompiler::compile(const std::string& composition) {
+    prev_.clear();
+    next_.clear();
 
-class Service : public Base
+    auto sub_composition = &prev_;
+    bool service_found = false;
+
+    auto ss = std::stringstream{composition};
+    auto service = std::string{};
+    while (std::getline(ss, service, '+')) {
+        if (service.back() == ';') {
+            service.pop_back();
+        }
+        if (service == service_name_) {
+            sub_composition = &next_;
+            service_found = true;
+            continue;
+        }
+        sub_composition->push_back(service);
+    }
+    if (!service_found) {
+        throw std::logic_error{service_name_ + " not in: " + composition};
+    }
+}
+
+std::set<std::string> SimpleCompiler::outputs()
 {
-public:
-    Service(const Component& self,
-            const Component& frontend,
-            const ServiceParameters& params);
+    std::set<std::string> out;
+    if (!next_.empty()) {
+        out.insert(next_.front());
+    }
+    return out;
+}
 
-    Service(const Service&) = delete;
-    Service& operator=(const Service&) = delete;
-
-    ~Service();
-
-public:
-    void start();
-
-    void stop();
-
-    void setup(xmsg::Message& msg);
-
-    void configure(xmsg::Message& msg);
-
-    void execute(xmsg::Message& msg);
-
-    void callback(xmsg::Message& msg);
-
-private:
-    std::mutex mutex_;
-    std::mutex cb_mutex_;
-
-    ServiceLoader loader_;
-    std::unique_ptr<ServiceEngine> service_;
-    std::unique_ptr<xmsg::Subscription> sub_;
-};
-
+} // end namespace composition
 } // end namespace clara
-
-#endif // end of include guard: CLARA_SERVICE_HPP

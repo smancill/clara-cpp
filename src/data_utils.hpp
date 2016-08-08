@@ -70,6 +70,23 @@ private:
     }
 
 public:
+    RequestParser(const RequestParser& other)
+      : meta_{other.meta_}
+      , data_{other.data_}
+      , ss_{data_}
+    {
+        // nop
+    }
+
+    RequestParser(RequestParser&& other)
+      : meta_{other.meta_}
+      , data_{std::move(other.data_)}
+      , ss_{data_}
+    {
+        other.ss_.clear();
+    }
+
+public:
     std::string next_string()
     {
         std::string item;

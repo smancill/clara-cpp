@@ -25,6 +25,7 @@
 #include "composition.hpp"
 
 #include <sstream>
+#include <stdexcept>
 
 namespace clara {
 namespace composition {
@@ -42,8 +43,8 @@ void SimpleCompiler::compile(const std::string& composition) {
     auto sub_composition = &prev_;
     bool service_found = false;
 
-    auto ss = std::stringstream{composition};
-    auto service = std::string{};
+    std::stringstream ss{composition};
+    std::string service{};
     while (std::getline(ss, service, '+')) {
         if (service.back() == ';') {
             service.pop_back();

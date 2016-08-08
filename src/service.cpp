@@ -78,7 +78,7 @@ void Service::stop()
 
 void Service::setup(xmsg::Message& msg)
 {
-    LOGGER->info("engine setup not implemetend (service = %s)", name());
+    service_->setup(msg);
 }
 
 

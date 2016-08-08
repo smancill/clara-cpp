@@ -50,7 +50,7 @@ ServiceEngine::~ServiceEngine()
 }
 
 
-void ServiceEngine::setup(xmsg::Message& msg)
+void ServiceEngine::setup(xmsg::Message&)
 {
     LOGGER->info("engine setup not implemetend (service = %s)", name());
 }
@@ -145,8 +145,8 @@ void ServiceEngine::parse_composition(const EngineData& input)
 }
 
 
-std::set<std::string> ServiceEngine::get_links(const EngineData& input,
-                                               const EngineData& output)
+std::set<std::string> ServiceEngine::get_links(const EngineData&,
+                                               const EngineData&)
 {
     return compiler_.outputs();
 }

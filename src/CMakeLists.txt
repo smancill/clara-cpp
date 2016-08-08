@@ -18,6 +18,8 @@ target_link_libraries(clara ${XMSG_LIBRARIES} ${CMAKE_DL_LIBS})
 target_include_directories(clara PUBLIC
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+target_include_directories(clara SYSTEM PUBLIC
   ${XMSG_INCLUDE_DIRS}
 )
 

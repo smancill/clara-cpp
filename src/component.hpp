@@ -36,7 +36,7 @@ namespace clara {
 
 namespace util {
 
-std::string make_name(const std::string& host, int port);
+std::string make_name(const std::string& host, int port, const std::string& lang);
 
 std::string make_name(const std::string& dpe,
                       const std::string& container);
@@ -52,12 +52,13 @@ class Component
 public:
     static Component dpe(const xmsg::ProxyAddress& address)
     {
-        return dpe(address, constants::java_lang);
+        return dpe(address, constants::cpp_lang);
     }
 
     static Component dpe(const xmsg::ProxyAddress& address, const std::string& lang)
     {
-        return Component{util::make_name(address.host(), address.pub_port()), address, [](auto& n) {
+        auto name = util::make_name(address.host(), address.pub_port(), lang);
+        return Component{name, address, [](auto& n) {
             return xmsg::Topic::build("dpe", n);
         }};
     }

@@ -27,13 +27,13 @@
 namespace clara {
 namespace util {
 
-std::string make_name(const std::string& host, int port)
+std::string make_name(const std::string& host, int port, const std::string& lang)
 {
     auto name = host;
     if (port != constants::cpp_port) {
         name += constants::port_sep + std::to_string(port);
     }
-    name += constants::lang_sep + constants::cpp_lang;
+    name += constants::lang_sep + lang;
     return name;
 }
 

@@ -52,14 +52,14 @@ Base::~Base()
 void Base::send(const Component& component, const std::string& data)
 {
     auto msg = util::build_request(component.topic(), data);
-    auto con = connect();
+    auto con = connect(component.addr());
     publish(con, msg);
 }
 
 
 void Base::send(const Component& component, xmsg::Message& msg)
 {
-    auto con = connect();
+    auto con = connect(component.addr());
     publish(con, msg);
 }
 

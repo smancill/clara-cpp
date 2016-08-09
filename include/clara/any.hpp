@@ -28,9 +28,16 @@
 #define ANY_IMPL_ANY_CAST_MOVEABLE
 #include <clara/third_party/linb/any.hpp>
 
+namespace linb {
+/**
+ * \class any
+ * \brief Third-party implementation of
+ * [std::any](http://en.cppreference.com/w/cpp/utility/any) (C++17)
+ */
+} // end namespace linb
+
 namespace clara {
 
-// third-party implementation of std::any (C++17)
 using namespace linb;
 
 } // end namespace clara

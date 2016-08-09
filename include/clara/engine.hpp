@@ -33,6 +33,9 @@
 #include <vector>
 #include <memory>
 
+/**
+ * Core CLARA classes and functions.
+ */
 namespace clara {
 
 class Engine

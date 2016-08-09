@@ -78,6 +78,9 @@ private:
 };
 
 
+/**
+ * Predefined CLARA data types.
+ */
 namespace type {
 
 /**

@@ -18,9 +18,15 @@ if(NOT CMAKE_INSTALL_INCLUDEDIR)
   set(CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "C header files (include)")
 endif()
 
+if(NOT CMAKE_INSTALL_CONFIGDIR)
+  set(CMAKE_INSTALL_CONFIGDIR "${CMAKE_INSTALL_LIBDIR}/cmake/clara"
+    CACHE PATH "CMake project files (${CMAKE_INSTALL_LIBDIR}/cmake/clara")
+endif()
+
 mark_as_advanced(CMAKE_INSTALL_BINDIR)
 mark_as_advanced(CMAKE_INSTALL_LIBDIR)
 mark_as_advanced(CMAKE_INSTALL_INCLUDEDIR)
+mark_as_advanced(CMAKE_INSTALL_CONFIGDIR)
 
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -58,6 +64,22 @@ if (CLARA_BUILD_TESTS)
   include("cmake/External/GMock.cmake")
   add_subdirectory("test")
 endif (CLARA_BUILD_TESTS)
+
+
+# export targets
+include(CMakePackageConfigHelpers)
+configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/clara-config.cmake.in
+  ${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/clara-config.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
+  PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
+
+install(EXPORT ClaraTargets
+  FILE clara-targets.cmake
+  NAMESPACE Clara::
+  DESTINATION ${CMAKE_INSTALL_CONFIGDIR})
+
+install(FILES ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/clara-config.cmake
+  DESTINATION ${CMAKE_INSTALL_CONFIGDIR} COMPONENT Devel)
 
 
 # uninstall target

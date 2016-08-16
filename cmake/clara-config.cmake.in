@@ -1,0 +1,8 @@
+include(CMakeFindDependencyMacro)
+find_dependency(xMsg CONFIG)
+
+@PACKAGE_INIT@
+
+set_and_check(CLARA_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+include("${CMAKE_CURRENT_LIST_DIR}/clara-targets.cmake")
+set(CLARA_LIBRARIES clara)

@@ -28,6 +28,7 @@ install(TARGETS clara
 )
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/clara
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  COMPONENT Devel
 )
 
 

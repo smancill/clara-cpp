@@ -45,7 +45,7 @@ if(APPLE)
   endif()
 endif()
 
-find_package(xmsg REQUIRED)
+find_package(xMsg CONFIG REQUIRED)
 
 option(CLARA_BUILD_TESTS "Build tests" ON)
 

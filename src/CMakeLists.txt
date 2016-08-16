@@ -13,14 +13,11 @@ set(CLARA_SRC
 )
 
 add_library(clara SHARED ${CLARA_SRC})
-target_link_libraries(clara ${XMSG_LIBRARIES} ${CMAKE_DL_LIBS})
+target_link_libraries(clara xMsg::xmsg ${CMAKE_DL_LIBS})
 
 target_include_directories(clara PUBLIC
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
-target_include_directories(clara SYSTEM PUBLIC
-  ${XMSG_INCLUDE_DIRS}
 )
 
 install(TARGETS clara

@@ -34,7 +34,7 @@ namespace {
 namespace vl { // variable lenght integers (not provided by xmsg helpers)
 
 using xmsg::proto::Data;
-using xmsg::proto::internal::set_repeated;
+using xmsg::proto::detail::set_repeated;
 
 template <typename T>
 inline void set_value(Data&, const T&)

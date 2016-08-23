@@ -123,6 +123,7 @@ private:
     {
         const auto default_host = std::string{"localhost"};
         const auto default_port = std::string{"7781"};
+        const auto default_fe_port = std::string{"7771"};
 
         // Act as front-end by default but if feHost or fePort are passed
         // act as a worker DPE with remote front-end
@@ -138,9 +139,9 @@ private:
             fe_addr_ = local_addr_;
         } else {
             // Get remote FE address
-            auto local_host = value_of(FE_HOST, default_host);
-            auto local_port = std::stoi(value_of(FE_PORT, default_port));
-            fe_addr_ = xmsg::ProxyAddress{local_host, local_port};
+            auto fe_host = value_of(FE_HOST, default_host);
+            auto fe_port = std::stoi(value_of(FE_PORT, default_fe_port));
+            fe_addr_ = xmsg::ProxyAddress{fe_host, fe_port};
         }
     }
 

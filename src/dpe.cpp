@@ -34,6 +34,7 @@
 
 
 #include <xmsg/xmsg.h>
+#include <xmsg/proxy.h>
 
 #include <mutex>
 #include <thread>
@@ -58,6 +59,7 @@ public:
      : Base{Component::dpe(local),
             Component::dpe(frontend, constants::java_lang)}
      , description_{description}
+     , proxy_{std::make_unique<xmsg::sys::Proxy>(local)}
     {
         // nop
     }
@@ -68,6 +70,10 @@ public:
     }
 
 public:
+    void start_proxy();
+
+    void stop_proxy();
+
     void print_startup();
 
     void subscribe();
@@ -81,6 +87,7 @@ public:
     void stop_containers();
 
     void start_service(util::RequestParser&);
+
     void stop_service(util::RequestParser&);
 
     void callback(xmsg::Message& msg);
@@ -98,6 +105,7 @@ private:
 
     std::string description_;
 
+    std::unique_ptr<xmsg::sys::Proxy> proxy_;
     std::unique_ptr<xmsg::Subscription> sub_;
     util::ConcurrentMap<std::string, Container> containers_;
 };
@@ -121,8 +129,9 @@ Dpe::~Dpe()
 
 void Dpe::start()
 {
-    dpe_->print_startup();
+    dpe_->start_proxy();
     dpe_->subscribe();
+    dpe_->print_startup();
 }
 
 
@@ -130,7 +139,20 @@ void Dpe::stop()
 {
     dpe_->unsubscribe();
     dpe_->stop_containers();
+    dpe_->stop_proxy();
     LOGGER->info("shutdown DPE");
+}
+
+
+void Dpe::DpeImpl::start_proxy()
+{
+    proxy_->start();
+}
+
+
+void Dpe::DpeImpl::stop_proxy()
+{
+    proxy_->stop();
 }
 
 

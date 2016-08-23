@@ -122,7 +122,7 @@ private:
     void parse_options()
     {
         const auto default_host = std::string{"localhost"};
-        const auto default_port = std::string{"7771"};
+        const auto default_port = std::string{"7781"};
 
         // Act as front-end by default but if feHost or fePort are passed
         // act as a worker DPE with remote front-end

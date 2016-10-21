@@ -63,6 +63,7 @@ private:
 private:
     EngineData get_engine_data(xmsg::Message& msg);
 
+    xmsg::Message put_engine_data(EngineData& msg, const xmsg::Topic& topic);
     xmsg::Message put_engine_data(EngineData& msg, const std::string& receiver);
 
     void update_metadata(const EngineData& input, EngineData& output);
@@ -73,6 +74,7 @@ private:
     std::set<std::string> get_links(const EngineData& input, const EngineData& output);
 
 private:
+    void send_response(EngineData& output, const xmsg::Topic& topic);
     void send_result(EngineData& output, const std::set<std::string> links);
 
     void report_problem(EngineData& output);

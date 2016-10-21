@@ -62,7 +62,12 @@ void ServiceEngine::configure(xmsg::Message& msg)
     auto output_data = configure_engine(input_data);
 
     update_metadata(input_data, output_data);
-    report_problem(output_data);
+
+    if (msg.has_replyto()) {
+        send_response(output_data, msg.replyto());
+    } else {
+        report_problem(output_data);
+    }
 }
 
 
@@ -73,6 +78,11 @@ void ServiceEngine::execute(xmsg::Message& msg)
     auto output_data = execute_engine(input_data);
 
     update_metadata(input_data, output_data);
+
+    if (msg.has_replyto()) {
+        send_response(output_data, msg.replyto());
+        return;
+    }
 
     report_problem(output_data);
     if (output_data.status() == EngineStatus::ERROR) {
@@ -107,6 +117,13 @@ EngineData ServiceEngine::execute_engine(EngineData& input)
 EngineData ServiceEngine::get_engine_data(xmsg::Message& msg)
 {
     return accessor_.deserialize(msg, input_types_);
+}
+
+
+xmsg::Message ServiceEngine::put_engine_data(EngineData& output,
+                                             const xmsg::Topic& topic)
+{
+    return accessor_.serialize(output, topic, output_types_);
 }
 
 
@@ -149,6 +166,14 @@ std::set<std::string> ServiceEngine::get_links(const EngineData&,
                                                const EngineData&)
 {
     return compiler_.outputs();
+}
+
+
+void ServiceEngine::send_response(EngineData& output, const xmsg::Topic& topic)
+{
+    auto con = connect();
+    auto msg = put_engine_data(output, topic);
+    publish(con, msg);
 }
 
 

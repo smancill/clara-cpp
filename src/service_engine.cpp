@@ -107,6 +107,13 @@ EngineData ServiceEngine::execute_engine(EngineData& input)
 {
     try {
         auto output_data = engine_->execute(input);
+        if (!output_data.has_data()) {
+            if (output_data.status() == EngineStatus::ERROR) {
+                output_data.set_data(type::STRING.mime_type(), "udf");
+            } else {
+                throw std::runtime_error{"no output data"};
+            }
+        }
         return output_data;
     } catch (const std::exception& e) {
         return util::build_error_data("unhandled exception", 4, e);

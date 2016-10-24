@@ -85,6 +85,11 @@ public:
         set_mime_type(std::forward<S>(mime_type));
     }
 
+    bool has_data()
+    {
+        return !data_.empty();
+    }
+
 private:
     void set_mime_type(const std::string&);
 

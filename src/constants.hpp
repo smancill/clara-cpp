@@ -34,6 +34,7 @@ namespace constants {
 constexpr int java_port = 7771;
 constexpr int cpp_port = 7781;
 constexpr int python_port = 7791;
+constexpr int reg_port_shift = 4;
 
 const std::string java_lang = "java";
 const std::string python_lang = "python";

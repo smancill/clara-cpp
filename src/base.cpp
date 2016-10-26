@@ -24,18 +24,28 @@
 
 #include "base.hpp"
 
+
+#include "constants.hpp"
 #include "data_utils.hpp"
 
 #include <iostream>
 #include <functional>
 #include <algorithm>
 
+namespace {
+    xmsg::RegAddress get_fe_address(const clara::Component& fe)
+    {
+        int reg_port = fe.addr().pub_port() + clara::constants::reg_port_shift;
+        return { fe.addr().host(), reg_port };
+    }
+}
+
 namespace clara
 {
 
 Base::Base(const Component& self,
            const Component& frontend)
-  : xmsg::xMsg{self.name(), self.addr(), {}}
+  : xmsg::xMsg{self.name(), self.addr(), get_fe_address(frontend)}
   , self_{self}
   , frontend_{frontend}
 {

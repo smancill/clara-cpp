@@ -52,7 +52,7 @@ public:
 
     virtual std::vector<EngineDataType> output_data_types() const = 0;
 
-    virtual std::set<std::string> states() const { return {};  }
+    virtual std::set<std::string> states() const { return std::set<std::string>{};  }
 
 public:
     virtual std::string name() const = 0;

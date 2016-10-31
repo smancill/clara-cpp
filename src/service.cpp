@@ -34,6 +34,7 @@ Service::Service(const Component& self,
                  const ServiceParameters& params)
   : Base{self, frontend}
   , loader_{params.engine_lib}
+  , thread_pool_{{static_cast<size_t>(params.pool_size), 1024}}
   , service_{std::make_unique<ServiceEngine>(self, frontend, loader_.get())}
 {
     // nop
@@ -78,19 +79,22 @@ void Service::stop()
 
 void Service::setup(xmsg::Message& msg)
 {
-    service_->setup(msg);
+    auto m = std::make_unique<xmsg::Message>(std::move(msg));
+    thread_pool_.post([s=service_.get(), m=std::move(m)]() { s->setup(*m); });
 }
 
 
 void Service::configure(xmsg::Message& msg)
 {
-    service_->configure(msg);
+    auto m = std::make_unique<xmsg::Message>(std::move(msg));
+    thread_pool_.post([s=service_.get(), m=std::move(m)](){ s->configure(*m); });
 }
 
 
 void Service::execute(xmsg::Message& msg)
 {
-    service_->execute(msg);
+    auto m = std::make_unique<xmsg::Message>(std::move(msg));
+    thread_pool_.post([s=service_.get(), m=std::move(m)]() { s->execute(*m); });
 }
 
 

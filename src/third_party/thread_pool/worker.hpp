@@ -1,9 +1,10 @@
 #ifndef WORKER_HPP
 #define WORKER_HPP
 
-#include <fixed_function.hpp>
-#include <mpsc_bounded_queue.hpp>
-#include <thread_local.hpp>
+#include "fixed_function.hpp"
+#include "mpsc_bounded_queue.hpp"
+#include "thread_local.hpp"
+
 #include <atomic>
 #include <thread>
 

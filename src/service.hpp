@@ -30,6 +30,7 @@
 #include "base.hpp"
 #include "service_engine.hpp"
 #include "service_loader.hpp"
+#include "third_party/thread_pool/thread_pool.hpp"
 
 #include <mutex>
 
@@ -75,6 +76,8 @@ private:
     std::mutex cb_mutex_;
 
     ServiceLoader loader_;
+    ThreadPool thread_pool_;
+
     std::unique_ptr<ServiceEngine> service_;
     std::unique_ptr<xmsg::Subscription> sub_;
 };

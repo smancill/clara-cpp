@@ -37,7 +37,7 @@ Service::Service(const Component& self,
   , thread_pool_{{static_cast<size_t>(params.pool_size), 1024}}
   , service_{std::make_unique<ServiceEngine>(self, frontend, loader_.get())}
 {
-    // nop
+    LOGGER->info("created service = %s pool_size = %d", name(), params.pool_size);
 }
 
 

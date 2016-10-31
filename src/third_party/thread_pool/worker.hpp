@@ -3,6 +3,7 @@
 
 #include <fixed_function.hpp>
 #include <mpsc_bounded_queue.hpp>
+#include <thread_local.hpp>
 #include <atomic>
 #include <thread>
 
@@ -78,8 +79,13 @@ private:
 namespace detail {
     inline size_t * thread_id()
     {
+#ifdef __APPLE__
+        using tls = detail::ThreadLocal<size_t>;
+        return tls::getThreadInstance();
+#else
         static thread_local size_t tss_id = -1u;
         return &tss_id;
+#endif
     }
 }
 

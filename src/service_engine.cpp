@@ -96,6 +96,9 @@ EngineData ServiceEngine::configure_engine(EngineData& input)
 {
     try {
         auto output_data = engine_->configure(input);
+        if (!output_data.has_data()) {
+            output_data.set_data(type::STRING.mime_type(), "done");
+        }
         return output_data;
     } catch (const std::exception& e) {
         return util::build_error_data("unhandled exception", 4, e);

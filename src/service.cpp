@@ -27,6 +27,16 @@
 #include "data_utils.hpp"
 #include "logging.hpp"
 
+
+static ThreadPoolOptions thread_pool_options(int pool_size, int queue_size)
+{
+    ThreadPoolOptions opts;
+    opts.threads_count = static_cast<size_t>(pool_size);
+    opts.worker_queue_size = static_cast<size_t>(queue_size);
+    return opts;
+}
+
+
 namespace clara {
 
 Service::Service(const Component& self,
@@ -34,7 +44,7 @@ Service::Service(const Component& self,
                  const ServiceParameters& params)
   : Base{self, frontend}
   , loader_{params.engine_lib}
-  , thread_pool_{{static_cast<size_t>(params.pool_size), 1024}}
+  , thread_pool_{thread_pool_options(params.pool_size, 1024)}
   , service_{std::make_unique<ServiceEngine>(self, frontend, loader_.get())}
 {
     LOGGER->info("created service = %s pool_size = %d", name(), params.pool_size);

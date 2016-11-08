@@ -32,7 +32,8 @@
 namespace clara {
 namespace composition {
 
-class SimpleCompiler {
+class SimpleCompiler
+{
 public:
     SimpleCompiler(std::string service_name);
 

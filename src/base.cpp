@@ -28,9 +28,9 @@
 #include "constants.hpp"
 #include "data_utils.hpp"
 
-#include <iostream>
-#include <functional>
 #include <algorithm>
+#include <functional>
+#include <iostream>
 
 namespace {
     xmsg::RegAddress get_fe_address(const clara::Component& fe)
@@ -40,16 +40,15 @@ namespace {
     }
 }
 
-namespace clara
-{
 
-Base::Base(const Component& self,
-           const Component& frontend)
+namespace clara {
+
+Base::Base(const Component& self, const Component& frontend)
   : xmsg::xMsg{self.name(), self.addr(), get_fe_address(frontend)}
   , self_{self}
   , frontend_{frontend}
 {
-      // nop
+    // nop
 }
 
 

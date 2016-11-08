@@ -31,8 +31,8 @@
 
 #include <xmsg/message.h>
 
-#include <string>
 #include <memory>
+#include <string>
 
 namespace clara {
 

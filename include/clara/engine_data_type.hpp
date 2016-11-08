@@ -37,7 +37,8 @@ namespace clara {
  * Data type can be a predefined type, or a custom-defined type.
  * When declaring a custom type, its serialization routine must be provided.
  */
-class EngineDataType final {
+class EngineDataType final
+{
 public:
     /**
      * Creates a new user data type.
@@ -50,8 +51,8 @@ public:
      */
     EngineDataType(std::string mime_type,
                    std::unique_ptr<Serializer> serializer)
-    : mime_type_{std::move(mime_type)},
-      serializer_{std::move(serializer)}
+      : mime_type_{std::move(mime_type)}
+      , serializer_{std::move(serializer)}
     {
         // nothing
     }

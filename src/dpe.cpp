@@ -33,15 +33,14 @@
 #include "utils.hpp"
 
 
-#include <xmsg/xmsg.h>
 #include <xmsg/proxy.h>
+#include <xmsg/xmsg.h>
 
 #include <mutex>
 #include <thread>
 #include <unordered_map>
 
-namespace clara
-{
+namespace clara {
 
 class DpeException : public std::runtime_error
 {
@@ -56,10 +55,10 @@ public:
     DpeImpl(const xmsg::ProxyAddress& local,
             const xmsg::ProxyAddress& frontend,
             const std::string& description)
-     : Base{Component::dpe(local),
-            Component::dpe(frontend, constants::java_lang)}
-     , description_{description}
-     , proxy_{std::make_unique<xmsg::sys::Proxy>(local)}
+      : Base{Component::dpe(local),
+             Component::dpe(frontend, constants::java_lang)}
+      , description_{description}
+      , proxy_{std::make_unique<xmsg::sys::Proxy>(local)}
     {
         // nop
     }

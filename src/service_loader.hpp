@@ -31,9 +31,9 @@ public:
     }
 
     ServiceLoader(ServiceLoader&& other)
-      : handle_{other.handle_},
-        create_service_{other.create_service_},
-        service_engine_{std::move(other.service_engine_)}
+      : handle_{other.handle_}
+      , create_service_{other.create_service_}
+      , service_engine_{std::move(other.service_engine_)}
     {
         other.handle_ = nullptr;
         other.create_service_ = nullptr;

@@ -127,7 +127,8 @@ public:
     }
 
 private:
-    InvalidRequest invalid_request() {
+    InvalidRequest invalid_request()
+    {
         std::string msg = "invalid request";
         if (meta_->has_author()) {
             msg += " from author = " + meta_->author();

@@ -28,8 +28,8 @@
 #include <clara/any.hpp>
 #include <clara/engine_status.hpp>
 
-#include <string>
 #include <memory>
+#include <string>
 
 namespace xmsg {
 namespace proto {

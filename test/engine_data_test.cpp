@@ -12,7 +12,8 @@
 using namespace testing;
 
 
-TEST(EngineData, ReadFromMessage) {
+TEST(EngineData, ReadFromMessage)
+{
     auto mt = clara::type::STRING.mime_type();
     auto e = clara::EngineDataAccessor{};
 
@@ -169,7 +170,7 @@ TEST(EngineData, SetCommunicationId)
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

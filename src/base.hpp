@@ -34,8 +34,7 @@ namespace clara {
 class Base : public xmsg::xMsg
 {
 public:
-    Base(const Component& self,
-         const Component& frontend);
+    Base(const Component& self, const Component& frontend);
 
     ~Base();
 

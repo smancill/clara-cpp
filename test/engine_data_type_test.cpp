@@ -17,7 +17,8 @@
 using namespace testing;
 
 
-TEST(PrimitiveSerializer, IntegerSerialization) {
+TEST(PrimitiveSerializer, IntegerSerialization)
+{
     const auto* s = clara::type::SINT32.serializer();
 
     const auto b = s->write(clara::any{18});
@@ -27,7 +28,8 @@ TEST(PrimitiveSerializer, IntegerSerialization) {
 }
 
 
-TEST(PrimitiveSerializer, FloatingPointSerialization) {
+TEST(PrimitiveSerializer, FloatingPointSerialization)
+{
     const auto* s = clara::type::DOUBLE.serializer();
 
     const auto b = s->write(clara::any{78.98});
@@ -37,7 +39,8 @@ TEST(PrimitiveSerializer, FloatingPointSerialization) {
 }
 
 
-TEST(PrimitiveSerializer, StringSerialization) {
+TEST(PrimitiveSerializer, StringSerialization)
+{
     const auto* s = clara::type::STRING.serializer();
 
     const auto b = s->write(clara::any{std::string{"Master of Puppets"}});
@@ -47,10 +50,11 @@ TEST(PrimitiveSerializer, StringSerialization) {
 }
 
 
-TEST(ArraySerializer, IntegerSerialization) {
+TEST(ArraySerializer, IntegerSerialization)
+{
     const auto* s = clara::type::ARRAY_SFIXED32.serializer();
 
-    const auto v = std::vector<std::int32_t>{ 4, 5, 6 };
+    const auto v = std::vector<std::int32_t>{4, 5, 6};
     const auto b = s->write(clara::any{v});
     const auto d = clara::any_cast<decltype(v)>(s->read(b));
 
@@ -58,10 +62,11 @@ TEST(ArraySerializer, IntegerSerialization) {
 }
 
 
-TEST(ArraySerializer, FloatingPointSerialization) {
+TEST(ArraySerializer, FloatingPointSerialization)
+{
     const auto* s = clara::type::ARRAY_DOUBLE.serializer();
 
-    const auto v = std::vector<double>{ 4.1, 5.6 };
+    const auto v = std::vector<double>{4.1, 5.6};
     const auto b = s->write(clara::any{v});
     const auto d = clara::any_cast<decltype(v)>(s->read(b));
 
@@ -69,7 +74,8 @@ TEST(ArraySerializer, FloatingPointSerialization) {
 }
 
 
-TEST(ArraySerializer, StringSerialization) {
+TEST(ArraySerializer, StringSerialization)
+{
     const auto* s = clara::type::ARRAY_STRING.serializer();
 
     const auto v = std::vector<std::string>{ "Ride the Lightning",
@@ -82,7 +88,8 @@ TEST(ArraySerializer, StringSerialization) {
 }
 
 
-TEST(RawBytesSerializer, RawBytesSerialization) {
+TEST(RawBytesSerializer, RawBytesSerialization)
+{
     const auto* s = clara::type::BYTES.serializer();
 
     using rnd_eng = std::default_random_engine;
@@ -99,7 +106,8 @@ TEST(RawBytesSerializer, RawBytesSerialization) {
 }
 
 
-TEST(RawBytesSerializer, MoveSemantics) {
+TEST(RawBytesSerializer, MoveSemantics)
+{
     const auto* s = clara::type::BYTES.serializer();
 
     using rnd_eng = std::default_random_engine;
@@ -123,7 +131,8 @@ TEST(RawBytesSerializer, MoveSemantics) {
 }
 
 
-TEST(NativeSerializer, NativeSerialization) {
+TEST(NativeSerializer, NativeSerialization)
+{
     const auto* s = clara::type::NATIVE.serializer();
 
     auto xd = xmsg::proto::Data{};
@@ -140,7 +149,8 @@ TEST(NativeSerializer, NativeSerialization) {
 }
 
 
-TEST(JSONSerializer, JSONSerialization) {
+TEST(JSONSerializer, JSONSerialization)
+{
     const auto* s = clara::type::JSON.serializer();
 
     auto j = std::string{"{ \"a\": 1, \"b\": 2, \"c\": [ 3, 4, 5] }"};
@@ -152,8 +162,7 @@ TEST(JSONSerializer, JSONSerialization) {
 }
 
 
-
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -31,12 +31,13 @@ namespace clara {
 namespace composition {
 
 SimpleCompiler::SimpleCompiler(std::string service_name)
- : service_name_{service_name}
+  : service_name_{service_name}
 {
     // nop
 }
 
-void SimpleCompiler::compile(const std::string& composition) {
+void SimpleCompiler::compile(const std::string& composition)
+{
     prev_.clear();
     next_.clear();
 

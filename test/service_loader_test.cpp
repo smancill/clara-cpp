@@ -7,7 +7,8 @@
 
 using namespace testing;
 
-TEST(ServiceLoader, LoadEngine) {
+TEST(ServiceLoader, LoadEngine)
+{
     auto engine1 = clara::ServiceLoader{"evio_generator_service"};
     auto engine2 = clara::ServiceLoader{"evio_printer_service"};
 
@@ -22,7 +23,7 @@ TEST(ServiceLoader, LoadEngine) {
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

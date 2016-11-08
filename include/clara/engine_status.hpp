@@ -27,7 +27,8 @@
 
 namespace clara {
 
-enum class EngineStatus {
+enum class EngineStatus
+{
     INFO,
     WARNING,
     ERROR,

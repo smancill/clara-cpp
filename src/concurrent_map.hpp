@@ -48,7 +48,7 @@ public:
 
     ~ConcurrentMap() = default;
 
-    template<typename... Args>
+    template <typename... Args>
     mapped_type insert(const key_type& name, Args&&... args)
     {
         std::unique_lock<std::mutex> lock{mutex_};

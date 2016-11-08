@@ -35,9 +35,10 @@
 namespace clara {
 namespace util {
 
-xmsg::Message build_request(const xmsg::Topic& topic, const std::string& data) {
+xmsg::Message build_request(const xmsg::Topic& topic, const std::string& data)
+{
     return xmsg::Message{topic, type::STRING.mime_type(),
-                         std::vector<uint8_t>{ data.begin(), data.end() }};
+                         std::vector<uint8_t>{data.begin(), data.end()}};
 }
 
 

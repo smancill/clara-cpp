@@ -37,7 +37,7 @@ namespace option {
 
 using namespace ::option;
 
-struct Arg: public ::option::Arg
+struct Arg : public ::option::Arg
 {
     static void print_error(const char* msg1, const Option& opt, const char* msg2)
     {
@@ -75,11 +75,13 @@ constexpr Descriptor usage[] =
 };
 
 
-class DpeOptionsParser final {
+class DpeOptionsParser final
+{
 public:
     bool parse(int argc, char* argv[])
     {
-        argc -= (argc > 0); argv += (argc > 0);
+        argc -= (argc > 0);
+        argv += (argc > 0);
         Stats stats(usage, argc, argv);
 
         options.resize(stats.options_max);
@@ -118,6 +120,7 @@ public:
     {
         option::printUsage(std::cout, usage);
     }
+
 private:
     void parse_options()
     {

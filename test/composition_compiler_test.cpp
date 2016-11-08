@@ -15,7 +15,8 @@ const std::string composition = R"(10.10.10.1_java:C:S1+)"
                                 R"(10.10.10.1_java:C:S3+)"
                                 R"(10.10.10.1_java:C:S4;)";
 
-TEST(SimpleCompiler, ServiceAtTheBeginning) {
+TEST(SimpleCompiler, ServiceAtTheBeginning)
+{
     auto cc = SimpleCompiler{"10.10.10.1_java:C:S1"};
 
     cc.compile(composition);
@@ -25,7 +26,8 @@ TEST(SimpleCompiler, ServiceAtTheBeginning) {
 }
 
 
-TEST(SimpleCompiler, ServiceAtTheMiddle) {
+TEST(SimpleCompiler, ServiceAtTheMiddle)
+{
     auto cc = SimpleCompiler{"10.10.10.1_java:C:S2"};
 
     cc.compile(composition);
@@ -35,7 +37,8 @@ TEST(SimpleCompiler, ServiceAtTheMiddle) {
 }
 
 
-TEST(SimpleCompiler, ServiceAtTheEnd) {
+TEST(SimpleCompiler, ServiceAtTheEnd)
+{
     auto cc = SimpleCompiler{"10.10.10.1_java:C:S4"};
 
     cc.compile(composition);
@@ -44,7 +47,8 @@ TEST(SimpleCompiler, ServiceAtTheEnd) {
 }
 
 
-TEST(SimpleCompiler, MultipleCalls) {
+TEST(SimpleCompiler, MultipleCalls)
+{
     auto cc = SimpleCompiler{"10.10.10.1_java:C:S3"};
 
     cc.compile(composition);
@@ -59,7 +63,7 @@ TEST(SimpleCompiler, MultipleCalls) {
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

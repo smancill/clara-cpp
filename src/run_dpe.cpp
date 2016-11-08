@@ -59,7 +59,7 @@ int main(int argc, char** argv)
                    options.description()};
     dpe.start();
 
-    signal(SIGINT,  signal_handler);
+    signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
 
     while (!quit) {

@@ -18,7 +18,8 @@ xmsg::Message request(const std::string& data)
 }
 
 
-TEST(RequestParser, ParseContainerRequest) {
+TEST(RequestParser, ParseContainerRequest)
+{
     auto r = "startContainer?master?5?undefined"s;
     auto m = request(r);
     auto p = RequestParser::build(m);
@@ -32,7 +33,8 @@ TEST(RequestParser, ParseContainerRequest) {
 }
 
 
-TEST(RequestParser, ParseServiceRequest) {
+TEST(RequestParser, ParseServiceRequest)
+{
     auto r = "startService?master?E1?org.jlab.clara.examples.engines.E1?3?undefined?undefined"s;
     auto m = request(r);
     auto p = RequestParser::build(m);
@@ -49,14 +51,16 @@ TEST(RequestParser, ParseServiceRequest) {
 }
 
 
-TEST(RequestParser, InvalidMimeType) {
+TEST(RequestParser, InvalidMimeType)
+{
     auto m = xmsg::make_message(topic, 34.8);
 
     ASSERT_THROW(RequestParser::build(m), InvalidRequest);
 }
 
 
-TEST(RequestParser, EmptyRequest) {
+TEST(RequestParser, EmptyRequest)
+{
     auto m = request("");
     auto p = RequestParser::build(m);
 
@@ -64,7 +68,8 @@ TEST(RequestParser, EmptyRequest) {
 }
 
 
-TEST(RequestParser, SingleStringElement) {
+TEST(RequestParser, SingleStringElement)
+{
     auto m = request("pingDpe");
     auto p = RequestParser::build(m);
 
@@ -72,7 +77,8 @@ TEST(RequestParser, SingleStringElement) {
 }
 
 
-TEST(RequestParser, MissingStringElement) {
+TEST(RequestParser, MissingStringElement)
+{
     auto m = request("stopService?master?E1");
     auto p = RequestParser::build(m);
 
@@ -84,7 +90,8 @@ TEST(RequestParser, MissingStringElement) {
 }
 
 
-TEST(RequestParser, EmptyStringElement) {
+TEST(RequestParser, EmptyStringElement)
+{
     auto m = request("stopService??E1");
     auto p = RequestParser::build(m);
 
@@ -94,7 +101,8 @@ TEST(RequestParser, EmptyStringElement) {
 }
 
 
-TEST(RequestParser, DefaultMissingStringElement) {
+TEST(RequestParser, DefaultMissingStringElement)
+{
     auto m = request("stopService?master");
     auto p = RequestParser::build(m);
 
@@ -105,7 +113,8 @@ TEST(RequestParser, DefaultMissingStringElement) {
 }
 
 
-TEST(RequestParser, DefaultEmptyStringElement) {
+TEST(RequestParser, DefaultEmptyStringElement)
+{
     auto m = request("stopService??E1");
     auto p = RequestParser::build(m);
 
@@ -116,7 +125,8 @@ TEST(RequestParser, DefaultEmptyStringElement) {
 }
 
 
-TEST(RequestParser, MissingIntegerElement) {
+TEST(RequestParser, MissingIntegerElement)
+{
     auto m = request("stopService?master?E1");
     auto p = RequestParser::build(m);
 
@@ -128,7 +138,8 @@ TEST(RequestParser, MissingIntegerElement) {
 }
 
 
-TEST(RequestParser, EmptyIntegerElement) {
+TEST(RequestParser, EmptyIntegerElement)
+{
     auto m = request("stopService??E1");
     auto p = RequestParser::build(m);
 
@@ -138,7 +149,8 @@ TEST(RequestParser, EmptyIntegerElement) {
 }
 
 
-TEST(RequestParser, NotAnInteger) {
+TEST(RequestParser, NotAnInteger)
+{
     auto m = request("stopService?master?E1");
     auto p = RequestParser::build(m);
 
@@ -146,7 +158,8 @@ TEST(RequestParser, NotAnInteger) {
 }
 
 
-TEST(RequestParser, OnlySeparators) {
+TEST(RequestParser, OnlySeparators)
+{
     auto m = request("???");
     auto p = RequestParser::build(m);
 
@@ -154,7 +167,7 @@ TEST(RequestParser, OnlySeparators) {
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

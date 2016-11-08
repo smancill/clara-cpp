@@ -33,7 +33,8 @@
 namespace clara {
 namespace log {
 
-class Logger {
+class Logger
+{
 public:
     static Logger* instance()
     {

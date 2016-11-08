@@ -31,8 +31,8 @@
 
 #include <ctime>
 #include <iomanip>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 
 namespace {
 
@@ -41,19 +41,20 @@ const char SEPARATOR = ':';
 int get_port(const std::string& full_name, int index)
 {
     switch (full_name[index]) {
-        case 'j': case 'J':
+        case 'j':
+        case 'J':
             return clara::constants::java_port;
-        case 'c': case 'C':
+        case 'c':
+        case 'C':
             return clara::constants::cpp_port;
-        case 'p': case 'P':
+        case 'p':
+        case 'P':
             return clara::constants::python_port;
         default:
             throw std::invalid_argument{"invalid language:" + full_name};
     }
 }
-
 }
-
 
 
 namespace clara {

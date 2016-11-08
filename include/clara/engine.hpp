@@ -28,10 +28,10 @@
 #include <clara/engine_data.hpp>
 #include <clara/engine_data_type.hpp>
 
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
-#include <memory>
 
 /**
  * Core CLARA classes and functions.

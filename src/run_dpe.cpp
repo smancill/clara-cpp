@@ -62,7 +62,7 @@ int main(int argc, char** argv)
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
 
-    while (!quit) {
+    while (quit == 0) {
         sleep(1);
     }
 

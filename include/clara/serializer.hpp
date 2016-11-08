@@ -74,7 +74,7 @@ public:
     }
 
 public:
-    virtual ~Serializer() { };
+    virtual ~Serializer() = default;
 };
 
 } // end namespace clara

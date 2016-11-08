@@ -36,10 +36,10 @@ namespace clara {
 class Dpe final
 {
 public:
-    Dpe(bool,
-        const xmsg::ProxyAddress&,
-        const xmsg::ProxyAddress&,
-        const std::string&);
+    Dpe(bool is_frontend,
+        const xmsg::ProxyAddress& local,
+        const xmsg::ProxyAddress& frontend,
+        const std::string& description);
 
     ~Dpe();
 

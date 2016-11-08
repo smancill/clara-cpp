@@ -44,11 +44,11 @@ class EngineData final
 public:
     EngineData();
 
-    EngineData(const EngineData&);
-    EngineData& operator=(const EngineData&);
+    EngineData(const EngineData& rhs);
+    EngineData& operator=(const EngineData& rhs);
 
-    EngineData(EngineData&&);
-    EngineData& operator=(EngineData&&);
+    EngineData(EngineData&& rhs);
+    EngineData& operator=(EngineData&& rhs);
 
     ~EngineData();
 
@@ -59,7 +59,9 @@ public:
     T& data()
     {
         T* value = any_cast<T>(&data_);
-        if (value == nullptr) throw bad_any_cast();
+        if (value == nullptr) {
+            throw bad_any_cast();
+        }
         return *value;
     }
 
@@ -67,7 +69,9 @@ public:
     const T& data() const
     {
         const T* value = any_cast<T>(&data_);
-        if (value == nullptr) throw bad_any_cast();
+        if (value == nullptr) {
+            throw bad_any_cast();
+        }
         return *value;
     }
 
@@ -91,25 +95,25 @@ public:
     }
 
 private:
-    void set_mime_type(const std::string&);
+    void set_mime_type(const std::string& mime_type);
 
 public:
     const std::string& description() const;
 
-    void set_description(const std::string&);
+    void set_description(const std::string& description);
 
     EngineStatus status() const;
 
     int status_severity() const;
 
-    void set_status(EngineStatus);
+    void set_status(EngineStatus status);
 
-    void set_status(EngineStatus, int);
+    void set_status(EngineStatus status, int severity);
 
 public:
     const std::string& engine_state() const;
 
-    void set_engine_state(const std::string&);
+    void set_engine_state(const std::string& state);
 
     const std::string& engine_name() const;
 
@@ -118,7 +122,7 @@ public:
 public:
     long communication_id() const;
 
-    void set_communication_id(long);
+    void set_communication_id(long id);
 
     const std::string& composition() const;
 
@@ -128,7 +132,7 @@ private:
     friend class EngineDataAccessor;
     using Meta = xmsg::proto::Meta;
 
-    EngineData(any&&, std::unique_ptr<Meta>&&);
+    EngineData(any&& data, std::unique_ptr<Meta>&& meta);
 
     any data_;
     std::unique_ptr<Meta> meta_;

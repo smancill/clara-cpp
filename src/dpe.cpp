@@ -63,10 +63,7 @@ public:
         // nop
     }
 
-    ~DpeImpl()
-    {
-        // nop
-    }
+    ~DpeImpl() override = default;
 
 public:
     void start_proxy();
@@ -79,15 +76,15 @@ public:
 
     void unsubscribe();
 
-    void start_container(util::RequestParser&);
+    void start_container(util::RequestParser& parser);
 
-    void stop_container(util::RequestParser&);
+    void stop_container(util::RequestParser& parser);
 
     void stop_containers();
 
-    void start_service(util::RequestParser&);
+    void start_service(util::RequestParser& parser);
 
-    void stop_service(util::RequestParser&);
+    void stop_service(util::RequestParser& parser);
 
     void callback(xmsg::Message& msg);
 

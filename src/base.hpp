@@ -36,7 +36,7 @@ class Base : public xmsg::xMsg
 public:
     Base(const Component& self, const Component& frontend);
 
-    ~Base();
+    ~Base() override;
 
 public:
     void send(const Component& component, const std::string& data);

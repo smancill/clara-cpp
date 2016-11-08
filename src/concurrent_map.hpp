@@ -41,7 +41,7 @@ public:
     using mapped_type = std::shared_ptr<element_type>;
 
 public:
-    ConcurrentMap() { };
+    ConcurrentMap() = default;
 
     ConcurrentMap(const ConcurrentMap&) = delete;
     ConcurrentMap(ConcurrentMap&&) = delete;
@@ -88,7 +88,9 @@ public:
     template <typename F>
     void for_each(F f)
     {
-        for (auto& x : cont_) f(x.second.get());
+        for (auto& x : cont_) {
+            f(x.second.get());
+        }
     }
 
     void clear()

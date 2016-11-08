@@ -31,7 +31,7 @@ namespace clara {
 namespace composition {
 
 SimpleCompiler::SimpleCompiler(std::string service_name)
-  : service_name_{service_name}
+  : service_name_{std::move(service_name)}
 {
     // nop
 }

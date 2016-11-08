@@ -46,7 +46,7 @@ public:
     ServiceEngine(const ServiceEngine&) = delete;
     ServiceEngine& operator=(const ServiceEngine&) = delete;
 
-    ~ServiceEngine();
+    ~ServiceEngine() override;
 
 public:
     void setup(xmsg::Message& msg);
@@ -63,8 +63,8 @@ private:
 private:
     EngineData get_engine_data(xmsg::Message& msg);
 
-    xmsg::Message put_engine_data(EngineData& msg, const xmsg::Topic& topic);
-    xmsg::Message put_engine_data(EngineData& msg, const std::string& receiver);
+    xmsg::Message put_engine_data(EngineData& output, const xmsg::Topic& topic);
+    xmsg::Message put_engine_data(EngineData& output, const std::string& receiver);
 
     void update_metadata(const EngineData& input, EngineData& output);
 

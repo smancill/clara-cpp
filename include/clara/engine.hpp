@@ -66,7 +66,7 @@ public:
 public:
     virtual void reset() { };
 
-    virtual ~Engine() { };
+    virtual ~Engine() = default;
 };
 
 } // end namespace clara

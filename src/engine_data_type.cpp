@@ -37,7 +37,7 @@ using xmsg::proto::Data;
 using xmsg::proto::detail::set_repeated;
 
 template <typename T>
-inline void set_value(Data&, const T&)
+inline void set_value(Data& /*data*/, const T& /*value*/)
         { static_assert(sizeof(T) == 0, "Unsupported data type"); }
 
 inline void set_value(Data& data, std::int32_t value)
@@ -51,7 +51,7 @@ inline void set_value(Data& data, const std::vector<std::int64_t>& value)
         { set_repeated(data.mutable_vlsint64a(), value); }
 
 template <typename T>
-inline T get_value(const Data&)
+inline T get_value(const Data& /*data*/)
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return T{}; }
 
 template<> inline std::int32_t get_value(const Data& data)
@@ -74,7 +74,9 @@ public:
     std::vector<std::uint8_t> write(const clara::any& data) const override
     {
         const T* value = clara::any_cast<T>(&data);
-        if (value == nullptr) throw clara::bad_any_cast();
+        if (value == nullptr) {
+            throw clara::bad_any_cast();
+        }
         const auto xdata = xmsg::proto::make_data(*value);
         return xmsg::proto::serialize_data(xdata);
     }
@@ -94,7 +96,9 @@ public:
     std::vector<std::uint8_t> write(const clara::any& data) const override
     {
         const T* value = clara::any_cast<T>(&data);
-        if (value == nullptr) throw clara::bad_any_cast();
+        if (value == nullptr) {
+            throw clara::bad_any_cast();
+        }
         auto xdata = xmsg::proto::Data{};
         vl::set_value(xdata, *value);
         return xmsg::proto::serialize_data(xdata);

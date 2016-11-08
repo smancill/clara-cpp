@@ -108,9 +108,8 @@ std::string get_dpe_host(const std::string& canonical_name)
     if (port_sep == std::string::npos) {
         auto lang_sep = canonical_name.find(constants::lang_sep);
         return canonical_name.substr(0, lang_sep);
-    } else {
-        return canonical_name.substr(0, port_sep);
     }
+    return canonical_name.substr(0, port_sep);
 }
 
 int get_dpe_port(const std::string& canonical_name)
@@ -119,10 +118,9 @@ int get_dpe_port(const std::string& canonical_name)
     auto lang_sep = canonical_name.find(constants::lang_sep);
     if (port_sep == std::string::npos) {
         return get_port(canonical_name, lang_sep + 1);
-    } else {
-        std::string port = canonical_name.substr(port_sep + 1, lang_sep);
-        return std::stoi(port);
     }
+    std::string port = canonical_name.substr(port_sep + 1, lang_sep);
+    return std::stoi(port);
 }
 
 

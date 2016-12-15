@@ -47,6 +47,20 @@ clara::EngineData build_error_data(const char* msg,
     return data;
 }
 
+
+clara::EngineData build_done_data(clara::EngineDataAccessor& accessor,
+                                  clara::EngineData& output)
+{
+    auto done_output = clara::EngineData{};
+    done_output.set_data(clara::type::STRING.mime_type(), "done");
+
+    auto done_meta = accessor.view_meta(done_output);
+    auto out_meta = accessor.view_meta(output);
+    done_meta->CopyFrom(*out_meta);
+
+    return done_output;
+}
+
 } // end namespace
 
 
@@ -75,9 +89,25 @@ ServiceEngine::~ServiceEngine()
 }
 
 
-void ServiceEngine::setup(xmsg::Message&)
+void ServiceEngine::setup(xmsg::Message& msg)
 {
-    LOGGER->info("engine setup not implemetend (service = %s)", name());
+    auto parser = util::RequestParser::build(msg);
+    auto report = parser.next_string();
+    auto value = parser.next_integer();
+    auto status = xmsg::proto::Meta::INFO;
+    if (report == constants::service_report_done) {
+        config_->set_done_count_threshold(value);
+        config_->reset_done_count();
+    } else if (report == constants::service_report_data) {
+        config_->set_data_count_threshold(value);
+        config_->reset_data_count();
+    } else {
+        status = xmsg::proto::Meta::ERROR;
+        LOGGER->error("Invalid report request = %s", report);
+    }
+    if (msg.has_replyto()) {
+        Base::send_response(msg, parser.request(), status);
+    }
 }
 
 
@@ -99,6 +129,8 @@ void ServiceEngine::configure(xmsg::Message& msg)
 void ServiceEngine::execute(xmsg::Message& msg)
 {
     report_->add_n_requests();
+    config_->add_request();
+
     auto input_data = get_engine_data(msg);
     parse_composition(input_data);
     auto output_data = execute_engine(input_data);
@@ -115,6 +147,7 @@ void ServiceEngine::execute(xmsg::Message& msg)
         report_->add_n_failures();
         return;
     }
+    report_result(output_data);
     send_result(output_data, get_links(input_data, output_data));
 }
 
@@ -245,6 +278,21 @@ void ServiceEngine::report_problem(EngineData& output)
         report(constants::error, output);
     } else if (status == EngineStatus::WARNING) {
         report(constants::warning, output);
+    }
+}
+
+
+void ServiceEngine::report_result(EngineData& output)
+{
+    if (config_->data_count() == config_->data_count_threshold()) {
+        report(constants::data, output);
+        config_->reset_data_count();
+    }
+
+    if (config_->done_count() == config_->done_count_threshold()) {
+        auto done_output = build_done_data(accessor_, output);
+        report(constants::done, done_output);
+        config_->reset_done_count();
     }
 }
 

@@ -83,6 +83,7 @@ private:
     void send_result(EngineData& output, const std::set<std::string> links);
 
     void report_problem(EngineData& output);
+    void report_result(EngineData& output);
 
     void report(const std::string& topic_prefix, EngineData& output);
 

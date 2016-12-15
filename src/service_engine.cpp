@@ -33,6 +33,23 @@
 
 #include <chrono>
 
+
+namespace {
+
+clara::EngineData build_error_data(const char* msg,
+                                   int severity,
+                                   const std::exception& ex)
+{
+    auto data = clara::EngineData{};
+    data.set_data(clara::type::STRING.mime_type(), msg);
+    data.set_description(ex.what());
+    data.set_status(clara::EngineStatus::ERROR, severity);
+    return data;
+}
+
+} // end namespace
+
+
 namespace clara {
 
 ServiceEngine::ServiceEngine(const Component& self,
@@ -111,7 +128,7 @@ EngineData ServiceEngine::configure_engine(EngineData& input)
         }
         return output_data;
     } catch (const std::exception& e) {
-        return util::build_error_data("unhandled exception", 4, e);
+        return build_error_data("unhandled exception", 4, e);
     }
 }
 
@@ -137,7 +154,7 @@ EngineData ServiceEngine::execute_engine(EngineData& input)
 
         return output_data;
     } catch (const std::exception& e) {
-        return util::build_error_data("unhandled exception", 4, e);
+        return build_error_data("unhandled exception", 4, e);
     }
 }
 
@@ -239,19 +256,5 @@ void ServiceEngine::report(const std::string& topic_prefix, EngineData& output)
     auto con = connect(frontend().addr());
     publish(con, msg);
 }
-
-
-namespace util {
-
-EngineData build_error_data(const char* msg, int severity, const std::exception& ex)
-{
-    EngineData data;
-    data.set_data(type::STRING.mime_type(), msg);
-    data.set_description(ex.what());
-    data.set_status(clara::EngineStatus::ERROR, severity);
-    return data;
-}
-
-} // end namespace util
 
 } // end namespace clara

@@ -101,12 +101,6 @@ private:
     std::string prev_composition_;
 };
 
-namespace util {
-
-EngineData build_error_data(const char* msg, int severity, const std::exception& ex);
-
-} // end namespace util
-
 } // end namespace clara
 
 #endif // end of include guard: CLARA_SERVICE_ENGINE_HPP

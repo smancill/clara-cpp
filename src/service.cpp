@@ -45,12 +45,15 @@ Service::Service(const Component& self,
   : Base{self, frontend}
   , loader_{params.engine_lib}
   , thread_pool_{thread_pool_options(params.pool_size, 1024)}
+  , sys_config_{std::make_shared<ServiceConfig>()}
   , report_{std::make_shared<ServiceReport>(name(), params,
                                             loader_->author(),
                                             loader_->version(),
                                             loader_->description())}
   , service_{std::make_unique<ServiceEngine>(self, frontend,
-                                             loader_.get(), report_.get())}
+                                             loader_.get(),
+                                             report_.get(),
+                                             sys_config_.get())}
 {
     LOGGER->info("created service = %s pool_size = %d", name(), params.pool_size);
 }

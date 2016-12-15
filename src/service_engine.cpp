@@ -26,6 +26,7 @@
 
 #include "data_utils.hpp"
 #include "logging.hpp"
+#include "service_config.hpp"
 #include "service_report.hpp"
 
 #include <xmsg/util.h>
@@ -37,10 +38,12 @@ namespace clara {
 ServiceEngine::ServiceEngine(const Component& self,
                              const Component& frontend,
                              Engine* engine,
-                             ServiceReport* report)
+                             ServiceReport* report,
+                             ServiceConfig* config)
   : Base{self, frontend}
   , engine_{engine}
   , report_{report}
+  , config_{config}
   , input_types_{engine_->input_data_types()}
   , output_types_{engine_->output_data_types()}
   , compiler_{self.name()}

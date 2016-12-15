@@ -36,6 +36,7 @@
 
 namespace clara {
 
+class ServiceConfig;
 class ServiceReport;
 
 class ServiceEngine : public Base
@@ -44,7 +45,8 @@ public:
     ServiceEngine(const Component& self,
                   const Component& frontend,
                   Engine* engine,
-                  ServiceReport* report);
+                  ServiceReport* report,
+                  ServiceConfig* config);
 
     ServiceEngine(const ServiceEngine&) = delete;
     ServiceEngine& operator=(const ServiceEngine&) = delete;
@@ -89,6 +91,7 @@ private:
 
     Engine* engine_;
     ServiceReport* report_;
+    ServiceConfig* config_;
     EngineDataAccessor accessor_;
 
     decltype(engine_->input_data_types()) input_types_;

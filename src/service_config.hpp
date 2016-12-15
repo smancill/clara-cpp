@@ -22,65 +22,73 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-#ifndef CLARA_SERVICE_HPP
-#define CLARA_SERVICE_HPP
+#ifndef CLARA_SERVICE_CONFIG_HPP
+#define CLARA_SERVICE_CONFIG_HPP
 
-#include <clara/engine.hpp>
+#include "constants.hpp"
 
-#include "base.hpp"
-#include "service_config.hpp"
-#include "service_engine.hpp"
-#include "service_loader.hpp"
-#include "service_report.hpp"
-#include "third_party/thread_pool/thread_pool.hpp"
-
-#include <mutex>
+#include <atomic>
+#include <string>
 
 namespace clara {
 
-
-class Service : public Base
+class ServiceConfig
 {
 public:
-    Service(const Component& self,
-            const Component& frontend,
-            const ServiceParameters& params);
+    void add_request()
+    {
+        data_req_count.fetch_add(1);
+        done_req_count.fetch_add(1);
+    }
 
-    Service(const Service&) = delete;
-    Service& operator=(const Service&) = delete;
+    void reset_data_count()
+    {
+        data_req_count.store(0);
+    }
 
-    ~Service() override;
+    void reset_done_count()
+    {
+        done_req_count.store(0);
+    }
 
-public:
-    void start();
+    long data_count()
+    {
+        return data_req_count.load();
+    }
 
-    void stop();
+    long done_count()
+    {
+        return done_req_count.load();
+    }
 
-    void setup(xmsg::Message& msg);
+    void set_data_count_threshold(long limit)
+    {
+        data_req_threshold.store(limit);
+    }
 
-    void configure(xmsg::Message& msg);
+    void set_done_count_threshold(long limit)
+    {
+        done_req_threshold.store(limit);
+    }
 
-    void execute(xmsg::Message& msg);
+    long data_count_threshold()
+    {
+        return data_req_threshold.load();
+    }
 
-    void callback(xmsg::Message& msg);
-
-public:
-    std::shared_ptr<ServiceReport> report() const;
+    long done_count_threshold()
+    {
+        return done_req_threshold.load();
+    }
 
 private:
-    std::mutex mutex_;
-    std::mutex cb_mutex_;
+    std::atomic<std::int64_t> data_req_threshold{0};
+    std::atomic<std::int64_t> done_req_threshold{0};
 
-    ServiceLoader loader_;
-    ThreadPool thread_pool_;
-
-    std::shared_ptr<ServiceConfig> sys_config_;
-    std::shared_ptr<ServiceReport> report_;
-    std::unique_ptr<ServiceEngine> service_;
-
-    std::unique_ptr<xmsg::Subscription> sub_;
+    std::atomic<std::int64_t> data_req_count{0};
+    std::atomic<std::int64_t> done_req_count{0};
 };
 
 } // end namespace clara
 
-#endif // end of include guard: CLARA_SERVICE_HPP
+#endif // end of include guard: CLARA_SERVICE_CONFIG_HPP

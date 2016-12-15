@@ -43,6 +43,10 @@ public:
 
     void send(const Component& component, xmsg::Message& msg);
 
+    void send_response(const xmsg::Message& msg,
+                       const std::string& data,
+                       xmsg::proto::Meta::Status status);
+
 public:
     const Component& self() { return self_; }
 

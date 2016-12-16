@@ -124,6 +124,16 @@ TEST(EngineData, MoveConstruction)
 }
 
 
+TEST(EngineData, HasData)
+{
+    auto d = clara::EngineData{};
+    EXPECT_THAT(d.has_data(), Eq(false));
+
+    d.set_data("data/integer", 10);
+    EXPECT_THAT(d.has_data(), Eq(true));
+}
+
+
 TEST(EngineData, SetDataDescription)
 {
     auto d = clara::EngineData{};

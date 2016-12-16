@@ -45,7 +45,7 @@ public:
     any(const any& rhs) :
         vtable(rhs.vtable)
     {
-        if(!rhs.empty())
+        if(rhs.has_value())
         {
             rhs.vtable->copy(rhs.storage, this->storage);
         }
@@ -56,7 +56,7 @@ public:
     any(any&& rhs) noexcept :
         vtable(rhs.vtable)
     {
-        if(!rhs.empty())
+        if(rhs.has_value())
         {
             rhs.vtable->move(rhs.storage, this->storage);
             rhs.vtable = nullptr;
@@ -66,7 +66,7 @@ public:
     /// Same effect as this->clear().
     ~any()
     {
-        this->clear();
+        this->reset();
     }
 
     /// Constructs an object of type any that contains an object of type T direct-initialized with std::forward<ValueType>(value).
@@ -112,25 +112,25 @@ public:
     }
 
     /// If not empty, destroys the contained object.
-    void clear() noexcept
+    void reset() noexcept
     {
-        if(!empty())
+        if(has_value())
         {
             this->vtable->destroy(storage);
             this->vtable = nullptr;
         }
     }
 
-    /// Returns true if *this has no contained object, otherwise false.
-    bool empty() const noexcept
+    /// Returns true if instance contains a value, otherwise false.
+    bool has_value() const noexcept
     {
-        return this->vtable == nullptr;
+        return this->vtable != nullptr;
     }
 
     /// If *this has a contained object of type T, typeid(T); otherwise typeid(void).
     const std::type_info& type() const noexcept
     {
-        return empty()? typeid(void) : this->vtable->type();
+        return has_value() ? this->vtable->type() : typeid(void);
     }
 
     /// Exchange the states of *this and rhs.

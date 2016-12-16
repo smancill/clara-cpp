@@ -91,7 +91,7 @@ public:
 
     bool has_data()
     {
-        return !data_.empty();
+        return data_.has_value();
     }
 
 private:

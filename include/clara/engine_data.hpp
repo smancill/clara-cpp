@@ -58,21 +58,13 @@ public:
     template<typename T>
     T& data()
     {
-        T* value = any_cast<T>(&data_);
-        if (value == nullptr) {
-            throw bad_any_cast();
-        }
-        return *value;
+        return any_cast<T&>(data_);
     }
 
     template<typename T>
     const T& data() const
     {
-        const T* value = any_cast<T>(&data_);
-        if (value == nullptr) {
-            throw bad_any_cast();
-        }
-        return *value;
+        return any_cast<const T&>(data_);
     }
 
     template<typename S, typename T>

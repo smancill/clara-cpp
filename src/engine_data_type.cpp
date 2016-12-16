@@ -73,11 +73,8 @@ class PrimitiveSerializer : public clara::Serializer
 public:
     std::vector<std::uint8_t> write(const clara::any& data) const override
     {
-        const T* value = clara::any_cast<T>(&data);
-        if (value == nullptr) {
-            throw clara::bad_any_cast();
-        }
-        const auto xdata = xmsg::proto::make_data(*value);
+        const T& value = clara::any_cast<const T&>(data);
+        const auto xdata = xmsg::proto::make_data(value);
         return xmsg::proto::serialize_data(xdata);
     }
 
@@ -95,12 +92,9 @@ class VariableLengthSerializer : public clara::Serializer
 public:
     std::vector<std::uint8_t> write(const clara::any& data) const override
     {
-        const T* value = clara::any_cast<T>(&data);
-        if (value == nullptr) {
-            throw clara::bad_any_cast();
-        }
+        const T& value = clara::any_cast<const T&>(data);
         auto xdata = xmsg::proto::Data{};
-        vl::set_value(xdata, *value);
+        vl::set_value(xdata, value);
         return xmsg::proto::serialize_data(xdata);
     }
 
@@ -142,8 +136,8 @@ class NativeSerializer : public clara::Serializer
 public:
     std::vector<std::uint8_t> write(const clara::any& data) const override
     {
-        const auto* value = clara::any_cast<xmsg::proto::Data>(&data);
-        return xmsg::proto::serialize_data(*value);
+        const auto& value = clara::any_cast<const xmsg::proto::Data&>(data);
+        return xmsg::proto::serialize_data(value);
     }
 
     clara::any read(const std::vector<std::uint8_t>& buffer) const override
@@ -158,8 +152,8 @@ class StringSerializer : public clara::Serializer
 public:
     std::vector<std::uint8_t> write(const clara::any& data) const override
     {
-        const auto* value = clara::any_cast<std::string>(&data);
-        return { std::begin(*value), std::end(*value) };
+        const auto& value = clara::any_cast<const std::string&>(data);
+        return { std::begin(value), std::end(value) };
     }
 
     clara::any read(const std::vector<std::uint8_t>& buffer) const override

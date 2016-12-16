@@ -134,6 +134,23 @@ TEST(EngineData, HasData)
 }
 
 
+TEST(EngineData, GetDataByReference)
+{
+    struct A {
+        int value = 0;
+    };
+
+    auto d = clara::EngineData{};
+    d.set_data("test/A", A{});
+
+    auto& a = d.data<A>();
+    a.value = 1;
+
+    auto& b = d.data<A>();
+    EXPECT_THAT(b.value, Eq(1));
+}
+
+
 TEST(EngineData, SetDataDescription)
 {
     auto d = clara::EngineData{};

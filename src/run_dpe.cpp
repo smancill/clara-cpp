@@ -25,6 +25,8 @@
 #include "dpe.hpp"
 #include "dpe_options.hpp"
 
+#include <xmsg/context.h>
+
 #include <csignal>
 #include <iostream>
 #include <string>
@@ -52,6 +54,10 @@ int main(int argc, char** argv)
         options.print_help();
         return EXIT_SUCCESS;
     }
+
+    auto ctx = xmsg::Context::instance();
+    ctx->set_io_threads(options.io_threads());
+    ctx->set_max_sockets(options.max_sockets());
 
     clara::Dpe dpe{false,
                    options.local_address(),

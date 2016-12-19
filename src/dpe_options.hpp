@@ -25,11 +25,14 @@
 #ifndef CLARA_DPE_OPTIONS_HPP
 #define CLARA_DPE_OPTIONS_HPP
 
+#include "dpe_config.hpp"
 #include "third_party/optionparser.h"
 
 #include <xmsg/address.h>
 
+#include <chrono>
 #include <iostream>
+#include <thread>
 #include <vector>
 
 namespace clara {
@@ -68,6 +71,8 @@ struct Arg : public ::option::Arg
 
 enum OptionIndex {
     UNKNOWN, HOST, PORT, FE_HOST, FE_PORT,
+    SESSION, DESC, POOL, CORES, REPORT,
+    CTX_SK, CTX_IO,
     HELP
 };
 
@@ -79,7 +84,16 @@ constexpr Descriptor usage[] =
     { PORT, 0, "", "port", Arg::Required,           "  --port <port>             \tuse given port for this DPE" },
     { FE_HOST, 0, "", "fe-host", Arg::Required,     "  --fe-host <hostname>      \tthe host used by the remote front-end" },
     { FE_PORT, 0, "", "fe-port", Arg::Required,     "  --fe-port <port>          \tthe port used by the remote front-end" },
-    { HELP, 0, "h", "help", Arg::None,              "  --help                    \tprint usage and exit" },
+    { SESSION, 0, "", "session", Arg::Required,     "  --session <id>            \tthe session ID of this DPE" },
+    { DESC, 0, "", "description", Arg::Required,    "  --description <string>    \ta short description of this DPE\n\n"
+                                                    "  Config options:" },
+    { POOL, 0, "", "poolsize", Arg::Required,       "  --poolsize <size>         \tsize of thread pool to handle requests" },
+    { CORES, 0, "", "max-cores", Arg::Required,     "  --max-cores <cores>       \thow many cores can be used by a service" },
+    { REPORT, 0, "", "report", Arg::Required,       "  --report <seconds>        \tthe period to publish reports\n\n"
+                                                    "  Advanced options:" },
+    { CTX_SK, 0, "", "max-sockets", Arg::Required,  "  --max-sockets <sockets>   \tmaximum number of allowed ZMQ sockets" },
+    { CTX_IO, 0, "", "io-threads", Arg::Required,   "  --io-threads <threads>    \tsize of ZMQ thread pool to handle I/O" },
+    { HELP, 0, "h", "help", Arg::None,              "" },
     { 0, 0, nullptr, nullptr, nullptr, nullptr}
 };
 
@@ -159,6 +173,16 @@ private:
             auto fe_port = value_of(FE_PORT, default_fe_port);
             fe_addr_ = xmsg::ProxyAddress{fe_host, fe_port};
         }
+
+        config_ = {
+            value_of(SESSION, ""),
+            value_of(POOL, 2),
+            value_of(CORES, std::thread::hardware_concurrency()),
+            parse_report_period()
+        };
+
+        max_sockets_ = value_of(CTX_SK, 1024);
+        io_threads_ = value_of(CTX_IO, 1);
     }
 
     std::string value_of(int opt, const std::string& val)
@@ -179,6 +203,15 @@ private:
         return val;
     }
 
+    int parse_report_period()
+    {
+        using namespace std::chrono;
+        auto default_period = 10'000;
+        auto ms = milliseconds{default_period};
+        auto s = value_of(REPORT, duration_cast<seconds>(ms).count());
+        return duration_cast<milliseconds>(seconds{s}).count();
+    }
+
 public:
     xmsg::ProxyAddress local_address() const
     {
@@ -190,9 +223,24 @@ public:
         return fe_addr_;
     }
 
+    DpeConfig config() const
+    {
+        return config_;
+    }
+
     std::string description()
     {
         return desc_;
+    }
+
+    int max_sockets() const
+    {
+        return max_sockets_;
+    }
+
+    int io_threads() const
+    {
+        return io_threads_;
     }
 
 private:
@@ -204,7 +252,11 @@ private:
     xmsg::ProxyAddress local_addr_;
     xmsg::ProxyAddress fe_addr_;
 
+    DpeConfig config_;
     std::string desc_;
+
+    int max_sockets_;
+    int io_threads_;
 };
 
 } // end namespace option

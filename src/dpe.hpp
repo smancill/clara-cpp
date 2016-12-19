@@ -25,6 +25,8 @@
 #ifndef CLARA_DPE_HPP
 #define CLARA_DPE_HPP
 
+#include "dpe_config.hpp"
+
 #include <memory>
 
 namespace xmsg {
@@ -39,7 +41,7 @@ public:
     Dpe(bool is_frontend,
         const xmsg::ProxyAddress& local,
         const xmsg::ProxyAddress& frontend,
-        const std::string& description);
+        const DpeConfig& config);
 
     ~Dpe();
 

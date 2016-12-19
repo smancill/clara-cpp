@@ -32,6 +32,7 @@ namespace clara {
 struct DpeConfig final
 {
     std::string session;
+    std::string description;
     int pool_size;
     int max_cores;
     int report_period;

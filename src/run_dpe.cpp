@@ -62,7 +62,7 @@ int main(int argc, char** argv)
     clara::Dpe dpe{false,
                    options.local_address(),
                    options.frontend_address(),
-                   options.description()};
+                   options.config()};
     dpe.start();
 
     signal(SIGINT, signal_handler);

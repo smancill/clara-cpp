@@ -32,7 +32,6 @@
 #include "logging.hpp"
 #include "utils.hpp"
 
-
 #include <xmsg/proxy.h>
 #include <xmsg/xmsg.h>
 
@@ -54,11 +53,11 @@ class Dpe::DpeImpl : public Base
 public:
     DpeImpl(const xmsg::ProxyAddress& local,
             const xmsg::ProxyAddress& frontend,
-            const std::string& description)
+            const DpeConfig& config)
       : Base{Component::dpe(local),
              Component::dpe(frontend, constants::java_lang)}
-      , description_{description}
       , proxy_{std::make_unique<xmsg::sys::Proxy>(local)}
+      , config_{config}
     {
         // nop
     }
@@ -88,7 +87,6 @@ public:
 
     void callback(xmsg::Message& msg);
 
-
 public:
     xmsg::Topic topic()
     {
@@ -99,19 +97,19 @@ private:
     std::mutex dpe_mutex_;
     std::mutex cb_mutex_;
 
-    std::string description_;
-
     std::unique_ptr<xmsg::sys::Proxy> proxy_;
     std::unique_ptr<xmsg::Subscription> sub_;
     util::ConcurrentMap<std::string, Container> containers_;
+
+    DpeConfig config_;
 };
 
 
 Dpe::Dpe(bool is_frontend,
          const xmsg::ProxyAddress& local,
          const xmsg::ProxyAddress& frontend,
-         const std::string& description)
-  : dpe_{std::make_unique<DpeImpl>(local, frontend, description)}
+         const DpeConfig& config)
+  : dpe_{std::make_unique<DpeImpl>(local, frontend, config)}
 {
     // nop
 }
@@ -168,8 +166,8 @@ void Dpe::DpeImpl::print_startup()
     std::cout << " Date             = " << util::get_current_time() << std::endl;
     std::cout << " Version          = 4.3" << std::endl;
     std::cout << " Lang             = " << "C++" << std::endl;
-    if (!description_.empty()) {
-        std::cout << " Description      = " << description_ << std::endl;
+    if (!config_.description.empty()) {
+        std::cout << " Description      = " << config_.description << std::endl;
     }
     std::cout << std::endl;
     std::cout << " Proxy Host       = " << self().addr().host() << std::endl;
@@ -188,7 +186,7 @@ void Dpe::DpeImpl::subscribe()
     sub_ = Base::subscribe(topic(), connect(), [this](auto& msg) {
         this->callback(msg);
     });
-    Base::register_as_subscriber(topic(), description_);
+    Base::register_as_subscriber(topic(), config_.description);
 }
 
 

@@ -176,6 +176,7 @@ private:
 
         config_ = {
             value_of(SESSION, ""),
+            value_of(DESC, ""),
             value_of(POOL, 2),
             value_of(CORES, std::thread::hardware_concurrency()),
             parse_report_period()
@@ -228,11 +229,6 @@ public:
         return config_;
     }
 
-    std::string description()
-    {
-        return desc_;
-    }
-
     int max_sockets() const
     {
         return max_sockets_;
@@ -253,7 +249,6 @@ private:
     xmsg::ProxyAddress fe_addr_;
 
     DpeConfig config_;
-    std::string desc_;
 
     int max_sockets_;
     int io_threads_;

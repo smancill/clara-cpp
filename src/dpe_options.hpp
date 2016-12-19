@@ -66,18 +66,21 @@ struct Arg : public ::option::Arg
     }
 };
 
-enum  optionIndex { UNKNOWN, HOST, PORT, FE_HOST, FE_PORT, HELP };
+enum OptionIndex {
+    UNKNOWN, HOST, PORT, FE_HOST, FE_PORT,
+    HELP
+};
 
 constexpr Descriptor usage[] =
 {
-    {UNKNOWN, 0, "", "", Arg::Unknown, "usage: c_dpe [options]\n\n"
-                                       "  options:" },
-    {HOST, 0,"", "host", Arg::Required, "  --host <hostname>  \tuse given host for this DPE" },
-    {PORT, 0,"", "port", Arg::Required, "  --port <port>      \tuse given port for this DPE" },
-    {FE_HOST, 0,"", "fe-host", Arg::Required, "  --fe-host <hostname>  \tthe host used by the remote front-end" },
-    {FE_PORT, 0,"", "fe-port", Arg::Required, "  --fe-port <port>      \tthe port used by the remote front-end" },
-    {HELP, 0,"", "help", Arg::None, "  --help  \tprint usage and exit" },
-    {0, 0, nullptr, nullptr, nullptr, nullptr}
+    { UNKNOWN, 0, "", "", Arg::Unknown,             "Usage: c_dpe [options]\n\n"
+                                                    "  Options:" },
+    { HOST, 0, "", "host", Arg::Required,           "  --host <hostname>         \tuse given host for this DPE" },
+    { PORT, 0, "", "port", Arg::Required,           "  --port <port>             \tuse given port for this DPE" },
+    { FE_HOST, 0, "", "fe-host", Arg::Required,     "  --fe-host <hostname>      \tthe host used by the remote front-end" },
+    { FE_PORT, 0, "", "fe-port", Arg::Required,     "  --fe-port <port>          \tthe port used by the remote front-end" },
+    { HELP, 0, "", "help", Arg::None,               "  --help                    \tprint usage and exit" },
+    { 0, 0, nullptr, nullptr, nullptr, nullptr}
 };
 
 
@@ -90,22 +93,22 @@ public:
         argv += static_cast<int>(argc > 0);
         Stats stats(usage, argc, argv);
 
-        options.resize(stats.options_max);
-        buffer.resize(stats.buffer_max);
+        options_.resize(stats.options_max);
+        buffer_.resize(stats.buffer_max);
 
-        parser = Parser(usage, argc, argv, &options[0], &buffer[0]);
+        parser_ = Parser(usage, argc, argv, &options_[0], &buffer_[0]);
 
-        if (parser.nonOptionsCount() > 0) {
+        if (parser_.nonOptionsCount() > 0) {
             std::cerr << "Invalid command line arguments." << std::endl;
             return false;
         }
 
-        if (parser.error()) {
+        if (parser_.error()) {
             return false;
         }
 
-        if (options[FE_HOST] == nullptr) {
-            if (options[FE_PORT] == nullptr) {
+        if (options_[FE_HOST] == nullptr) {
+            if (options_[FE_PORT] == nullptr) {
                 std::cerr << "The remote front-end host is required." << std::endl;
             } else {
                 std::cerr << "Missing front-end host argument." << std::endl;
@@ -119,7 +122,7 @@ public:
 
     bool has_help()
     {
-        return options[HELP] != nullptr;
+        return options_[HELP] != nullptr;
     }
 
     void print_help()
@@ -131,16 +134,16 @@ private:
     void parse_options()
     {
         const auto default_host = std::string{"localhost"};
-        const auto default_port = std::string{"7781"};
-        const auto default_fe_port = std::string{"7771"};
+        const auto default_port = 7781;
+        const auto default_fe_port = 7771;
 
         // Act as front-end by default but if feHost or fePort are passed
         // act as a worker DPE with remote front-end
-        bool fe = options[FE_HOST] == nullptr && options[FE_PORT] == nullptr;
+        bool fe = options_[FE_HOST] == nullptr && options_[FE_PORT] == nullptr;
 
         // Get local DPE address
         auto local_host = value_of(HOST, default_host);
-        auto local_port = std::stoi(value_of(PORT, default_port));
+        auto local_port = value_of(PORT, default_port);
         local_addr_ = xmsg::ProxyAddress{local_host, local_port};
 
         if (fe) {
@@ -149,16 +152,25 @@ private:
         } else {
             // Get remote FE address
             auto fe_host = value_of(FE_HOST, default_host);
-            auto fe_port = std::stoi(value_of(FE_PORT, default_fe_port));
+            auto fe_port = value_of(FE_PORT, default_fe_port);
             fe_addr_ = xmsg::ProxyAddress{fe_host, fe_port};
         }
     }
 
     std::string value_of(int opt, const std::string& val)
     {
-        auto arg = options[opt].arg;
+        auto arg = options_[opt].arg;
         if (arg != nullptr) {
             return std::string{arg};
+        }
+        return val;
+    }
+
+    int value_of(int opt, int val)
+    {
+        auto arg = options_[opt].arg;
+        if (arg != nullptr) {
+            return std::stoi(arg);
         }
         return val;
     }
@@ -180,10 +192,10 @@ public:
     }
 
 private:
-    std::vector<Option> options;
-    std::vector<Option> buffer;
+    std::vector<Option> options_;
+    std::vector<Option> buffer_;
 
-    Parser parser;
+    Parser parser_;
 
     xmsg::ProxyAddress local_addr_;
     xmsg::ProxyAddress fe_addr_;

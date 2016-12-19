@@ -79,7 +79,7 @@ constexpr Descriptor usage[] =
     { PORT, 0, "", "port", Arg::Required,           "  --port <port>             \tuse given port for this DPE" },
     { FE_HOST, 0, "", "fe-host", Arg::Required,     "  --fe-host <hostname>      \tthe host used by the remote front-end" },
     { FE_PORT, 0, "", "fe-port", Arg::Required,     "  --fe-port <port>          \tthe port used by the remote front-end" },
-    { HELP, 0, "", "help", Arg::None,               "  --help                    \tprint usage and exit" },
+    { HELP, 0, "h", "help", Arg::None,              "  --help                    \tprint usage and exit" },
     { 0, 0, nullptr, nullptr, nullptr, nullptr}
 };
 
@@ -105,6 +105,10 @@ public:
 
         if (parser_.error()) {
             return false;
+        }
+
+        if (has_help()) {
+            return true;
         }
 
         if (options_[FE_HOST] == nullptr) {

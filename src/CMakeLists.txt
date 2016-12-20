@@ -1,3 +1,5 @@
+include("${CMAKE_SOURCE_DIR}/cmake/External/rapidjson.cmake")
+
 set(CLARA_SRC
   base.cpp
   component.cpp
@@ -15,8 +17,10 @@ set(CLARA_SRC
   utils.cpp
 )
 
+add_definitions(-DRAPIDJSON_HAS_STDSTRING)
 add_library(clara SHARED ${CLARA_SRC})
-target_link_libraries(clara xMsg::xmsg ${CMAKE_DL_LIBS})
+add_dependencies(clara miloyip-rapidjson)
+target_link_libraries(clara xMsg::xmsg rapidjson ${CMAKE_DL_LIBS})
 
 target_include_directories(clara PUBLIC
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>

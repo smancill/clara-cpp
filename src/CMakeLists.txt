@@ -5,6 +5,7 @@ set(CLARA_SRC
   container.cpp
   data_utils.cpp
   dpe.cpp
+  dpe_report.cpp
   engine_data.cpp
   engine_data_type.cpp
   service.cpp

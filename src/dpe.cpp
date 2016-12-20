@@ -29,20 +29,15 @@
 #include "constants.hpp"
 #include "container.hpp"
 #include "data_utils.hpp"
+#include "dpe_report.hpp"
 #include "logging.hpp"
 #include "utils.hpp"
 
 #include <xmsg/proxy.h>
 #include <xmsg/xmsg.h>
 
-#include <cstdlib>
 #include <mutex>
 #include <thread>
-
-
-namespace {
-const std::string clara_home = std::getenv("CLARA_HOME");
-} // end namespace
 
 
 namespace clara {
@@ -105,6 +100,7 @@ private:
     util::ConcurrentMap<std::string, Container> containers_;
 
     DpeConfig config_;
+    DpeReport report_;
     std::unique_ptr<ReportService> report_service_;
 };
 
@@ -112,7 +108,7 @@ private:
 class ReportService
 {
 public:
-    ReportService(Base& base, DpeConfig& config);
+    ReportService(Base& base, DpeConfig& config, DpeReport& report);
 
     ~ReportService();
 
@@ -121,10 +117,11 @@ public:
 
     void stop();
 
+public:
+    std::string alive_report() { return report_.alive_report(); }
+
 private:
     void run();
-
-    std::string alive_report();
 
     xmsg::Message alive_message();
 
@@ -152,6 +149,7 @@ private:
 
     Base& base_;
     DpeConfig& config_;
+    DpeReport& report_;
 };
 
 
@@ -197,7 +195,8 @@ Dpe::DpeImpl::DpeImpl(const xmsg::ProxyAddress& local,
          Component::dpe(frontend, constants::java_lang)}
   , proxy_{std::make_unique<xmsg::sys::Proxy>(local)}
   , config_{config}
-  , report_service_{std::make_unique<ReportService>(*this, config_)}
+  , report_{*this, config_}
+  , report_service_{std::make_unique<ReportService>(*this, config_, report_)}
 {
     // nop
 }
@@ -407,9 +406,12 @@ void Dpe::DpeImpl::callback(xmsg::Message& msg)
 }
 
 
-ReportService::ReportService(Base& base, DpeConfig& config)
+ReportService::ReportService(Base& base,
+                             DpeConfig& config,
+                             DpeReport& report)
   : base_{base}
   , config_{config}
+  , report_{report}
 {
     // nop
 }
@@ -436,14 +438,6 @@ void ReportService::stop()
         interrupt();
         thread_.join();
     }
-}
-
-
-std::string ReportService::alive_report()
-{
-    return base_.name() + constants::data_sep +
-           std::to_string(config_.max_cores) + constants::data_sep +
-           clara_home;
 }
 
 

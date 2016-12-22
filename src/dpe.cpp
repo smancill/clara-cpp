@@ -35,10 +35,19 @@
 #include <xmsg/proxy.h>
 #include <xmsg/xmsg.h>
 
+#include <cstdlib>
 #include <mutex>
 #include <thread>
 
+
+namespace {
+const std::string clara_home = std::getenv("CLARA_HOME");
+} // end namespace
+
+
 namespace clara {
+
+class ReportService;
 
 class DpeException : public std::runtime_error
 {
@@ -67,6 +76,10 @@ public:
 
     void unsubscribe();
 
+    void start_reports();
+
+    void stop_reports();
+
 public:
     void start_container(util::RequestParser& parser);
 
@@ -92,6 +105,53 @@ private:
     util::ConcurrentMap<std::string, Container> containers_;
 
     DpeConfig config_;
+    std::unique_ptr<ReportService> report_service_;
+};
+
+
+class ReportService
+{
+public:
+    ReportService(Base& base, DpeConfig& config);
+
+    ~ReportService();
+
+public:
+    void start();
+
+    void stop();
+
+private:
+    void run();
+
+    std::string alive_report();
+
+    xmsg::Message alive_message();
+
+private:
+    bool wait(int time_out)
+    {
+        auto duration = std::chrono::milliseconds{time_out};
+        std::unique_lock<std::mutex> lock{m_};
+        return !cv_.wait_for(lock, duration, [this]() { return interrupt_; });
+    }
+
+    void interrupt()
+    {
+        std::unique_lock<std::mutex> lock{m_};
+        interrupt_ = true;
+        cv_.notify_one();
+    }
+
+private:
+    std::thread thread_;
+    std::condition_variable cv_;
+    std::mutex m_;
+
+    bool interrupt_ = false;
+
+    Base& base_;
+    DpeConfig& config_;
 };
 
 
@@ -115,12 +175,14 @@ void Dpe::start()
 {
     dpe_->start_proxy();
     dpe_->subscribe();
+    dpe_->start_reports();
     dpe_->print_startup();
 }
 
 
 void Dpe::stop()
 {
+    dpe_->stop_reports();
     dpe_->unsubscribe();
     dpe_->stop_containers();
     dpe_->stop_proxy();
@@ -135,6 +197,7 @@ Dpe::DpeImpl::DpeImpl(const xmsg::ProxyAddress& local,
          Component::dpe(frontend, constants::java_lang)}
   , proxy_{std::make_unique<xmsg::sys::Proxy>(local)}
   , config_{config}
+  , report_service_{std::make_unique<ReportService>(*this, config_)}
 {
     // nop
 }
@@ -202,6 +265,18 @@ void Dpe::DpeImpl::unsubscribe()
         Base::unsubscribe(std::move(sub_));
         Base::deregister_as_subscriber(topic());
     }
+}
+
+
+void Dpe::DpeImpl::start_reports()
+{
+    report_service_->start();
+}
+
+
+void Dpe::DpeImpl::stop_reports()
+{
+    report_service_->stop();
 }
 
 
@@ -329,6 +404,73 @@ void Dpe::DpeImpl::callback(xmsg::Message& msg)
     } catch (...) {
         LOGGER->error("%s callback: unexpected exception", name());
     }
+}
+
+
+ReportService::ReportService(Base& base, DpeConfig& config)
+  : base_{base}
+  , config_{config}
+{
+    // nop
+}
+
+
+ReportService::~ReportService()
+{
+    stop();
+}
+
+
+void ReportService::start()
+{
+    thread_ = std::thread{[this]() {
+        std::this_thread::sleep_for(std::chrono::seconds{5});
+        run();
+    }};
+}
+
+
+void ReportService::stop()
+{
+    if (thread_.joinable()) {
+        interrupt();
+        thread_.join();
+    }
+}
+
+
+std::string ReportService::alive_report()
+{
+    return base_.name() + constants::data_sep +
+           std::to_string(config_.max_cores) + constants::data_sep +
+           clara_home;
+}
+
+
+void ReportService::run()
+{
+    try {
+        auto fe_addr = base_.frontend().addr();
+        auto con = base_.connect(fe_addr);
+        while (true) {
+            auto alive_msg = alive_message();
+            base_.publish(con, alive_msg);
+            if (!wait(config_.report_period)) {
+                break;
+            }
+        }
+    } catch (std::exception& e) {
+        LOGGER->error(e.what());
+    }
+};
+
+
+xmsg::Message ReportService::alive_message()
+{
+    auto topic = xmsg::Topic::build(constants::dpe_alive,
+                                    config_.session,
+                                    base_.name());
+    return util::build_request(std::move(topic), alive_report());
 }
 
 } // end namespace clara

@@ -37,7 +37,6 @@
 
 #include <mutex>
 #include <thread>
-#include <unordered_map>
 
 namespace clara {
 
@@ -53,16 +52,9 @@ class Dpe::DpeImpl : public Base
 public:
     DpeImpl(const xmsg::ProxyAddress& local,
             const xmsg::ProxyAddress& frontend,
-            const DpeConfig& config)
-      : Base{Component::dpe(local),
-             Component::dpe(frontend, constants::java_lang)}
-      , proxy_{std::make_unique<xmsg::sys::Proxy>(local)}
-      , config_{config}
-    {
-        // nop
-    }
+            const DpeConfig& config);
 
-    ~DpeImpl() override = default;
+    ~DpeImpl() override;
 
 public:
     void start_proxy();
@@ -75,6 +67,7 @@ public:
 
     void unsubscribe();
 
+public:
     void start_container(util::RequestParser& parser);
 
     void stop_container(util::RequestParser& parser);
@@ -88,10 +81,7 @@ public:
     void callback(xmsg::Message& msg);
 
 public:
-    xmsg::Topic topic()
-    {
-        return xmsg::Topic::build("dpe", name());
-    }
+    xmsg::Topic topic();
 
 private:
     std::mutex dpe_mutex_;
@@ -136,6 +126,21 @@ void Dpe::stop()
     dpe_->stop_proxy();
     LOGGER->info("shutdown DPE");
 }
+
+
+Dpe::DpeImpl::DpeImpl(const xmsg::ProxyAddress& local,
+                 const xmsg::ProxyAddress& frontend,
+                 const DpeConfig& config)
+  : Base{Component::dpe(local),
+         Component::dpe(frontend, constants::java_lang)}
+  , proxy_{std::make_unique<xmsg::sys::Proxy>(local)}
+  , config_{config}
+{
+    // nop
+}
+
+
+Dpe::DpeImpl::~DpeImpl() = default;
 
 
 void Dpe::DpeImpl::start_proxy()
@@ -292,6 +297,12 @@ void Dpe::DpeImpl::stop_container(util::RequestParser& parser)
                                    ": container doesn't exist"};
     }
     container->stop();
+}
+
+
+xmsg::Topic Dpe::DpeImpl::topic()
+{
+    return xmsg::Topic::build("dpe", name());
 }
 
 

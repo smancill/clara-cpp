@@ -79,4 +79,22 @@ double DpeReport::load() const
     return 1.0;
 }
 
+
+void DpeReport::add_container(const element_type& container)
+{
+    containers_.add(container);
+}
+
+
+void DpeReport::remove_container(const element_type& container)
+{
+    containers_.remove(container);
+}
+
+
+DpeReport::range_type DpeReport::containers() const
+{
+    return containers_.view();
+}
+
 } // end namespace clara

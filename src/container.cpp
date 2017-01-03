@@ -26,12 +26,15 @@
 
 #include "logging.hpp"
 
+#include <cstdlib>
+
 namespace clara {
 
 Container::Container(const Component& self,
                      const Component& frontend,
                      const std::string& description)
   : Base{self, frontend}
+  , report_{std::make_shared<ContainerReport>(name(), std::getenv("USER"))}
   , description_{description}
   , running_{false}
 {
@@ -108,6 +111,12 @@ void Container::remove_services()
 {
     services_.for_each([](auto s) { s->stop(); });
     services_.clear();
+}
+
+
+std::shared_ptr<ContainerReport> Container::report() const
+{
+    return report_;
 }
 
 } // end namespace clara

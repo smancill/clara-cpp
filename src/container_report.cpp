@@ -22,55 +22,19 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-#ifndef CLARA_CONTAINER_HPP
-#define CLARA_CONTAINER_HPP
-
-#include "base.hpp"
-
-#include "concurrent_map.hpp"
 #include "container_report.hpp"
-#include "service.hpp"
 
-#include <mutex>
+#include "utils.hpp"
 
 namespace clara {
 
-class Container : public Base
+ContainerReport::ContainerReport(const std::string& name,
+                                 const std::string& author)
+  : name_{name}
+  , author_{author}
+  , start_time_{util::get_current_time()}
 {
-public:
-    Container(const Component& self,
-              const Component& frontend,
-              const std::string& description);
+    // nop
+}
 
-    Container(const Container&) = delete;
-    Container& operator=(const Container&) = delete;
-
-    ~Container() override;
-
-public:
-    void start();
-
-    void stop();
-
-public:
-    void add_service(const ServiceParameters& params);
-
-    bool remove_service(const std::string& engine_name);
-
-    void remove_services();
-
-public:
-    std::shared_ptr<ContainerReport> report() const;
-
-private:
-    std::mutex mutex_;
-
-    util::ConcurrentMap<std::string, Service> services_;
-    std::shared_ptr<ContainerReport> report_;
-    std::string description_;
-    bool running_;
-};
-
-} // end namespace clara
-
-#endif // end of include guard: CLARA_CONTAINER_HPP
+}

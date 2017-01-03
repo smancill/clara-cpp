@@ -22,74 +22,37 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-#ifndef CLARA_DPE_REPORT_HPP
-#define CLARA_DPE_REPORT_HPP
+#ifndef CLARA_CONTAINER_REPORT_HPP
+#define CLARA_CONTAINER_REPORT_HPP
 
-#include "concurrent_utils.hpp"
 #include "constants.hpp"
-#include "dpe_config.hpp"
 
-#include <memory>
 #include <string>
-#include <vector>
 
 namespace clara {
 
 class Base;
-class ContainerReport;
 
-class DpeReport
+class ContainerReport
 {
 public:
-    using vector_type = util::CopyOnWriteVector<ContainerReport>;
-    using element_type =  vector_type::pointer_type;
-    using range_type = vector_type::range_type;
+    ContainerReport(const std::string& name, const std::string& author);
 
 public:
-    DpeReport(Base& base, DpeConfig& config);
+    std::string name() { return name_; };
 
-public:
-    std::string name() const { return name_; };
+    std::string author() { return author_; };
 
-    std::string session() const { return config_.session; };
+    std::string lang() { return constants::cpp_lang; };
 
-    std::string lang() const { return constants::cpp_lang; };
-
-    std::string description() const { return config_.description; };
-
-    std::string start_time() const { return start_time_; };
-
-    std::string clara_home() const;
-
-    std::string alive_report() const { return alive_report_; };
-
-public:
-    int core_count() const;
-
-    long memory_size() const;
-
-    long memory_usage() const;
-
-    double cpu_usage() const;
-
-    double load() const;
-
-public:
-    void add_container(const element_type& container);
-
-    void remove_container(const element_type& container);
-
-    range_type containers() const;
+    std::string start_time() { return start_time_; };
 
 private:
     std::string name_;
+    std::string author_;
     std::string start_time_;
-    std::string alive_report_;
-
-    DpeConfig& config_;
-    vector_type containers_;
 };
 
 } // end namespace clara
 
-#endif // end of include guard: CLARA_DPE_REPORT_HPP
+#endif // end of include guard: CLARA_CONTAINER_REPORT_HPP

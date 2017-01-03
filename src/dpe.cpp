@@ -293,6 +293,7 @@ void Dpe::DpeImpl::start_container(util::RequestParser& parser)
     if (container) {
         try {
             container->start();
+            report_.add_container(container->report());
         } catch (const std::exception& e) {
             container->stop();
             containers_.remove(name);
@@ -370,6 +371,7 @@ void Dpe::DpeImpl::stop_container(util::RequestParser& parser)
         throw util::InvalidRequest{"could not stop container = " + container_name +
                                    ": container doesn't exist"};
     }
+    report_.remove_container(container->report());
     container->stop();
 }
 

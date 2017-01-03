@@ -26,16 +26,21 @@
 
 #include "data_utils.hpp"
 #include "logging.hpp"
+#include "service_report.hpp"
 
 #include <xmsg/util.h>
+
+#include <chrono>
 
 namespace clara {
 
 ServiceEngine::ServiceEngine(const Component& self,
                              const Component& frontend,
-                             Engine* engine)
+                             Engine* engine,
+                             ServiceReport* report)
   : Base{self, frontend}
   , engine_{engine}
+  , report_{report}
   , input_types_{engine_->input_data_types()}
   , output_types_{engine_->output_data_types()}
   , compiler_{self.name()}
@@ -73,6 +78,7 @@ void ServiceEngine::configure(xmsg::Message& msg)
 
 void ServiceEngine::execute(xmsg::Message& msg)
 {
+    report_->add_n_requests();
     auto input_data = get_engine_data(msg);
     parse_composition(input_data);
     auto output_data = execute_engine(input_data);
@@ -86,6 +92,7 @@ void ServiceEngine::execute(xmsg::Message& msg)
 
     report_problem(output_data);
     if (output_data.status() == EngineStatus::ERROR) {
+        report_->add_n_failures();
         return;
     }
     send_result(output_data, get_links(input_data, output_data));
@@ -109,7 +116,10 @@ EngineData ServiceEngine::configure_engine(EngineData& input)
 EngineData ServiceEngine::execute_engine(EngineData& input)
 {
     try {
+        auto t0 = std::chrono::high_resolution_clock::now();
         auto output_data = engine_->execute(input);
+        auto t1 = std::chrono::high_resolution_clock::now();
+
         if (!output_data.has_data()) {
             if (output_data.status() == EngineStatus::ERROR) {
                 output_data.set_data(type::STRING.mime_type(), "udf");
@@ -117,6 +127,11 @@ EngineData ServiceEngine::execute_engine(EngineData& input)
                 throw std::runtime_error{"no output data"};
             }
         }
+
+        auto d = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);
+        report_->add_exec_time(d.count());
+        accessor_.view_meta(output_data)->set_executiontime(d.count());
+
         return output_data;
     } catch (const std::exception& e) {
         return util::build_error_data("unhandled exception", 4, e);
@@ -126,6 +141,7 @@ EngineData ServiceEngine::execute_engine(EngineData& input)
 
 EngineData ServiceEngine::get_engine_data(xmsg::Message& msg)
 {
+    report_->add_bytes_recv(msg.data().size());
     return accessor_.deserialize(msg, input_types_);
 }
 
@@ -133,7 +149,9 @@ EngineData ServiceEngine::get_engine_data(xmsg::Message& msg)
 xmsg::Message ServiceEngine::put_engine_data(EngineData& output,
                                              const xmsg::Topic& topic)
 {
-    return accessor_.serialize(output, topic, output_types_);
+    auto msg = accessor_.serialize(output, topic, output_types_);
+    report_->add_bytes_sent(msg.data().size());
+    return msg;
 }
 
 
@@ -157,7 +175,6 @@ void ServiceEngine::update_metadata(const EngineData& input, EngineData& output)
         out_meta->set_communicationid(in_meta->communicationid());
     }
     out_meta->set_composition(in_meta->composition());
-    // out_meta->set_executiontime(execution_time);
     out_meta->set_action(in_meta->action());
 }
 

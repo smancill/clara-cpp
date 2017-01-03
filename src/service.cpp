@@ -49,7 +49,8 @@ Service::Service(const Component& self,
                                             loader_->author(),
                                             loader_->version(),
                                             loader_->description())}
-  , service_{std::make_unique<ServiceEngine>(self, frontend, loader_.get())}
+  , service_{std::make_unique<ServiceEngine>(self, frontend,
+                                             loader_.get(), report_.get())}
 {
     LOGGER->info("created service = %s pool_size = %d", name(), params.pool_size);
 }

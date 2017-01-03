@@ -45,6 +45,10 @@ Service::Service(const Component& self,
   : Base{self, frontend}
   , loader_{params.engine_lib}
   , thread_pool_{thread_pool_options(params.pool_size, 1024)}
+  , report_{std::make_shared<ServiceReport>(name(), params,
+                                            loader_->author(),
+                                            loader_->version(),
+                                            loader_->description())}
   , service_{std::make_unique<ServiceEngine>(self, frontend, loader_.get())}
 {
     LOGGER->info("created service = %s pool_size = %d", name(), params.pool_size);
@@ -125,6 +129,12 @@ void Service::callback(xmsg::Message& msg)
     } catch (...) {
         LOGGER->error("%s callback: unexpected exception", name());
     }
+}
+
+
+std::shared_ptr<ServiceReport> Service::report() const
+{
+    return report_;
 }
 
 } // end namespace clara

@@ -30,20 +30,12 @@
 #include "base.hpp"
 #include "service_engine.hpp"
 #include "service_loader.hpp"
+#include "service_report.hpp"
 #include "third_party/thread_pool/thread_pool.hpp"
 
 #include <mutex>
 
 namespace clara {
-
-struct ServiceParameters
-{
-    std::string engine_name;
-    std::string engine_lib;
-    std::string initial_state;
-    std::string description;
-    int pool_size;
-};
 
 
 class Service : public Base
@@ -71,6 +63,9 @@ public:
 
     void callback(xmsg::Message& msg);
 
+public:
+    std::shared_ptr<ServiceReport> report() const;
+
 private:
     std::mutex mutex_;
     std::mutex cb_mutex_;
@@ -78,7 +73,9 @@ private:
     ServiceLoader loader_;
     ThreadPool thread_pool_;
 
+    std::shared_ptr<ServiceReport> report_;
     std::unique_ptr<ServiceEngine> service_;
+
     std::unique_ptr<xmsg::Subscription> sub_;
 };
 

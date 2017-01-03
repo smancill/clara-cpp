@@ -22,40 +22,27 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-#include "container_report.hpp"
+#include "service_report.hpp"
 
 #include "utils.hpp"
 
-#include <algorithm>
-#include <atomic>
-
 namespace clara {
 
-ContainerReport::ContainerReport(const std::string& name,
-                                 const std::string& author)
+ServiceReport::ServiceReport(const std::string& name,
+                             const ServiceParameters& params,
+                             const std::string& author,
+                             const std::string& version,
+                             const std::string& description)
   : name_{name}
+  , engine_{params.engine_name}
+  , library_{params.engine_lib}
+  , pool_size_{params.pool_size}
   , author_{author}
+  , version_{version}
+  , description_{description}
   , start_time_{util::get_current_time()}
 {
     // nop
-}
-
-
-void ContainerReport::add_service(const element_type& service)
-{
-    services_.add(service);
-}
-
-
-void ContainerReport::remove_service(const element_type& service)
-{
-    services_.remove(service);
-}
-
-
-ContainerReport::range_type ContainerReport::services() const
-{
-    return services_.view();
 }
 
 }

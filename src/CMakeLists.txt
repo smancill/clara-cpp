@@ -11,6 +11,7 @@ set(CLARA_SRC
   engine_data_type.cpp
   service.cpp
   service_engine.cpp
+  service_report.cpp
   utils.cpp
 )
 

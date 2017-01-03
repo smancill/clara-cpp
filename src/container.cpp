@@ -84,6 +84,7 @@ void Container::add_service(const ServiceParameters& params)
     if (service) {
         try {
             service->start();
+            report_->add_service(service->report());
         } catch (const std::exception& e) {
             service->stop();
             services_.remove(name);
@@ -101,6 +102,7 @@ bool Container::remove_service(const std::string& engine_name)
     auto service = services_.remove(engine_name);
     if (service) {
         service->stop();
+        report_->remove_service(service->report());
         return true;
     }
     return false;

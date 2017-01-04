@@ -58,6 +58,8 @@ const std::string stop_container = "stopContainer";
 const std::string stop_remote_container = "stopRemoteContainer";
 const std::string container_down = "containerIsDown";
 const std::string remove_container = "removeContainer";
+const std::string report_registration = "reportRegistration";
+const std::string report_runtime = "reportRuntime";
 
 const std::string state_service = "getServiceState";
 const std::string start_service = "startService";

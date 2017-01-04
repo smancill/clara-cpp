@@ -405,6 +405,8 @@ void Dpe::DpeImpl::callback(xmsg::Message& msg)
             start_service(parser);
         } else if (cmd == constants::stop_service) {
             stop_service(parser);
+        } else if (cmd == constants::report_runtime) {
+            response = report_service_->json_report();
         } else {
             LOGGER->info("Received data %s", util::parse_message(msg));
         }

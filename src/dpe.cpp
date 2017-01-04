@@ -201,7 +201,7 @@ Dpe::DpeImpl::DpeImpl(const xmsg::ProxyAddress& local,
   : Base{Component::dpe(local),
          Component::dpe(frontend, constants::java_lang)}
   , proxy_{std::make_unique<xmsg::sys::Proxy>(local)}
-  , config_{config}
+  , config_(config)
   , report_{*this, config_}
   , report_service_{std::make_unique<ReportService>(*this, config_, report_)}
 {

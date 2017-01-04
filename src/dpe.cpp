@@ -395,6 +395,7 @@ void Dpe::DpeImpl::callback(xmsg::Message& msg)
     try {
         auto parser = util::RequestParser::build(msg);
         auto cmd = parser.next_string();
+        auto response = parser.request();
 
         if (cmd == constants::start_container) {
             start_container(parser);
@@ -407,8 +408,14 @@ void Dpe::DpeImpl::callback(xmsg::Message& msg)
         } else {
             LOGGER->info("Received data %s", util::parse_message(msg));
         }
+        if (msg.has_replyto()) {
+            send_response(msg, response, xmsg::proto::Meta::INFO);
+        }
     } catch (std::exception& e) {
         LOGGER->error(e.what());
+        if (msg.has_replyto()) {
+            send_response(msg, e.what(), xmsg::proto::Meta::ERROR);
+        }
     } catch (...) {
         LOGGER->error("%s callback: unexpected exception", name());
     }

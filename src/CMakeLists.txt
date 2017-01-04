@@ -11,6 +11,7 @@ set(CLARA_SRC
   dpe_report.cpp
   engine_data.cpp
   engine_data_type.cpp
+  json_report.cpp
   service.cpp
   service_engine.cpp
   service_report.cpp

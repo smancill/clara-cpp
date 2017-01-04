@@ -30,6 +30,7 @@
 #include "container.hpp"
 #include "data_utils.hpp"
 #include "dpe_report.hpp"
+#include "json_report.hpp"
 #include "logging.hpp"
 #include "utils.hpp"
 
@@ -120,10 +121,14 @@ public:
 public:
     std::string alive_report() { return report_.alive_report(); }
 
+    std::string json_report() { return json_report_.generate(report_); }
+
 private:
     void run();
 
     xmsg::Message alive_message();
+
+    xmsg::Message json_message();
 
 private:
     bool wait(int time_out)
@@ -150,6 +155,8 @@ private:
     Base& base_;
     DpeConfig& config_;
     DpeReport& report_;
+
+    JsonReport json_report_;
 };
 
 
@@ -450,7 +457,9 @@ void ReportService::run()
         auto con = base_.connect(fe_addr);
         while (true) {
             auto alive_msg = alive_message();
+            auto json_msg = json_message();
             base_.publish(con, alive_msg);
+            base_.publish(con, json_msg);
             if (!wait(config_.report_period)) {
                 break;
             }
@@ -467,6 +476,15 @@ xmsg::Message ReportService::alive_message()
                                     config_.session,
                                     base_.name());
     return util::build_request(std::move(topic), alive_report());
+}
+
+
+xmsg::Message ReportService::json_message()
+{
+    auto topic = xmsg::Topic::build(constants::dpe_report,
+                                    config_.session,
+                                    base_.name());
+    return util::build_request(std::move(topic), json_report());
 }
 
 } // end namespace clara

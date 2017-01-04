@@ -75,7 +75,11 @@ public:
         std::lock_guard<std::mutex> lock{m_};
         auto copy = std::make_shared<container_type>(*cont_);
         copy->push_back(elem);
+#if !defined(__APPLE__) && defined(__GNUC__) && __GNUC__ < 5
+        cont_ = copy;
+#else
         std::atomic_exchange(&cont_, copy);
+#endif
     }
 
     void remove(const pointer_type& elem)
@@ -84,16 +88,25 @@ public:
         auto copy = std::make_shared<container_type>(*cont_);
         copy->erase(std::remove(copy->begin(), copy->end(), elem),
                     copy->end());
+#if !defined(__APPLE__) && defined(__GNUC__) && __GNUC__ < 5
+        cont_ = copy;
+#else
         std::atomic_exchange(&cont_, copy);
+#endif
     }
 
     range_type view() const
     {
+#if !defined(__APPLE__) && defined(__GNUC__) && __GNUC__ < 5
+        std::lock_guard<std::mutex> lock{m_};
+        return {cont_};
+#else
         return {std::atomic_load(&cont_)};
+#endif
     }
 
 private:
-    std::mutex m_;
+    mutable std::mutex m_;
     std::shared_ptr<container_type> cont_;
 };
 

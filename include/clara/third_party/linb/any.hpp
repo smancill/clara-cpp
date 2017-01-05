@@ -317,7 +317,7 @@ protected:
     template<typename T>
     const T* cast() const noexcept
     {
-        return requires_allocation<T>::value?
+        return requires_allocation<typename std::decay<T>::type>::value?
             reinterpret_cast<const T*>(storage.dynamic) :
             reinterpret_cast<const T*>(&storage.stack);
     }
@@ -326,7 +326,7 @@ protected:
     template<typename T>
     T* cast() noexcept
     {
-        return requires_allocation<T>::value?
+        return requires_allocation<typename std::decay<T>::type>::value?
             reinterpret_cast<T*>(storage.dynamic) :
             reinterpret_cast<T*>(&storage.stack);
     }
@@ -334,6 +334,20 @@ protected:
 private:
     storage_union storage; // on offset(0) so no padding for align
     vtable_type*  vtable;
+
+    template<typename ValueType, typename T>
+    typename std::enable_if<requires_allocation<T>::value>::type
+    do_construct(ValueType&& value)
+    {
+        storage.dynamic = new T(std::forward<ValueType>(value));
+    }
+
+    template<typename ValueType, typename T>
+    typename std::enable_if<!requires_allocation<T>::value>::type
+    do_construct(ValueType&& value)
+    {
+        new (&storage.stack) T(std::forward<ValueType>(value));
+    }
 
     /// Chooses between stack and dynamic allocation for the type decay_t<ValueType>,
     /// assigns the correct vtable, and constructs the object on our storage.
@@ -344,10 +358,7 @@ private:
 
         this->vtable = vtable_for_type<T>();
 
-        if(requires_allocation<T>::value)
-            storage.dynamic = new T(std::forward<ValueType>(value));
-        else
-            new (&storage.stack) T(std::forward<ValueType>(value));
+        do_construct<ValueType,T>(std::forward<ValueType>(value));
     }
 };
 

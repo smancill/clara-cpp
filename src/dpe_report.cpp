@@ -29,13 +29,22 @@
 
 #include <cstdlib>
 
-static const std::string clara_home = std::getenv("CLARA_HOME");
+static std::string get_clara_home()
+{
+    auto clara_home = std::getenv("CLARA_HOME");
+    if (!clara_home) {
+        throw std::runtime_error{"Missing CLARA_HOME env variable"};
+    }
+    return {clara_home};
+}
+
 
 namespace clara {
 
 DpeReport::DpeReport(Base& base, DpeConfig& config)
   : name_{base.name()}
   , start_time_{util::get_current_time()}
+  , clara_home_{get_clara_home()}
   , config_{config}
 {
     alive_report_ = name_ + constants::data_sep +
@@ -46,7 +55,7 @@ DpeReport::DpeReport(Base& base, DpeConfig& config)
 
 std::string DpeReport::clara_home() const
 {
-    return ::clara_home;
+    return clara_home_;
 }
 
 

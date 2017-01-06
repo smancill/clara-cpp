@@ -85,6 +85,7 @@ private:
     std::string name_;
     std::string start_time_;
     std::string alive_report_;
+    std::string clara_home_;
 
     DpeConfig& config_;
     vector_type containers_;

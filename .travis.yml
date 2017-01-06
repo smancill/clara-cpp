@@ -37,4 +37,4 @@ before_script:
   - make -j$JOBS
 
 script:
-  - make check CTEST_OUTPUT_ON_FAILURE=1 ARGS=-V
+  - make check

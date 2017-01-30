@@ -60,6 +60,7 @@ const std::string container_down = "containerIsDown";
 const std::string remove_container = "removeContainer";
 const std::string report_registration = "reportRegistration";
 const std::string report_runtime = "reportRuntime";
+const std::string report_json = "reportJson";
 
 const std::string registration_key = "DPERegistration";
 const std::string runtime_key = "DPERuntime";

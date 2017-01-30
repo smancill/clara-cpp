@@ -80,7 +80,8 @@ std::string JsonReport::generate(const DpeReport& report) const
 
     writer.Key(constants::runtime_key.c_str());
     writer.StartObject();
-    put(writer, "hostname", report.name());
+    put(writer, "hostname", report.name()); // keep it to not break existing clients
+    put(writer, "name", report.name());
     put(writer, "snapshot_time", snapshot_time);
     put(writer, "cpu_usage", report.cpu_usage());
     put(writer, "memory_usage", report.memory_usage());
@@ -118,7 +119,8 @@ std::string JsonReport::generate(const DpeReport& report) const
 
     writer.Key(constants::registration_key.c_str());
     writer.StartObject();
-    put(writer, "hostname", report.name());
+    put(writer, "hostname", report.name()); // keep it to not break existing clients
+    put(writer, "name", report.name());
     put(writer, "language", report.lang());
     put(writer, "clara_home", report.clara_home());
     put(writer, "n_cores", report.core_count());

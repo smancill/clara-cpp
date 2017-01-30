@@ -61,6 +61,9 @@ const std::string remove_container = "removeContainer";
 const std::string report_registration = "reportRegistration";
 const std::string report_runtime = "reportRuntime";
 
+const std::string registration_key = "DPERegistration";
+const std::string runtime_key = "DPERuntime";
+
 const std::string state_service = "getServiceState";
 const std::string start_service = "startService";
 const std::string start_remote_service = "startRemoteService";

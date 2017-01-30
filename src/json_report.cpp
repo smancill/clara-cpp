@@ -78,7 +78,7 @@ std::string JsonReport::generate(const DpeReport& report) const
 
     writer.StartObject();
 
-    writer.Key("DPERuntime");
+    writer.Key(constants::runtime_key.c_str());
     writer.StartObject();
     put(writer, "hostname", report.name());
     put(writer, "snapshot_time", snapshot_time);
@@ -116,7 +116,7 @@ std::string JsonReport::generate(const DpeReport& report) const
     writer.EndArray();
     writer.EndObject();
 
-    writer.Key("DPERegistration");
+    writer.Key(constants::registration_key.c_str());
     writer.StartObject();
     put(writer, "hostname", report.name());
     put(writer, "language", report.lang());

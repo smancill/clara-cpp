@@ -26,53 +26,21 @@
 
 #include "dpe_report.hpp"
 #include "container_report.hpp"
+#include "json_utils.hpp"
 #include "service_report.hpp"
 #include "utils.hpp"
 
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
-
 #include <string>
-
-namespace {
-
-using Writer = rapidjson::Writer<rapidjson::StringBuffer>;
-
-void put(Writer& writer, const char* key, const std::string& value)
-{
-    writer.Key(key);
-    writer.String(value);
-}
-
-void put(Writer& writer, const char* key, int value)
-{
-    writer.Key(key);
-    writer.Int(value);
-}
-
-
-void put(Writer& writer, const char* key, long value)
-{
-    writer.Key(key);
-    writer.Int64(value);
-}
-
-
-void put(Writer& writer, const char* key, double value)
-{
-    writer.Key(key);
-    writer.Double(value);
-}
-
-}
 
 
 namespace clara {
 
 std::string JsonReport::generate(const DpeReport& report) const
 {
-    rapidjson::StringBuffer buffer;
-    rapidjson::Writer<rapidjson::StringBuffer> writer{buffer};
+    using namespace util;
+
+    Buffer buffer;
+    Writer writer{buffer};
 
     auto snapshot_time = util::get_current_time();
 

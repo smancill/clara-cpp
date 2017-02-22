@@ -25,6 +25,7 @@
 #include "dpe_report.hpp"
 
 #include "base.hpp"
+#include "json_utils.hpp"
 #include "utils.hpp"
 
 #include <cstdlib>
@@ -39,6 +40,25 @@ static std::string get_clara_home()
 }
 
 
+static std::string get_alive_report(const std::string& name,
+                                    int cores,
+                                    const std::string& clara_home)
+{
+    using namespace clara::util;
+
+    Buffer buffer;
+    Writer writer{buffer};
+
+    writer.StartObject();
+    put(writer, "name", name);
+    put(writer, "n_cores", cores);
+    put(writer, "clara_home", clara_home);
+    writer.EndObject();
+
+    return buffer.GetString();
+}
+
+
 namespace clara {
 
 DpeReport::DpeReport(Base& base, DpeConfig& config)
@@ -47,9 +67,7 @@ DpeReport::DpeReport(Base& base, DpeConfig& config)
   , clara_home_{get_clara_home()}
   , config_{config}
 {
-    alive_report_ = name_ + constants::data_sep +
-                    std::to_string(core_count()) + constants::data_sep +
-                    clara_home();
+    alive_report_ = get_alive_report(name(), core_count(), clara_home());
 }
 
 

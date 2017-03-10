@@ -21,4 +21,4 @@ add_test(test_composition_compiler test_composition_compiler)
 target_link_libraries(test_composition_compiler clara gmock)
 
 add_executable(test_service_loader service_loader_test.cpp)
-target_link_libraries(test_service_loader clara gmock)
+target_link_libraries(test_service_loader clara ${CMAKE_DL_LIBS} gmock)

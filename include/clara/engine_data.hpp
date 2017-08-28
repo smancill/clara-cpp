@@ -30,6 +30,7 @@
 
 #include <memory>
 #include <string>
+#include <type_traits>
 
 namespace xmsg {
 namespace proto {
@@ -57,16 +58,14 @@ public:
 public:
     const std::string& mime_type() const;
 
-    template<typename T>
-    T& data()
+    const any& data() const
     {
-        return any_cast<T&>(data_);
+        return data_;
     }
 
-    template<typename T>
-    const T& data() const
+    any& data()
     {
-        return any_cast<const T&>(data_);
+        return data_;
     }
 
     template<typename S, typename T>
@@ -130,6 +129,23 @@ private:
     any data_;
     std::unique_ptr<Meta> meta_;
 };
+
+
+template<typename T>
+T& data_cast(EngineData& data)
+{
+    using V = std::add_lvalue_reference_t<T>;
+    return any_cast<V>(data.data());
+}
+
+
+template<typename T>
+const T& data_cast(const EngineData& data)
+{
+    using V = std::add_lvalue_reference_t<std::add_const_t<T>>;
+    return any_cast<V>(data.data());
+}
+
 
 } // end namespace clara
 

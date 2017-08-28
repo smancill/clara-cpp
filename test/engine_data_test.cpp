@@ -72,7 +72,7 @@ TEST(EngineData, CreateFromPrimitive)
 
     d.set_data(clara::type::SFIXED32, 800);
 
-    EXPECT_THAT(d.data<std::int32_t>(), Eq(800));
+    EXPECT_THAT(clara::data_cast<std::int32_t>(d), Eq(800));
 }
 
 
@@ -83,7 +83,7 @@ TEST(EngineData, CreateFromString)
 
     d.set_data(clara::type::STRING, s);
 
-    EXPECT_THAT(d.data<std::string>(), Eq("Ash nazg durbatulûk"));
+    EXPECT_THAT(clara::data_cast<std::string>(d), Eq("Ash nazg durbatulûk"));
 }
 
 
@@ -93,7 +93,7 @@ TEST(EngineData, CreateFromStringLiteral)
 
     d.set_data(clara::type::STRING, "Ash nazg durbatulûk");
 
-    EXPECT_THAT(d.data<std::string>(), Eq("Ash nazg durbatulûk"));
+    EXPECT_THAT(clara::data_cast<std::string>(d), Eq("Ash nazg durbatulûk"));
 }
 
 
@@ -104,7 +104,7 @@ TEST(EngineData, CreateFromVector)
 
     d.set_data(clara::type::ARRAY_SFIXED32, v);
 
-    EXPECT_THAT(d.data<std::vector<std::int32_t>>(), Eq(v));
+    EXPECT_THAT(clara::data_cast<std::vector<std::int32_t>>(d), Eq(v));
 }
 
 
@@ -117,7 +117,7 @@ TEST(EngineData, CreateFromMovedData)
     d.set_data(clara::type::ARRAY_SFIXED32, std::move(t));
 
     EXPECT_THAT(t, IsEmpty());
-    EXPECT_THAT(d.data<std::vector<std::int32_t>>(), Eq(v));
+    EXPECT_THAT(clara::data_cast<std::vector<std::int32_t>>(d), Eq(v));
 }
 
 
@@ -131,10 +131,10 @@ TEST(EngineData, CopyConstruction)
 
     auto c = d;
 
-    EXPECT_THAT(d.data<std::vector<std::int32_t>>(), Eq(v));
+    EXPECT_THAT(clara::data_cast<std::vector<std::int32_t>>(d), Eq(v));
     EXPECT_THAT(d.description(), Eq("numbers"));
 
-    EXPECT_THAT(c.data<std::vector<std::int32_t>>(), Eq(v));
+    EXPECT_THAT(clara::data_cast<std::vector<std::int32_t>>(c), Eq(v));
     EXPECT_THAT(c.description(), Eq("numbers"));
 }
 
@@ -150,7 +150,7 @@ TEST(EngineData, MoveConstruction)
 
     auto c = std::move(d);
 
-    EXPECT_THAT(c.data<std::vector<std::int32_t>>(), Eq(v));
+    EXPECT_THAT(clara::data_cast<decltype(v)>(c), Eq(v));
     EXPECT_THAT(c.description(), Eq("numbers"));
 
     EXPECT_THAT(e.view_meta(d), Eq(nullptr));
@@ -176,10 +176,10 @@ TEST(EngineData, GetDataByReference)
     auto d = clara::EngineData{};
     d.set_data("test/A", A{});
 
-    auto& a = d.data<A>();
+    auto& a = clara::data_cast<A>(d);
     a.value = 1;
 
-    auto& b = d.data<A>();
+    auto& b = clara::data_cast<A>(d);
     EXPECT_THAT(b.value, Eq(1));
 }
 

@@ -19,8 +19,14 @@ set(CLARA_SRC
   utils.cpp
 )
 
+set(CLARA_STD_SRC
+  stdlib/event_reader_service.cpp
+  stdlib/event_writer_service.cpp
+  stdlib/json11_utils.cpp
+)
+
 add_definitions(-DRAPIDJSON_HAS_STDSTRING)
-add_library(clara SHARED ${CLARA_SRC})
+add_library(clara SHARED ${CLARA_SRC} ${CLARA_STD_SRC})
 add_dependencies(clara miloyip-rapidjson)
 target_link_libraries(clara PUBLIC xMsg::xmsg PRIVATE ${CMAKE_DL_LIBS} rapidjson)
 

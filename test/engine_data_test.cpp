@@ -57,6 +57,17 @@ TEST(EngineData, CreateFromPrimitive)
 TEST(EngineData, CreateFromString)
 {
     auto d = clara::EngineData{};
+    auto s = std::string{"Ash nazg durbatulûk"};
+
+    d.set_data(clara::type::STRING.mime_type(), s);
+
+    EXPECT_THAT(d.data<std::string>(), Eq("Ash nazg durbatulûk"));
+}
+
+
+TEST(EngineData, CreateFromStringLiteral)
+{
+    auto d = clara::EngineData{};
 
     d.set_data(clara::type::STRING.mime_type(), "Ash nazg durbatulûk");
 

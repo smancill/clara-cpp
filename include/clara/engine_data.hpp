@@ -70,14 +70,7 @@ public:
     template<typename S, typename T>
     void set_data(S&& mime_type, T&& data)
     {
-        data_ = std::forward<T>(data);
-        set_mime_type(std::forward<S>(mime_type));
-    }
-
-    template<typename S>
-    void set_data(S&& mime_type, const char* data)
-    {
-        data_ = std::string{data};
+        set_value(std::forward<T>(data));
         set_mime_type(std::forward<S>(mime_type));
     }
 
@@ -88,6 +81,11 @@ public:
 
 private:
     void set_mime_type(const std::string& mime_type);
+
+    template<typename T>
+    void set_value(T&& data) { data_ = std::forward<T>(data); }
+
+    void set_value(const char* data) { data_ = std::string{data}; }
 
 public:
     const std::string& description() const;

@@ -79,6 +79,12 @@ void EngineData::set_mime_type(const std::string& mime_type)
 }
 
 
+void EngineData::set_mime_type(const EngineDataType& data_type)
+{
+    meta_->set_datatype(data_type.mime_type());
+}
+
+
 const std::string& EngineData::description() const
 {
     return meta_->description();

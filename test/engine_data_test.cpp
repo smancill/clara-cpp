@@ -44,11 +44,33 @@ TEST(EngineData, ReadFromMessage)
 }
 
 
+TEST(EngineData, SetMimeTypeFromString)
+{
+    auto d = clara::EngineData{};
+    auto m = clara::type::SFIXED32.mime_type();
+
+    d.set_data(m, 600);
+
+    EXPECT_THAT(d.mime_type(), Eq(m));
+}
+
+
+TEST(EngineData, SetMimeTypeFromDataType)
+{
+    auto d = clara::EngineData{};
+    auto t = clara::type::SFIXED32;
+
+    d.set_data(t, 600);
+
+    EXPECT_THAT(d.mime_type(), Eq(t.mime_type()));
+}
+
+
 TEST(EngineData, CreateFromPrimitive)
 {
     auto d = clara::EngineData{};
 
-    d.set_data(clara::type::SFIXED32.mime_type(), 800);
+    d.set_data(clara::type::SFIXED32, 800);
 
     EXPECT_THAT(d.data<std::int32_t>(), Eq(800));
 }
@@ -59,7 +81,7 @@ TEST(EngineData, CreateFromString)
     auto d = clara::EngineData{};
     auto s = std::string{"Ash nazg durbatulûk"};
 
-    d.set_data(clara::type::STRING.mime_type(), s);
+    d.set_data(clara::type::STRING, s);
 
     EXPECT_THAT(d.data<std::string>(), Eq("Ash nazg durbatulûk"));
 }
@@ -69,7 +91,7 @@ TEST(EngineData, CreateFromStringLiteral)
 {
     auto d = clara::EngineData{};
 
-    d.set_data(clara::type::STRING.mime_type(), "Ash nazg durbatulûk");
+    d.set_data(clara::type::STRING, "Ash nazg durbatulûk");
 
     EXPECT_THAT(d.data<std::string>(), Eq("Ash nazg durbatulûk"));
 }
@@ -80,7 +102,7 @@ TEST(EngineData, CreateFromVector)
     auto d = clara::EngineData{};
     auto v = std::vector<std::int32_t>{1, 2, 3, 4, 5, 6};
 
-    d.set_data(clara::type::ARRAY_SFIXED32.mime_type(), v);
+    d.set_data(clara::type::ARRAY_SFIXED32, v);
 
     EXPECT_THAT(d.data<std::vector<std::int32_t>>(), Eq(v));
 }
@@ -92,7 +114,7 @@ TEST(EngineData, CreateFromMovedData)
     auto v = std::vector<std::int32_t>{1, 2, 3, 4, 5, 6};
     auto t = v;
 
-    d.set_data(clara::type::ARRAY_SFIXED32.mime_type(), std::move(t));
+    d.set_data(clara::type::ARRAY_SFIXED32, std::move(t));
 
     EXPECT_THAT(t, IsEmpty());
     EXPECT_THAT(d.data<std::vector<std::int32_t>>(), Eq(v));
@@ -104,7 +126,7 @@ TEST(EngineData, CopyConstruction)
     auto d = clara::EngineData{};
     auto v = std::vector<std::int32_t>{1, 2, 3, 4, 5, 6};
 
-    d.set_data(clara::type::ARRAY_SFIXED32.mime_type(), v);
+    d.set_data(clara::type::ARRAY_SFIXED32, v);
     d.set_description("numbers");
 
     auto c = d;
@@ -123,7 +145,7 @@ TEST(EngineData, MoveConstruction)
     auto d = clara::EngineData{};
     auto v = std::vector<std::int32_t>{1, 2, 3, 4, 5, 6};
 
-    d.set_data(clara::type::ARRAY_SFIXED32.mime_type(), v);
+    d.set_data(clara::type::ARRAY_SFIXED32, v);
     d.set_description("numbers");
 
     auto c = std::move(d);

@@ -39,6 +39,8 @@ class Meta;
 
 namespace clara {
 
+class EngineDataType;
+
 class EngineData final
 {
 public:
@@ -68,10 +70,10 @@ public:
     }
 
     template<typename S, typename T>
-    void set_data(S&& mime_type, T&& data)
+    void set_data(S&& type, T&& data)
     {
+        set_mime_type(std::forward<S>(type));
         set_value(std::forward<T>(data));
-        set_mime_type(std::forward<S>(mime_type));
     }
 
     bool has_data()
@@ -81,6 +83,7 @@ public:
 
 private:
     void set_mime_type(const std::string& mime_type);
+    void set_mime_type(const EngineDataType& data_type);
 
     template<typename T>
     void set_value(T&& data) { data_ = std::forward<T>(data); }

@@ -79,6 +79,32 @@ private:
 };
 
 
+inline
+bool operator==(const EngineDataType& data_type, const std::string& mime_type)
+{
+    return data_type.mime_type() == mime_type;
+}
+
+inline
+bool operator==(const std::string& mime_type, const EngineDataType& data_type)
+{
+    return data_type == mime_type;
+}
+
+
+inline
+bool operator!=(const EngineDataType& data_type, const char* mime_type)
+{
+    return !(data_type == mime_type);
+}
+
+inline
+bool operator!=(const std::string& mime_type, const EngineDataType& data_type)
+{
+    return !(data_type == mime_type);
+}
+
+
 /**
  * Predefined CLARA data types.
  */

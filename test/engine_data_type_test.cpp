@@ -162,6 +162,16 @@ TEST(JSONSerializer, JSONSerialization)
 }
 
 
+TEST(EngineDataType, CompareWithStringMimeType)
+{
+    ASSERT_THAT(clara::type::JSON, Eq("application/json"));
+    ASSERT_THAT(clara::type::JSON, Ne("application/xml"));
+
+    ASSERT_THAT("binary/bytes", Eq(clara::type::BYTES));
+    ASSERT_THAT("binary/bytes", Ne(clara::type::STRING));
+}
+
+
 int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);

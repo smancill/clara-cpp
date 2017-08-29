@@ -199,7 +199,7 @@ EngineData ServiceEngine::get_engine_data(xmsg::Message& msg)
 }
 
 
-xmsg::Message ServiceEngine::put_engine_data(EngineData& output,
+xmsg::Message ServiceEngine::put_engine_data(const EngineData& output,
                                              const xmsg::Topic& topic)
 {
     auto msg = accessor_.serialize(output, topic, output_types_);
@@ -208,7 +208,7 @@ xmsg::Message ServiceEngine::put_engine_data(EngineData& output,
 }
 
 
-xmsg::Message ServiceEngine::put_engine_data(EngineData& output,
+xmsg::Message ServiceEngine::put_engine_data(const EngineData& output,
                                              const std::string& receiver)
 {
     auto topic = xmsg::Topic::raw(receiver);

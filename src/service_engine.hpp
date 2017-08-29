@@ -68,8 +68,8 @@ private:
 private:
     EngineData get_engine_data(xmsg::Message& msg);
 
-    xmsg::Message put_engine_data(EngineData& output, const xmsg::Topic& topic);
-    xmsg::Message put_engine_data(EngineData& output, const std::string& receiver);
+    xmsg::Message put_engine_data(const EngineData& output, const xmsg::Topic& topic);
+    xmsg::Message put_engine_data(const EngineData& output, const std::string& receiver);
 
     void update_metadata(const EngineData& input, EngineData& output);
 

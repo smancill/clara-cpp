@@ -48,7 +48,9 @@ class ReportService;
 class DpeException : public std::runtime_error
 {
 public:
-    DpeException(std::string msg) : std::runtime_error{std::move(msg)} { }
+    DpeException(const std::string& msg) : std::runtime_error{msg} {}
+
+    DpeException(const char* msg) : std::runtime_error{msg} {}
 };
 
 

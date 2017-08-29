@@ -44,7 +44,9 @@ std::string parse_message(const xmsg::Message& msg);
 class InvalidRequest : public std::logic_error
 {
 public:
-    InvalidRequest(std::string msg) : std::logic_error{std::move(msg)} { }
+    InvalidRequest(const std::string& msg) : std::logic_error{msg} {}
+
+    InvalidRequest(const char* msg) : std::logic_error{msg} {}
 };
 
 

@@ -258,7 +258,7 @@ void ServiceEngine::send_response(EngineData& output, const xmsg::Topic& topic)
 
 
 void ServiceEngine::send_result(EngineData& output,
-                                const std::set<std::string> links)
+                                const std::set<std::string>& links)
 {
     for (auto&& ss : links) {
         auto host = util::get_dpe_host(ss);

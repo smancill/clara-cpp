@@ -80,7 +80,7 @@ private:
 
 private:
     void send_response(EngineData& output, const xmsg::Topic& topic);
-    void send_result(EngineData& output, const std::set<std::string> links);
+    void send_result(EngineData& output, const std::set<std::string>& links);
 
     void report_problem(EngineData& output);
     void report_result(EngineData& output);

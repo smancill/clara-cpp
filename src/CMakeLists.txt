@@ -15,6 +15,7 @@ set(CLARA_SRC
   service.cpp
   service_engine.cpp
   service_report.cpp
+  third_party/dropbox/json11.cpp
   utils.cpp
 )
 
@@ -33,6 +34,10 @@ install(TARGETS clara EXPORT ClaraTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+install(FILES ${CMAKE_SOURCE_DIR}/src/third_party/dropbox/json11.hpp
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/clara/third_party/dropbox
+  COMPONENT Devel
 )
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/clara
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}

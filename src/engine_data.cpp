@@ -61,8 +61,8 @@ EngineData& EngineData::operator=(const EngineData& rhs)
 }
 
 
-EngineData::EngineData(EngineData&&) = default;
-EngineData& EngineData::operator=(EngineData&&) = default;
+EngineData::EngineData(EngineData&&) noexcept = default;
+EngineData& EngineData::operator=(EngineData&&) noexcept = default;
 
 EngineData::~EngineData() = default;
 

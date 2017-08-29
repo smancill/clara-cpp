@@ -47,8 +47,8 @@ public:
     EngineData(const EngineData& rhs);
     EngineData& operator=(const EngineData& rhs);
 
-    EngineData(EngineData&& rhs);
-    EngineData& operator=(EngineData&& rhs);
+    EngineData(EngineData&& rhs) noexcept;
+    EngineData& operator=(EngineData&& rhs) noexcept;
 
     ~EngineData();
 

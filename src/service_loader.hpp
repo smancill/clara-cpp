@@ -30,7 +30,7 @@ public:
         service_engine_ = create_service_();
     }
 
-    ServiceLoader(ServiceLoader&& other)
+    ServiceLoader(ServiceLoader&& other) noexcept
       : handle_{other.handle_}
       , create_service_{other.create_service_}
       , service_engine_{std::move(other.service_engine_)}

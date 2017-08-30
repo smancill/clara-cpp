@@ -32,7 +32,8 @@
 #include "service_engine.hpp"
 #include "service_loader.hpp"
 #include "service_report.hpp"
-#include "third_party/thread_pool/thread_pool.hpp"
+
+#include "thread_pool/thread_pool.hpp"
 
 #include <mutex>
 

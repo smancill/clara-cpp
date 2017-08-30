@@ -26,7 +26,8 @@
 #define CLARA_DPE_OPTIONS_HPP
 
 #include "dpe_config.hpp"
-#include "third_party/optionparser.h"
+
+#include "optionparser.h"
 
 #include <xmsg/address.h>
 

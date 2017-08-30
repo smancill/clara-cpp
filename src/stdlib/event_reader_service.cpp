@@ -24,7 +24,8 @@
 
 #include <clara/stdlib/event_reader_service.hpp>
 
-#include "json11_utils.hpp"
+#include <clara/stdlib/json_utils.hpp>
+
 #include "service_utils.hpp"
 
 #include <iostream>
@@ -133,22 +134,15 @@ EngineData EventReaderService::configure(EngineData& input)
 {
     if (input.mime_type() == type::JSON) {
         try {
-            auto data = util::parse_json(data_cast<std::string>(input));
-            using util::has_key;
-            if (has_key(data, CONF_ACTION) && has_key(data, CONF_FILENAME)) {
-                auto action = util::get_string(data, CONF_ACTION);
-                if (action == CONF_ACTION_OPEN) {
-                    impl_->open_file(data);
-                } else if (action == CONF_ACTION_CLOSE) {
-                    impl_->close_file(data);
-                } else {
-                    std::cerr << name() << " config: wrong " << CONF_ACTION
-                              << " parameter value " << action << std::endl;
-                }
+            auto data = parse_json(data_cast<std::string>(input));
+            auto action = get_string(data, CONF_ACTION);
+            if (action == CONF_ACTION_OPEN) {
+                impl_->open_file(data);
+            } else if (action == CONF_ACTION_CLOSE) {
+                impl_->close_file(data);
             } else {
-                std::cerr << name() << " config: missing " << CONF_ACTION
-                          << " or " << CONF_FILENAME << " parameters"
-                          << std::endl;
+                std::cerr << name() << " config: invalid \"" << CONF_ACTION
+                          << "\" value: \"" << action << "\"" << std::endl;
             }
         } catch (const bad_any_cast& e) {
             std::cerr << name() << " config: " << "input data is not JSON"
@@ -172,7 +166,7 @@ void EventReaderService::Impl::open_file(const json11::Json& config_data)
         close_file();
     }
 
-    file_name_ = util::get_string(config_data, CONF_FILENAME);
+    file_name_ = get_string(config_data, CONF_FILENAME);
     std::cout << service_->name() << " request to open file " << file_name_
               << std::endl;
     try {
@@ -239,7 +233,7 @@ void EventReaderService::Impl::close_file(const json11::Json& config_data)
 {
     std::unique_lock<std::mutex> lock{mutex_};
 
-    file_name_ = util::get_string(config_data, CONF_FILENAME);
+    file_name_ = get_string(config_data, CONF_FILENAME);
     std::cout << service_->name() << " request to close file " << file_name_
               << std::endl;
     if (has_file()) {

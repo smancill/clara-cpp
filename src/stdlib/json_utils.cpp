@@ -22,10 +22,36 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-#include "json11_utils.hpp"
+#include <clara/stdlib/json_utils.hpp>
+
+#include <clara/engine_data.hpp>
+
+namespace {
+
+const json11::Json& get_value(const json11::Json& obj, const std::string& key)
+{
+    using clara::stdlib::JsonError;
+    if (key.empty()) {
+        throw std::invalid_argument{"empty key parameter"};
+    }
+    const auto& val = obj[key];
+    if (val.is_null()) {
+        throw JsonError{"JSON key \"" + key + "\" is not present"};
+    }
+    return val;
+}
+
+}
+
 
 namespace clara {
-namespace util {
+namespace stdlib {
+
+json11::Json parse_json(const EngineData& input)
+{
+    return parse_json(data_cast<std::string>(input));
+}
+
 
 json11::Json parse_json(const std::string& str)
 {
@@ -46,54 +72,71 @@ bool has_key(const json11::Json& obj, const std::string& key)
 
 int get_bool(const json11::Json& obj, const std::string& key)
 {
-    auto val = obj[key];
-    if (val.is_null()) {
-        throw JsonError{"JSON key " + key + " is not present"};
-    }
+    const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::BOOL) {
         return val.bool_value();
     }
-    throw JsonError{"JSON key " + key + " is not a boolean"};
+    throw JsonError{"JSON key \"" + key + "\" is not a boolean"};
 }
 
 
 int get_int(const json11::Json& obj, const std::string& key)
 {
-    auto val = obj[key];
-    if (val.is_null()) {
-        throw JsonError{"JSON key " + key + " is not present"};
-    }
+    const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::NUMBER) {
         return val.int_value();
     }
-    throw JsonError{"JSON key " + key + " is not a number"};
+    throw JsonError{"JSON key \"" + key + "\" is not a number"};
 }
 
 
 int get_double(const json11::Json& obj, const std::string& key)
 {
-    auto val = obj[key];
-    if (val.is_null()) {
-        throw JsonError{"JSON key " + key + " is not present"};
-    }
+    const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::NUMBER) {
         return val.number_value();
     }
-    throw JsonError{"JSON key " + key + " is not a number"};
+    throw JsonError{"JSON key \"" + key + "\" is not a number"};
 }
 
 
 const std::string& get_string(const json11::Json& obj, const std::string& key)
 {
-    auto val = obj[key];
-    if (val.is_null()) {
-        throw JsonError{"JSON key " + key + " is not present"};
-    }
+    const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::STRING) {
         return val.string_value();
     }
-    throw JsonError{"JSON key " + key + " is not a string"};
+    throw JsonError{"JSON key \"" + key + "\" is not a string"};
 }
 
-} // end namespace util
+
+const json11::Json& get_array(const json11::Json& obj, const std::string& key)
+{
+    const auto& val = get_value(obj, key);
+    if (val.type() == json11::Json::Type::ARRAY) {
+        return val;
+    }
+    throw JsonError{"JSON key \"" + key + "\" is not an array"};
+}
+
+
+const json11::Json& get_object(const json11::Json& obj, const std::string& key)
+{
+    const auto& val = get_value(obj, key);
+    if (val.type() == json11::Json::Type::OBJECT) {
+        return val;
+    }
+    throw JsonError{"JSON key \"" + key + "\" is not an array"};
+}
+
+
+void check_json(const json11::Json& obj, const json11::Json::shape& shape)
+{
+    auto err = std::string{};
+    if (!obj.has_shape(shape, err)) {
+        throw JsonError{err};
+    }
+}
+
+} // end namespace stdlib
 } // end namespace clara

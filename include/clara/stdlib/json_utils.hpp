@@ -22,8 +22,8 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-#ifndef CLARA_STD_JSON11_UTILS_HPP
-#define CLARA_STD_JSON11_UTILS_HPP
+#ifndef CLARA_STD_JSON_UTILS_HPP
+#define CLARA_STD_JSON_UTILS_HPP
 
 #include <clara/third_party/json11.hpp>
 
@@ -31,10 +31,13 @@
 #include <sstream>
 
 namespace clara {
-namespace util {
+
+class EngineData;
+
+namespace stdlib {
 
 /**
-  * A problem in the event reader implementation.
+  * A problem parsing JSON data
   */
 class JsonError : public std::runtime_error
 {
@@ -49,6 +52,8 @@ public:
 };
 
 
+json11::Json parse_json(const EngineData& input);
+
 json11::Json parse_json(const std::string& str);
 
 bool has_key(const json11::Json& obj, const std::string& key);
@@ -61,7 +66,13 @@ int get_double(const json11::Json& obj, const std::string& key);
 
 const std::string& get_string(const json11::Json& obj, const std::string& key);
 
-} // end namespace util
+const json11::Json& get_array(const json11::Json& obj, const std::string& key);
+
+const json11::Json& get_object(const json11::Json& obj, const std::string& key);
+
+void check_json(const json11::Json& obj, const json11::Json::shape& shape);
+
+} // end namespace stdlib
 } // end namespace clara
 
-#endif // end of include guard: CLARA_JSON11_UTILS_HPP
+#endif // end of include guard: CLARA_STD_JSON_UTILS_HPP

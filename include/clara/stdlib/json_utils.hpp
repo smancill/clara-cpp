@@ -58,7 +58,7 @@ json11::Json parse_json(const std::string& str);
 
 bool has_key(const json11::Json& obj, const std::string& key);
 
-int get_bool(const json11::Json& obj, const std::string& key);
+bool get_bool(const json11::Json& obj, const std::string& key);
 
 int get_int(const json11::Json& obj, const std::string& key);
 

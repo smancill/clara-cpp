@@ -70,7 +70,7 @@ bool has_key(const json11::Json& obj, const std::string& key)
 }
 
 
-int get_bool(const json11::Json& obj, const std::string& key)
+bool get_bool(const json11::Json& obj, const std::string& key)
 {
     const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::BOOL) {

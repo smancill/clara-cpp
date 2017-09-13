@@ -105,14 +105,30 @@ void Service::setup(xmsg::Message& msg)
 void Service::configure(xmsg::Message& msg)
 {
     auto m = std::make_unique<xmsg::Message>(std::move(msg));
-    thread_pool_.post([s=service_.get(), m=std::move(m)](){ s->configure(*m); });
+    thread_pool_.post([s=service_.get(), m=std::move(m)](){
+        try {
+            s->configure(*m);
+        } catch (const std::exception& e) {
+            LOGGER->error("%s configure: unhandled exception %s", s->name(), e.what());
+        } catch (...) {
+            LOGGER->error("%s configure: unexpected exception", s->name());
+        }
+    });
 }
 
 
 void Service::execute(xmsg::Message& msg)
 {
     auto m = std::make_unique<xmsg::Message>(std::move(msg));
-    thread_pool_.post([s=service_.get(), m=std::move(m)]() { s->execute(*m); });
+    thread_pool_.post([s=service_.get(), m=std::move(m)]() {
+        try {
+            s->execute(*m);
+        } catch (const std::exception& e) {
+            LOGGER->error("%s execute: unhandled exception %s", s->name(), e.what());
+        } catch (...) {
+            LOGGER->error("%s execute: unexpected exception", s->name());
+        }
+    });
 }
 
 
@@ -129,7 +145,7 @@ void Service::callback(xmsg::Message& msg)
             execute(msg);
         }
     } catch (std::exception& e) {
-        LOGGER->error(e.what());
+        LOGGER->error("%s callback: %s", name(), e.what());
     } catch (...) {
         LOGGER->error("%s callback: unexpected exception", name());
     }

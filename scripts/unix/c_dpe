@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+if [ -z "${CLARA_HOME}" ]; then
+    echo "Error: \$CLARA_HOME is not defined."
+    exit 1
+fi
+
+# find plugins directory
+if [ -n "${CLARA_PLUGINS}" ]; then
+    if [ ! -d "${CLARA_PLUGINS}" ]; then
+        echo "Error: \$CLARA_PLUGINS is not a directory."
+        exit 1
+    fi
+    plugins_dir="${CLARA_PLUGINS}"
+else
+    plugins_dir="${CLARA_HOME}/plugins"
+fi
+
+# set library path
+lib_path="$CLARA_HOME/lib"
+for plugin in "${plugins_dir}"/*/; do
+    plugin=${plugin%*/}
+    lib_path+=":${plugin}/services:${plugin}/lib"
+done
+lib_path+=":${CLARA_HOME}/services"
+
+case "$(uname)" in
+    "Linux")
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$lib_path
+        ;;
+    "Darwin")
+        export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH:+$DYLD_LIBRARY_PATH:}$lib_path
+        ;;
+    *)
+        ;;
+esac
+
+exec "${CLARA_HOME}"/lib/clara/c_dpe "$@"

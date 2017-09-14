@@ -133,7 +133,7 @@ inline void Worker::threadFunc(size_t id, Worker *steal_donor)
         if (m_queue.pop(handler) || steal_donor->steal(handler)) {
             try {handler();} catch (...) {}
         } else {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            std::this_thread::sleep_for(std::chrono::microseconds(250));
         }
 }
 

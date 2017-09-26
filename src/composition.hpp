@@ -28,6 +28,8 @@
 #include <list>
 #include <set>
 #include <string>
+#include "instruction.hpp"
+#include "service.hpp"
 
 namespace clara {
 namespace composition {
@@ -45,6 +47,39 @@ private:
     std::string service_name_;
     std::list<std::string> prev_;
     std::list<std::string> next_;
+};
+
+class CompositionCompiler
+{
+public:
+    CompositionCompiler(std::string service);
+
+    void compile(std::string iCode);
+
+    void reset();
+
+    std::set<Instruction> get_instructions();
+
+    std::set<std::string> get_unconditional_links();
+
+    std::set<std::string> get_links(Service owner_ss, Service input_ss);
+
+
+private:
+    std::string IP, STR, STR2, Sn, RStmt, sCond, cCond, Cond;
+    std::set<Instruction> intructions;
+    std::string my_service_name;
+
+    std::set<std::string> pre_process(std::string pCode);
+
+    bool parse_statement(std::string iStmt);
+
+    bool parse_conditional_statement(std::string iStmt, Instruction ti);
+
+    Instruction parse_condition(std::string iCnd);
+
+    std::string no_blanks(std::string x);
+
 };
 
 } // end namespace composition

@@ -30,6 +30,8 @@
 namespace clara {
 namespace composition {
 
+//    Simple Compiler
+
 SimpleCompiler::SimpleCompiler(std::string service_name)
   : service_name_{std::move(service_name)}
 {
@@ -69,6 +71,64 @@ std::set<std::string> SimpleCompiler::outputs()
         out.insert(next_.front());
     }
     return out;
+}
+
+
+//    Composition Compiler
+
+CompositionCompiler::CompositionCompiler(std::string service)
+{
+
+}
+
+void CompositionCompiler::compile(std::string iCode)
+{
+
+}
+
+void CompositionCompiler::reset()
+{
+
+}
+
+std::set<Instruction> CompositionCompiler::get_instructions()
+{
+
+}
+
+std::set<std::string> CompositionCompiler::get_unconditional_links()
+{
+
+}
+
+std::set<std::string> CompositionCompiler::get_links(Service owner_ss, Service input_ss)
+{
+
+}
+
+std::set<std::string> CompositionCompiler::pre_process(std::string pCode)
+{
+
+}
+
+bool CompositionCompiler::parse_statement(std::string iStmt)
+{
+
+}
+
+bool CompositionCompiler::parse_conditional_statement(std::string iStmt, Instruction ti)
+{
+
+}
+
+Instruction CompositionCompiler::parse_condition(std::string iCnd)
+{
+
+}
+
+std::string CompositionCompiler::no_blanks(std::string x)
+{
+
 }
 
 } // end namespace composition

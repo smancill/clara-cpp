@@ -28,11 +28,25 @@
 #include <list>
 #include <set>
 #include <string>
+#include <vector>
 #include "instruction.hpp"
-#include "service.hpp"
 
 namespace clara {
 namespace composition {
+
+inline std::vector<std::string> tokenize(std::string s, std::string delim)
+{
+    std:: vector<std::string> tv;
+
+    size_t pos = 0;
+    std::string token;
+    while ((pos = s.find(delim)) != std::string::npos) {
+        token = s.substr(0, pos);
+        tv.push_back(token);
+        s.erase(0, pos + delim.length());
+    }
+    return tv;
+}
 
 class SimpleCompiler
 {
@@ -62,7 +76,7 @@ public:
 
     std::set<std::string> get_unconditional_links();
 
-    std::set<std::string> get_links(Service owner_ss, Service input_ss);
+    //std::set<std::string> get_links(Service owner_ss, Service input_ss);
 
 
 private:

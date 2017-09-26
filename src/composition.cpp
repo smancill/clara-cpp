@@ -26,6 +26,7 @@
 
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
 
 namespace clara {
 namespace composition {
@@ -77,23 +78,28 @@ std::set<std::string> SimpleCompiler::outputs()
 //    Composition Compiler
 
 CompositionCompiler::CompositionCompiler(std::string service)
+    : my_service_name{std::move(service)}
 {
-
+    // nop
 }
 
 void CompositionCompiler::compile(std::string iCode)
 {
+    reset();
 
+    std::string pCode = no_blanks(iCode);
+
+    std::set<std::string> pp = pre_process(pCode);
 }
 
 void CompositionCompiler::reset()
 {
-
+    CompositionCompiler::intructions.clear();
 }
 
 std::set<Instruction> CompositionCompiler::get_instructions()
 {
-
+    return intructions;
 }
 
 std::set<std::string> CompositionCompiler::get_unconditional_links()
@@ -101,13 +107,28 @@ std::set<std::string> CompositionCompiler::get_unconditional_links()
 
 }
 
-std::set<std::string> CompositionCompiler::get_links(Service owner_ss, Service input_ss)
-{
-
-}
+//std::set<std::string> CompositionCompiler::get_links(Service owner_ss, Service input_ss)
+//{
+//
+//}
 
 std::set<std::string> CompositionCompiler::pre_process(std::string pCode)
 {
+    if (pCode.find(';') == std::string::npos && pCode.back() != ';') {
+        throw std::logic_error{"Syntax error in the CLARA routing program. "
+                    "Missing end of statement operator = \";\""};
+    }
+
+    std::set<std::string> r;
+    std::vector<std::string> st = tokenize(pCode, ";");
+
+    for (std::string text : st) {
+        if (text != "" && text != "}") {
+            r.insert(text);
+        }
+    }
+
+    return r;
 
 }
 
@@ -128,7 +149,8 @@ Instruction CompositionCompiler::parse_condition(std::string iCnd)
 
 std::string CompositionCompiler::no_blanks(std::string x)
 {
-
+    x.erase(std::remove (x.begin(), x.end(), ' '), x.end());
+    return x;
 }
 
 } // end namespace composition

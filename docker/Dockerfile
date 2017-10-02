@@ -28,14 +28,14 @@ ARG xmsg_api_url="https://api.github.com/repos/JeffersonLab/xmsg-cpp"
 ADD ${xmsg_api_url}/git/refs/heads/${xmsg_rev} xmsg.json
 RUN mkdir -p xmsg-cpp && cd xmsg-cpp \
     && curl -L ${xmsg_api_url}/tarball/${xmsg_rev} | tar xz --strip=1 -C . \
-    && ./configure --prefix=${CLARA_HOME} \
+    && ./configure --prefix=${CLARA_HOME} --disable-tests \
     && make && make install \
     && rm -rf /usr/local/src/xmsg-cpp
 
 # Build CLARA
 ADD . clara-cpp
 RUN cd clara-cpp \
-    && ./configure --prefix=${CLARA_HOME} \
+    && ./configure --prefix=${CLARA_HOME} --disable-tests \
     && make && make install \
     && rm -rf build
 

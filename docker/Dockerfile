@@ -1,5 +1,8 @@
 FROM debian:stretch-slim AS build
 
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install --assume-yes apt-utils
+
 RUN apt-get update && apt-get install -y \
         cmake \
         g++ \

@@ -3,12 +3,22 @@ FROM debian:stretch-slim AS build
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install --assume-yes apt-utils
 
+# Useful packages
+RUN apt-get update && apt-get install -y \
+        ca-certificates \
+        curl \
+        procps \
+        wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build tools
 RUN apt-get update && apt-get install -y \
         cmake \
         g++ \
         make \
     && rm -rf /var/lib/apt/lists/*
 
+# Build dependencies
 RUN apt-get update && apt-get install -y \
         libzmq3-dev \
         libprotobuf-dev \
@@ -47,6 +57,12 @@ EXPOSE 7781 7782 7783 7785
 
 FROM debian:stretch-slim
 
+# Useful packages
+RUN apt-get update && apt-get install -y \
+        procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Run dependencies
 RUN apt-get update && apt-get install -y \
         libzmq5 \
         libprotobuf10 \

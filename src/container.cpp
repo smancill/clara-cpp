@@ -28,13 +28,22 @@
 
 #include <cstdlib>
 
+namespace {
+std::string default_author()
+{
+    auto* author = std::getenv("USER");
+    return author ? author : "clara";
+}
+} // end namespace
+
+
 namespace clara {
 
 Container::Container(const Component& self,
                      const Component& frontend,
                      const std::string& description)
   : Base{self, frontend}
-  , report_{std::make_shared<ContainerReport>(name(), std::getenv("USER"))}
+  , report_{std::make_shared<ContainerReport>(name(), default_author())}
   , description_{description}
   , running_{false}
 {

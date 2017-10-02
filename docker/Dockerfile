@@ -6,9 +6,7 @@ RUN apt-get update && apt-get install --assume-yes apt-utils
 RUN apt-get update && apt-get install -y \
         cmake \
         g++ \
-        git \
         make \
-        ssh-client \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y \
@@ -17,8 +15,6 @@ RUN apt-get update && apt-get install -y \
         protobuf-compiler \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
-
 ENV CLARA_HOME="/usr/local/clara"
 ENV PATH="${CLARA_HOME}/bin:${PATH}"
 ENV LD_LIBRARY_PATH="${CLARA_HOME}/lib"
@@ -26,14 +22,17 @@ ENV LD_LIBRARY_PATH="${CLARA_HOME}/lib"
 RUN mkdir -p /usr/local/src
 WORKDIR /usr/local/src
 
+# Install xMsg
 ARG xmsg_rev="master"
-RUN git clone https://github.com/JeffersonLab/xmsg-cpp.git \
-    && cd xmsg-cpp \
-    && git checkout $xmsg_rev \
+ARG xmsg_api_url="https://api.github.com/repos/JeffersonLab/xmsg-cpp"
+ADD ${xmsg_api_url}/git/refs/heads/${xmsg_rev} xmsg.json
+RUN mkdir -p xmsg-cpp && cd xmsg-cpp \
+    && curl -L ${xmsg_api_url}/tarball/${xmsg_rev} | tar xz --strip=1 -C . \
     && ./configure --prefix=${CLARA_HOME} \
     && make && make install \
     && rm -rf /usr/local/src/xmsg-cpp
 
+# Build CLARA
 ADD . clara-cpp
 RUN cd clara-cpp \
     && ./configure --prefix=${CLARA_HOME} \

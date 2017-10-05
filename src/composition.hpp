@@ -29,6 +29,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <regex>
 #include "instruction.hpp"
 
 namespace clara {
@@ -67,31 +68,21 @@ class CompositionCompiler
 {
 public:
     CompositionCompiler(std::string service);
-
     void compile(std::string iCode);
-
     void reset();
-
-    std::set<Instruction> get_instructions();
-
+    std::set<instruction::Instruction> get_instructions();
     std::set<std::string> get_unconditional_links();
-
-    //std::set<std::string> get_links(Service owner_ss, Service input_ss);
+    std::set<std::string> get_links(ServiceState::ServiceState owner_ss, ServiceState::ServiceState input_ss);
 
 
 private:
-    std::string IP, STR, STR2, Sn, RStmt, sCond, cCond, Cond;
-    std::set<Instruction> intructions;
+    std::string STR, STR2, Sn, RStmt, sCond, cCond, Cond;
+    std::set<instruction::Instruction> instructions;
     std::string my_service_name;
-
     std::set<std::string> pre_process(std::string pCode);
-
     bool parse_statement(std::string iStmt);
-
-    bool parse_conditional_statement(std::string iStmt, Instruction ti);
-
-    Instruction parse_condition(std::string iCnd);
-
+    bool parse_conditional_statement(std::string iStmt, instruction::Instruction ti);
+    instruction::Instruction parse_condition(std::string iCnd);
     std::string no_blanks(std::string x);
 
 };

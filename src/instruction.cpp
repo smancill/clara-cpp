@@ -96,17 +96,17 @@ namespace clara {
                 return false;
             }
 
-//            if (!(this->if_condition.equals(i.if_condition))) {
-//                return false;
-//            }
+            if (!(this->if_condition.equals(i.if_condition))) {
+                return false;
+            }
 
 //            if (this->if_cond_statements != i.if_cond_statements) {
 //                return false;
 //            }
 
-//            if (!(this->else_if_condition.equals(i.else_if_condition))) {
-//                return false;
-//            }
+            if (!(this->else_if_condition.equals(i.else_if_condition))) {
+                return false;
+            }
 
 //            if (this->else_if_cond_statements != i.else_if_cond_statements) {
 //                return false;

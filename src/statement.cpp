@@ -139,9 +139,9 @@ namespace statement {
         if (!(this->statement_string_ == s.statement_string_)) {
             return false;
         }
-//        if (!(this->log_and_inputs == s.log_and_inputs)) {
-//            return false;
-//        }
+        if (!(this->log_and_inputs == s.log_and_inputs)) {
+            return false;
+        }
         if (!(this->input_links == s.input_links)) {
             return false;
         }

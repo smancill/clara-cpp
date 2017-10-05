@@ -28,7 +28,7 @@ namespace clara {
 namespace statement {
 
     Statement::Statement(std::string statement_string, std::string service_name) {
-        if (statement_string.find(service_name) != nullptr) {
+        if (statement_string.find(service_name) != std::string::npos) {
             this->statement_string_ = statement_string;
             this->service_name_ = service_name;
             process(statement_string);
@@ -45,27 +45,28 @@ namespace statement {
         return statement_string_;
     }
 
-    std::set<std::string> Statement::get_input_links() {
+    std::vector<std::string> Statement::get_input_links() {
         return input_links;
     }
 
-    std::set<std::string> Statement::get_output_links() {
+    std::vector<std::string> Statement::get_output_links() {
         return output_links;
     }
 
-    std::map<std::string, clara::EngineData> get_log_and_inputs() {
+    std::vector<std::string> Statement::get_log_and_inputs() {
         return log_and_inputs;
     };
 
     void Statement::process(std::string statement) {
         input_links.clear();
         output_links.clear();
+        log_and_inputs.clear();
 
         if(statement.find(service_name_) != std::string::npos) {
             parse_linked(service_name_, statement);
             if (is_log_and(service_name_, statement)) {
-                for (String sn : input_links) {
-                    log_and_inputs.insert(sn, 0);
+                for (std::string sn : input_links) {
+                    log_and_inputs.push_back(sn);
                 }
             }
         }
@@ -124,10 +125,10 @@ namespace statement {
     std::string Statement::to_string() {
         return "Statement {"
                 "serviceName='" + service_name_ + "'"
-                ", statementString='" + statement_string_ + "'"
-                ", logAndInputs='"
-                ", inputLinks=" + input_links + ""
-                ", outputLinks=" + output_links + ""
+//                ", statementString='" + statement_string_ + "'"
+//                ", logAndInputs='"
+//                ", inputLinks=" + input_links + ""
+//                ", outputLinks=" + output_links + ""
                 "}";
     }
 
@@ -138,9 +139,9 @@ namespace statement {
         if (!(this->statement_string_ == s.statement_string_)) {
             return false;
         }
-        if (!(this->log_and_inputs == s.log_and_inputs)) {
-            return false;
-        }
+//        if (!(this->log_and_inputs == s.log_and_inputs)) {
+//            return false;
+//        }
         if (!(this->input_links == s.input_links)) {
             return false;
         }

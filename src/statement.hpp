@@ -58,9 +58,9 @@ public:
     Statement(std::string statement_string, std::string service_name);
     std::string get_service_name();
     std::string get_statement_string();
-    std::set<std::string> get_input_links();
-    std::set<std::string> get_output_links();
-    std::map<std::string, EngineData>get_log_and_inputs();
+    std::vector<std::string> get_input_links();
+    std::vector<std::string> get_output_links();
+    std::vector<std::string> get_log_and_inputs();
     std::string to_string();
     bool equals(Statement s);
     int hash_code();
@@ -68,9 +68,10 @@ public:
 private:
     std::string service_name_;
     std::string statement_string_;
-    std::map<std::string, clara::EngineData> log_and_inputs;
-    std::set<std::string> input_links;
-    std::set<std::string> output_links;
+    std::vector<std::string> log_and_inputs;
+    std::vector<std::string> input_links;
+    std::vector<std::string> output_links;
+
 
     void process(std::string statement);
     void parse_linked(std::string service_name, std::string statement);

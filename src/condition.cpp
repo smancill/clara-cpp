@@ -3,7 +3,7 @@
 //
 
 #include "condition.hpp"
-#include "composition.cpp"
+#include "composition.hpp"
 #include <algorithm>
 #include <regex>
 
@@ -15,7 +15,7 @@ namespace condition {
         this->service_name_ = "default";
     }
 
-    Condition::Condition(std::string condition_string, std::service_name) {
+    Condition::Condition(std::string condition_string, std::string service_name) {
         this->service_name_ = service_name;
         process(condition_string);
     }
@@ -24,44 +24,44 @@ namespace condition {
         return this->service_name_;
     }
 
-    std::set<ServiceState::ServiceState> Condition::get_and_states() {
+    std::vector<ServiceState::ServiceState> Condition::get_and_states() {
         return this->and_states;
     }
 
     void Condition::add_and_state(ServiceState::ServiceState and_state) {
-        this->and_states.insert(and_state);
+        this->and_states.push_back(and_state);
     }
 
-    std::set<ServiceState::ServiceState> Condition::get_and_not_states() {
+    std::vector<ServiceState::ServiceState> Condition::get_and_not_states() {
         return this->and_not_states;
     }
 
     void Condition::add_and_not_state(ServiceState::ServiceState and_not_state) {
-        this->and_not_states.insert(and_not_state);
+        this->and_not_states.push_back(and_not_state);
     }
 
-    std::set<ServiceState::ServiceState> Condition::get_or_states() {
+    std::vector<ServiceState::ServiceState> Condition::get_or_states() {
         return this->or_states;
     }
 
     void Condition::add_or_state(ServiceState::ServiceState or_state) {
-        this->or_states.insert(or_state);
+        this->or_states.push_back(or_state);
     }
 
-    std::set<ServiceState::ServiceState> Condition::get_or_not_states() {
+    std::vector<ServiceState::ServiceState> Condition::get_or_not_states() {
         return this->or_not_states;
     }
 
     void Condition::add_or_not_state(ServiceState::ServiceState or_state) {
-        this->or_not_states.insert(or_state);
+        this->or_not_states.push_back(or_state);
     }
 
     void Condition::process(std::string cs) {
         if (cs.find("(") != std::string::npos) {
-            std::replace(cs.begin(), cs.end(), "(", "");
+            std::replace( cs.begin(), cs.end(), '(', ' ');
         }
         if (cs.find(")") != std::string::npos) {
-            std::replace(cs.begin(), cs.end(), ")", "");
+            std::replace(cs.begin(), cs.end(), ')', ' ');
         }
 
         if (cs.find("&&") != std::string::npos)  {
@@ -73,14 +73,14 @@ namespace condition {
         }
     }
 
+    // todo : implement conditions
     void Condition::parse_condition(std::string cs, std::string logic_operator) {
         std::vector<std::string> t0;
         std::vector<std::string> t1;
         std::smatch matcher;
-        std::regex rs(cs);
 
         if (logic_operator == "") {
-            if (std::regex_match(composition::CompositionCompiler::SIMP_COND, matcher, rs)) {
+            if (std::regex_search(cs, matcher, composition::CompositionCompiler::get_simp_cond())) {
                 if (cs.find("!=") != std::string::npos) {
                     t1 = tokenize(cs, "!=");
                     if (t1.size() != 2) {
@@ -91,22 +91,22 @@ namespace condition {
         }
     }
 
-    bool Condition::check_and_condition(std::set<ServiceState::ServiceState> sc, ServiceState::ServiceState s1,
+    bool Condition::check_and_condition(std::vector<ServiceState::ServiceState> sc, ServiceState::ServiceState s1,
                                         ServiceState::ServiceState s2) {
-        if (sc.find(s1) != std::string::npos) {
-            if (sc.find(s2) != std::string::npos) {
+        if (std::find(sc.begin(), sc.end(), s1) != sc.end()) {
+            if (std::find(sc.begin(), sc.end(), s2) != sc.end()) {
                 return true;
             }
         }
         return false;
     }
 
-    bool Condition::check_or_condition(std::set<ServiceState::ServiceState> sc, ServiceState::ServiceState s1,
+    bool Condition::check_or_condition(std::vector<ServiceState::ServiceState> sc, ServiceState::ServiceState s1,
                                        ServiceState::ServiceState s2) {
-        if (sc.find(s1) != std::string::npos) {
+        if (std::find(sc.begin(), sc.end(), s1) != sc.end()) {
             return true;
         }
-        if (sc.find(s2) != std::string::npos) {
+        if (std::find(sc.begin(), sc.end(), s2) != sc.end()) {
             return true;
         }
         return false;
@@ -127,26 +127,26 @@ namespace condition {
 
     bool Condition::equals(Condition c) {
         if (this->service_name_ == c.get_service_name()) {
-            if (this->or_not_states == c.get_or_states()) {
-                if (this->or_not_states == c.get_or_not_states()) {
-                    if (this->and_states == c.get_and_states()) {
-                        if (this->and_not_states == c.get_and_not_states()) {
+//            if (this->or_not_states == c.get_or_states()) {
+//                if (this->or_not_states == c.get_or_not_states()) {
+//                    if (this->and_states == c.get_and_states()) {
+//                        if (this->and_not_states == c.get_and_not_states()) {
                             return true;
-                        }
-                    }
-                }
-            }
+//                        }
+//                    }
+//                }
+//            }
         }
         return false;
     }
 
     std::string Condition::to_string() {
         return "Condition{"
-               + "serviceName='" + service_name_ + '\''
-               + ", andStates=" + and_states
-               + ", andNotStates=" + and_not_states
-               + ", orStates=" + or_states
-               + ", orNotStates=" + or_not_states
+               "serviceName='" + service_name_ + '\''
+//               + ", andStates=" + and_states
+//               + ", andNotStates=" + and_not_states
+//               + ", orStates=" + or_states
+//               + ", orNotStates=" + or_not_states
                + '}';
     }
 

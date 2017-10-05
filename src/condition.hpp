@@ -9,6 +9,7 @@
 #include <vector>
 #include "service_state.hpp"
 
+
 namespace clara {
 namespace condition {
 
@@ -32,27 +33,27 @@ public:
     Condition();
     Condition(std::string condition_string, std::string service_name);
     std::string get_service_name();
-    std::set<ServiceState::ServiceState> get_and_states();
-    std::set<ServiceState::ServiceState> get_and_not_states();
-    std::set<ServiceState::ServiceState> get_or_states();
-    std::set<ServiceState::ServiceState> get_or_not_states();
+    std::vector<ServiceState::ServiceState> get_and_states();
+    std::vector<ServiceState::ServiceState> get_and_not_states();
+    std::vector<ServiceState::ServiceState> get_or_states();
+    std::vector<ServiceState::ServiceState> get_or_not_states();
     bool is_true(ServiceState::ServiceState owner_ss, ServiceState::ServiceState input_ss);
     std::string to_string();
     bool equals(Condition c);
 private:
     std::string service_name_;
-    std::set<ServiceState::ServiceState> and_states;
-    std::set<ServiceState::ServiceState> and_not_states;
-    std::set<ServiceState::ServiceState> or_states;
-    std::set<ServiceState::ServiceState> or_not_states;
+    std::vector<ServiceState::ServiceState> and_states;
+    std::vector<ServiceState::ServiceState> and_not_states;
+    std::vector<ServiceState::ServiceState> or_states;
+    std::vector<ServiceState::ServiceState> or_not_states;
     void add_and_state(ServiceState::ServiceState and_state);
     void add_and_not_state(ServiceState::ServiceState and_not_state);
     void add_or_state(ServiceState::ServiceState or_state);
     void add_or_not_state(ServiceState::ServiceState or_state);
     void process(std::string cs);
     void parse_condition(std::string cs, std::string logic_operator);
-    bool check_and_condition(std::set<ServiceState::ServiceState> sc, ServiceState::ServiceState s1, ServiceState::ServiceState s2);
-    bool check_or_condition(std::set<ServiceState::ServiceState> sc, ServiceState::ServiceState s1, ServiceState::ServiceState s2);
+    bool check_and_condition(std::vector<ServiceState::ServiceState> sc, ServiceState::ServiceState s1, ServiceState::ServiceState s2);
+    bool check_or_condition(std::vector<ServiceState::ServiceState> sc, ServiceState::ServiceState s1, ServiceState::ServiceState s2);
 };
 }
 }

@@ -40,6 +40,7 @@ public:
     bool equals(ServiceState ss);
     int hash_code();
     std::string to_string();
+    bool operator==(const ServiceState lhs);
 private:
     std::string name_;
     std::string state_;

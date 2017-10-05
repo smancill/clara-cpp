@@ -31,6 +31,7 @@
 #include <vector>
 #include <regex>
 #include "instruction.hpp"
+#include "service_state.hpp"
 
 namespace clara {
 namespace composition {
@@ -67,19 +68,20 @@ private:
 class CompositionCompiler
 {
 public:
+    //CompositionCompiler();
     CompositionCompiler(std::string service);
     void compile(std::string iCode);
     void reset();
-    std::set<instruction::Instruction> get_instructions();
-    std::set<std::string> get_unconditional_links();
-    std::set<std::string> get_links(ServiceState::ServiceState owner_ss, ServiceState::ServiceState input_ss);
-
+    std::vector<instruction::Instruction> get_instructions();
+    std::vector<std::string> get_unconditional_links();
+    std::vector<std::string> get_links(ServiceState::ServiceState owner_ss, ServiceState::ServiceState input_ss);
+    static std::regex get_simp_cond();
 
 private:
     std::string STR, STR2, Sn, RStmt, sCond, cCond, Cond;
-    std::set<instruction::Instruction> instructions;
+    std::vector<instruction::Instruction> instructions;
     std::string my_service_name;
-    std::set<std::string> pre_process(std::string pCode);
+    std::vector<std::string> pre_process(std::string pCode);
     bool parse_statement(std::string iStmt);
     bool parse_conditional_statement(std::string iStmt, instruction::Instruction ti);
     instruction::Instruction parse_condition(std::string iCnd);

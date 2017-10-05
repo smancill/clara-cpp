@@ -51,6 +51,10 @@ bool ServiceState::equals(ServiceState ss) {
     return false;
 }
 
+bool ServiceState::operator==(const ServiceState lhs) {
+    return this->get_name() == lhs.name_;
+}
+
 int ServiceState::hash_code() {
     int result = std::hash<std::string>{}(name_);
     result = 31 * result + std::hash<std::string>{}(state_);

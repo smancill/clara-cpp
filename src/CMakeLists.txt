@@ -4,6 +4,7 @@ set(CLARA_SRC
   base.cpp
   component.cpp
   composition.cpp
+  condition.cpp
   container.cpp
   container_report.cpp
   data_utils.cpp
@@ -11,11 +12,14 @@ set(CLARA_SRC
   dpe_report.cpp
   engine_data.cpp
   engine_data_type.cpp
+  instruction.cpp
   json_report.cpp
   service.cpp
   service_engine.cpp
   service_report.cpp
+  service_state.cpp
   third_party/dropbox/json11.cpp
+  statement.cpp
   utils.cpp
 )
 

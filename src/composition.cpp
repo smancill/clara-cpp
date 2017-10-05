@@ -97,13 +97,18 @@ CompositionCompiler::CompositionCompiler(std::string service)
     // nop
 }
 
+std::regex CompositionCompiler::get_simp_cond() {
+    return SIMP_COND;
+}
+
+// todo : implement rest of compile
 void CompositionCompiler::compile(std::string iCode)
 {
     reset();
 
     std::string pCode = no_blanks(std::move(iCode));
 
-    std::set<std::string> pp = pre_process(pCode);
+    std::vector<std::string> pp = pre_process(pCode);
 }
 
 void CompositionCompiler::reset()
@@ -111,96 +116,98 @@ void CompositionCompiler::reset()
     CompositionCompiler::instructions.clear();
 }
 
-std::set<instruction::Instruction> CompositionCompiler::get_instructions()
+std::vector<instruction::Instruction> CompositionCompiler::get_instructions()
 {
-    //return instructions; error here, find out why
+    return instructions;
 }
 
-std::set<std::string> CompositionCompiler::get_unconditional_links()
+std::vector<std::string> CompositionCompiler::get_unconditional_links()
 {
-    std::set<std::string> outputs;
-//    for (instruction::Instruction inst : instructions) {
-//        if (!inst.get_un_cond_statements().empty()) {
-//            for (statement::Statement stmt : inst.get_un_cond_statements()) {
-//                for (std::string s : stmt.get_output_links()) {
-//                    outputs.insert(s);
-//                }
-//            }
-//        }
-//    }
+    std::vector<std::string> outputs;
+    if (!instructions.empty()) {
+        for(int i = 0; i < instructions.size(); i++) {
+            if (!(instructions.at(i).get_un_cond_statements().empty())) {
+                for (int j = 0; j < instructions.at(i).get_un_cond_statements().size(); j++) {
+                    for (std::string s : instructions.at(i).get_un_cond_statements().at(j).get_output_links()) {
+                        outputs.push_back(s);
+                    }
+                }
+            }
+        }
+    }
     return outputs;
 }
 
-std::set<std::string> CompositionCompiler::get_links(ServiceState::ServiceState owner_ss,
+std::vector<std::string> CompositionCompiler::get_links(ServiceState::ServiceState owner_ss,
                                                      ServiceState::ServiceState input_ss) {
-    std::set<std::string> outputs;
+    std::vector<std::string> outputs;
     bool in_condition = false;
     bool condition_chosen = false;
 
-//    for (instruction::Instruction inst : instructions) {
-//        if (!inst.get_un_cond_statements().empty()) {
-//            in_condition = false;
-//            for (statement::Statement stmt : inst.get_un_cond_statements()) {
-//                for (std::string s : stmt.get_output_links()) {
-//                    outputs.insert(s);
-//                }
-//            }
-//            continue;
-//        }
-//
-//        if (!inst.get_if_condition().get_service_name().empty()) {
-//            in_condition = true;
-//            condition_chosen = false;
-//            if (inst.get_if_condition().is_true(owner_ss, input_ss)) {
-//                condition_chosen = true;
-//                for (statement::Statement stmt : inst.get_if_cond_statements()) {
-//                    for (std::string s : stmt.get_output_links()) {
-//                        outputs.insert(s);
-//                    }
-//                }
-//            }
-//            continue;
-//        }
-//
-//        if (in_condition && !condition_chosen) {
-//            if (!inst.get_else_if_condition().get_service_name().empty()) {
-//                if (inst.get_else_if_condition().is_true(owner_ss, input_ss)) {
-//                    condition_chosen = true;
-//                    for (statement::Statement stmt : inst.get_else_if_cond_statements()) {
-//                        for (std::string s : stmt.get_output_links()) {
-//                            outputs.insert(s);
-//                        }
-//                    }
-//                }
-//                continue;
-//            }
-//
-//            if (!inst.get_else_cond_statements().empty()) {
-//                condition_chosen = true;
-//                for (statement::Statement stmt : inst.get_else_cond_statements()) {
-//                    for (std::string s : stmt.get_output_links()) {
-//                        outputs.insert(s);
-//                    }
-//                }
-//            }
-//        }
-//    }
+    for (instruction::Instruction inst : instructions) {
+        if (!inst.get_un_cond_statements().empty()) {
+            in_condition = false;
+            for (statement::Statement stmt : inst.get_un_cond_statements()) {
+                for (std::string s : stmt.get_output_links()) {
+                    outputs.push_back(s);
+                }
+            }
+            continue;
+        }
+
+        if (!inst.get_if_condition().get_service_name().empty()) {
+            in_condition = true;
+            condition_chosen = false;
+            if (inst.get_if_condition().is_true(owner_ss, input_ss)) {
+                condition_chosen = true;
+                for (statement::Statement stmt : inst.get_if_cond_statements()) {
+                    for (std::string s : stmt.get_output_links()) {
+                        outputs.push_back(s);
+                    }
+                }
+            }
+            continue;
+        }
+
+        if (in_condition && !condition_chosen) {
+            if (!inst.get_else_if_condition().get_service_name().empty()) {
+                if (inst.get_else_if_condition().is_true(owner_ss, input_ss)) {
+                    condition_chosen = true;
+                    for (statement::Statement stmt : inst.get_else_if_cond_statements()) {
+                        for (std::string s : stmt.get_output_links()) {
+                            outputs.push_back(s);
+                        }
+                    }
+                }
+                continue;
+            }
+
+            if (!inst.get_else_cond_statements().empty()) {
+                condition_chosen = true;
+                for (statement::Statement stmt : inst.get_else_cond_statements()) {
+                    for (std::string s : stmt.get_output_links()) {
+                        outputs.push_back(s);
+                    }
+                }
+            }
+        }
+    }
     return outputs;
 }
 
-std::set<std::string> CompositionCompiler::pre_process(std::string pCode)
+std::vector<std::string> CompositionCompiler::pre_process(std::string pCode)
 {
     if (pCode.find(';') == std::string::npos && pCode.back() != ';') {
         throw std::logic_error{"Syntax error in the CLARA routing program. "
                                        "Missing end of statement operator = \";\""};
     }
 
-    std::set<std::string> r;
+    std::vector<std::string> r;
     std::vector<std::string> st = tokenize(pCode, ";");
 
     for (std::string text : st) {
         if (text != "" && text != "}") {
-            r.insert(text);
+            r.push_back(text);
         }
     }
 

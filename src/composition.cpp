@@ -24,6 +24,8 @@
 
 #include "composition.hpp"
 
+#include <iostream>
+#include <string>
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
@@ -88,8 +90,17 @@ std::string STATEMENT = SERV_NAME + "(," + SERV_NAME + ")*"
                         + "((+&?" + SERV_NAME + ")*|(+" + SERV_NAME
                         + "(," + SERV_NAME + ")*)*)";
 
-std::regex SIMP_COND(SERV_NAME + "(==|!=)" + WORD + "\"");
+std::regex Statement_r(STATEMENT);
 
+
+std::string simp_cond_s = SERV_NAME + "(==|!=)" + WORD + "\"";
+std::regex SIMP_COND(simp_cond_s);
+
+std::string comp_cond_s = simp_cond_s + "((&&|!!)" + simp_cond_s + ")*";
+std::regex COMP_COND(comp_cond_s);
+
+std::string cond_s = "((}?if|}elseif)(" + comp_cond_s + "){" + STATEMENT + ")|(}else{" + STATEMENT + ")";
+std::regex COND(cond_s);
 
 CompositionCompiler::CompositionCompiler(std::string service)
         : my_service_name{std::move(service)}
@@ -109,6 +120,7 @@ void CompositionCompiler::compile(std::string iCode)
     std::string pCode = no_blanks(std::move(iCode));
 
     std::vector<std::string> pp = pre_process(pCode);
+    
 }
 
 void CompositionCompiler::reset()
@@ -217,17 +229,105 @@ std::vector<std::string> CompositionCompiler::pre_process(std::string pCode)
 
 bool CompositionCompiler::parse_statement(std::string iStmt)
 {
-    // todo
+    bool b = false;
+    instruction::Instruction ti(iStmt);
+    iStmt = remove_first(iStmt, '}');
+
+    std::smatch matcher;
+
+    try {
+        if (std::regex_search(iStmt, matcher, Statement_r)) {  // todo : this might be wrong, test to check
+            if (iStmt.find(my_service_name) == std::string::npos) {
+                return false;
+            }
+
+            statement::Statement ts(iStmt, my_service_name);
+            ti.add_un_cond_statement(ts);
+            instructions.push_back(ti);
+            b = true;
+        } else {
+            std::cout << "DDD ----- > statement = " + iStmt << std::endl;
+            throw std::logic_error{"Syntax error in the CLARA routing program."
+                                           "Malformed routing statement"};
+        }
+    } catch (const std::logic_error& e) {
+        std::cout << e.what() << std::endl;
+    }
+    return b;
 }
 
 bool CompositionCompiler::parse_conditional_statement(std::string iStmt, instruction::Instruction ti)
 {
-    // todo
+    bool b = false;
+    std::smatch matcher;
+
+    if (std::regex_search(iStmt, matcher, Statement_r)) {
+        if (iStmt.find(my_service_name) == std::string::npos) {
+            return false;
+        }
+
+        statement::Statement ts(iStmt, my_service_name);
+
+        // make a default instruction for comparison
+        instruction::Instruction default_instruction("default_instruction");
+        if (ti.get_if_condition().equals(default_instruction.get_if_condition())) {
+            ti.add_if_cond_statement(ts);
+        } else if (ti.get_else_if_condition().equals(default_instruction.get_else_if_condition())) {
+            ti.add_else_if_cond_statement(ts);
+        } else {
+            ti.add_else_cond_statement(ts);
+        }
+        b = true;
+    } else {
+        std::cout << "DDD ----- > statement = " + iStmt << std::endl;
+        throw std::logic_error{"Syntax error in the CLARA routing program."
+                                       "Malformed routing statement"};
+    }
+
+    return b;
 }
 
 instruction::Instruction CompositionCompiler::parse_condition(std::string iCnd)
 {
-    // todo
+    instruction::Instruction ti(my_service_name);
+    std::smatch matcher;
+
+    if (std::regex_search(iCnd, matcher, COND)) {
+        try {
+            std::string statement_str = iCnd.substr(iCnd.find('{'));
+
+            if (statement_str.find(my_service_name) == std::string::npos) {
+                return ti; // todo : in Java this returns null, find replacement
+            }
+
+            statement::Statement ts(statement_str, my_service_name);
+
+            if (std::strncmp(iCnd.c_str(), "}if(", 4) == 0 ||
+                                            strncmp(iCnd.c_str(), "if(", 3) == 0) {
+                std::string condition_str = iCnd.substr(iCnd.find('(') + 1,
+                                                        iCnd.find_last_of(')'));
+                condition::Condition tc(condition_str, my_service_name);
+                ti.set_if_condition(tc);
+                ti.add_if_cond_statement(ts);
+            } else if (std::strncmp(iCnd.c_str(), "}elseif(", 8) == 0) {
+                std::string condition_str = iCnd.substr(iCnd.find('(') + 1,
+                                                        iCnd.find_last_of(')'));
+                condition::Condition tc(condition_str, my_service_name);
+                ti.set_else_if_condition(tc);
+                ti.add_else_if_cond_statement(ts);
+            } else if (std::strncmp(iCnd.c_str(), "}else", 5) == 0) {
+                ti.add_else_cond_statement(ts);
+            }
+        } catch (const std::exception& e) {
+            throw std::logic_error{"Syntax error in the CLARA routing program."
+                                           "Missing parenthesis"};
+        }
+    } else {
+        throw std::logic_error{"Syntax error in the CLARA routing program. "
+                                "Malformed conditional statement"};
+    }
+
+    return ti;
 }
 
 std::string CompositionCompiler::no_blanks(std::string x)

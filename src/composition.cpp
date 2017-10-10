@@ -120,7 +120,47 @@ void CompositionCompiler::compile(std::string iCode)
     std::string pCode = no_blanks(std::move(iCode));
 
     std::vector<std::string> pp = pre_process(pCode);
-    
+
+    int i = -1;
+    while (++i < pp.size()) {
+        std::string scs1 = pp.at(i); // compile error "expression must be R value" is just a CLion bug
+
+        if (std::strncmp(scs1.c_str(), "if(", 3) == 0
+                || std::strncmp(scs1.c_str(), "}if(", 4) == 0
+                || std::strncmp(scs1.c_str(), "}elseif(", 8) == 0
+                || std::strncmp(scs1.c_str(), "}else", 5) == 0) {
+
+            instruction::Instruction instruction = parse_condition(scs1);
+
+            while (++i < pp.size()) {
+                std::string scs2 = pp.at(i); // compile error "expression must be R value" is just a CLion bug
+
+                if (std::strncmp(scs2.c_str(), "}", 1) != 0
+                    && std::strncmp(scs2.c_str(), "if(", 3) != 0
+                    && std::strncmp(scs2.c_str(), "}if(", 4) != 0
+                    && std::strncmp(scs2.c_str(), "}elseif(", 8) != 0
+                    && std::strncmp(scs2.c_str(), "}else", 5) != 0) {
+
+                    if (instruction.get_service_name() != "null") {
+                        parse_conditional_statement(scs2, instruction);
+                    }
+                } else {
+                    break;
+                }
+            }
+            if (instruction.get_service_name() != "null") {
+                instructions.push_back(instruction);
+            }
+            i--;
+        } else {
+            parse_statement(scs1);
+        }
+    }
+
+    if (instructions.empty()) {
+        throw std::logic_error{"Composition is irrelevant for a service"};
+    }
+
 }
 
 void CompositionCompiler::reset()
@@ -297,7 +337,7 @@ instruction::Instruction CompositionCompiler::parse_condition(std::string iCnd)
             std::string statement_str = iCnd.substr(iCnd.find('{'));
 
             if (statement_str.find(my_service_name) == std::string::npos) {
-                return ti; // todo : in Java this returns null, find replacement
+                return instruction::Instruction("null"); // todo : in Java this returns null, find replacement
             }
 
             statement::Statement ts(statement_str, my_service_name);

@@ -73,7 +73,7 @@ namespace condition {
         }
     }
 
-    // todo : implement conditions
+    // todo : make sure std::vector "at()" works as intended and exceptions are fine
     void Condition::parse_condition(std::string cs, std::string logic_operator) {
         std::vector<std::string> t0;
         std::vector<std::string> t1;
@@ -82,11 +82,79 @@ namespace condition {
         if (logic_operator == "") {
             if (std::regex_search(cs, matcher, composition::CompositionCompiler::get_simp_cond())) {
                 if (cs.find("!=") != std::string::npos) {
-                    t1 = tokenize(cs, "!=");
+                    t1 = tokenize(cs, "!=\"");
                     if (t1.size() != 2) {
                         throw std::logic_error{"Condition Exception."};
                     }
+                    ServiceState::ServiceState sst(t1.at(0), t1.at(1));
+                    add_or_not_state(sst);
+                } else if (cs.find("==") != std::string::npos) {
+                    t1 = tokenize(cs, "==\"");
+                    if (t1.size() != 2) {
+                        throw std::logic_error{"Condition Exception."};
+                    }
+                    ServiceState::ServiceState sst(t1.at(0), t1.at(1));
+                    add_or_state(sst);
+                } else {
+                    throw std::logic_error{"Condition Exception"};
                 }
+            } else {
+                throw std::logic_error{"Condition Exception"};
+            }
+        } else {
+
+            if (cs.find("&&") != std::string::npos && cs.find("!!") == std::string::npos) {
+                t0 = tokenize(cs, logic_operator);
+                for (std::string ac : t0) {
+                    if (std::regex_search(ac, matcher, composition::CompositionCompiler::get_simp_cond())) {
+                        if (ac.find("!=") != std::string::npos) {
+                            t1 = tokenize(t0.at(0), "!=\"");
+                            if (t1.size() != 2) {
+                                throw std::logic_error{"Condition Exception."};
+                            }
+                            ServiceState::ServiceState sst(t1.at(0), t1.at(1));
+                            add_and_not_state(sst);
+                        } else if (ac.find("==") != std::string::npos) {
+                            t1 = tokenize(t0.at(0), "==\"");
+                            if (t1.size() != 2) {
+                                throw std::logic_error{"Condition Exception."};
+                            }
+                            ServiceState::ServiceState sst(t1.at(0), t1.at(1));
+                            add_and_state(sst);
+                        } else {
+                            throw std::logic_error{"Condition Exception"};
+                        }
+                    } else {
+                        throw std::logic_error{"Condition Exception"};
+                    }
+                }
+            } else if (cs.find("!!") != std::string::npos && cs.find("&&") == std::string::npos) {
+                t0 = tokenize(cs, logic_operator);
+                for (std::string ac : t0) {
+                    if (std::regex_search(ac, matcher, composition::CompositionCompiler::get_simp_cond())) {
+                        if (ac.find("!=") != std::string::npos) {
+                            t1 = tokenize(t0.at(0), "!=\"");
+                            if (t1.size() != 2) {
+                                throw std::logic_error{"Condition Exception."};
+                            }
+                            ServiceState::ServiceState sst(t1.at(0), t1.at(1));
+                            add_or_not_state(sst);
+                        } else if (ac.find("==") != std::string::npos) {
+                            t1 = tokenize(t0.at(0), "==\"");
+                            if (t1.size() != 2) {
+                                throw std::logic_error{"Condition Exception."};
+                            }
+                            ServiceState::ServiceState sst(t1.at(0), t1.at(1));
+                            add_or_state(sst);
+                        } else {
+                            throw std::logic_error{"Condition Exception"};
+                        }
+                    } else {
+                        throw std::logic_error{"Condition Exception"};
+                    }
+                }
+            } else {
+                throw std::logic_error{"Condition Exception"};
             }
         }
     }

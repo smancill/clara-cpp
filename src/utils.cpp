@@ -65,7 +65,7 @@ std::string get_current_time()
     time_t now;
     std::time(&now);
     char buf[sizeof "2001-01-01 00:00:00"];
-    strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S", gmtime(&now));
+    std::strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S", std::localtime(&now));
     return buf;
 }
 

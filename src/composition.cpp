@@ -79,7 +79,7 @@ std::set<std::string> SimpleCompiler::outputs()
 
 //    Composition Compiler
 
-std::string IP = "([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3})";
+std::string IP = "([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})";
 
 std::string WORD = "([A-Z|a-z]+[0-9]*)";
 std::string PORT = "(%+[0-9]*)*";
@@ -87,7 +87,7 @@ std::string PORT = "(%+[0-9]*)*";
 std::string SERV_NAME = IP + PORT + "_(java|python|cpp)" + WORD + ":" + WORD;
 
 std::string STATEMENT = SERV_NAME + "(," + SERV_NAME + ")*"
-                        + "((+&?" + SERV_NAME + ")*|(+" + SERV_NAME
+                        + "((\\+&?" + SERV_NAME + ")*|(\\+" + SERV_NAME
                         + "(," + SERV_NAME + ")*)*)";
 
 std::regex Statement_r(STATEMENT);
@@ -99,7 +99,7 @@ std::regex SIMP_COND(simp_cond_s);
 std::string comp_cond_s = simp_cond_s + "((&&|!!)" + simp_cond_s + ")*";
 std::regex COMP_COND(comp_cond_s);
 
-std::string cond_s = "((}?if|}elseif)(" + comp_cond_s + "){" + STATEMENT + ")|(}else{" + STATEMENT + ")";
+std::string cond_s = "((\\}?if|\\}elseif)\\(" + comp_cond_s + "\\)\\{" + STATEMENT + ")|(\\}else\\{" + STATEMENT + ")";
 std::regex COND(cond_s);
 
 CompositionCompiler::CompositionCompiler(std::string service)

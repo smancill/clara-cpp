@@ -1,6 +1,26 @@
-//
-// Created by Patrick Hennis on 9/26/17.
-//
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* vim: set ts=8 sts=4 et sw=4 tw=80: */
+/*
+ * Copyright (c) 2016.  Jefferson Lab (JLab). All rights reserved. Permission
+ * to use, copy, modify, and distribute  this software and its documentation for
+ * educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement.
+ *
+ * IN NO EVENT SHALL JLAB BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING
+ * OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF JLAB HAS
+ * BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * JLAB SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE. THE CLARA SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY,
+ * PROVIDED HEREUNDER IS PROVIDED "AS IS". JLAB HAS NO OBLIGATION TO PROVIDE
+ * MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ *
+ * This software was developed under the United States Government license.
+ * For more information contact author at gurjyan@jlab.org
+ * Department of Experimental Nuclear Physics, Jefferson Lab.
+ */
 
 #include "condition.hpp"
 #include "composition.hpp"
@@ -77,10 +97,9 @@ namespace condition {
     void Condition::parse_condition(std::string cs, std::string logic_operator) {
         std::vector<std::string> t0;
         std::vector<std::string> t1;
-        std::smatch matcher;
 
         if (logic_operator == "") {
-            if (std::regex_search(cs, matcher, composition::CompositionCompiler::get_simp_cond())) {
+            if (std::regex_match(cs, composition::CompositionCompiler::get_simp_cond())) {
                 if (cs.find("!=") != std::string::npos) {
                     t1 = tokenize(cs, "!=\"");
                     if (t1.size() != 2) {
@@ -106,7 +125,7 @@ namespace condition {
             if (cs.find("&&") != std::string::npos && cs.find("!!") == std::string::npos) {
                 t0 = tokenize(cs, logic_operator);
                 for (std::string ac : t0) {
-                    if (std::regex_search(ac, matcher, composition::CompositionCompiler::get_simp_cond())) {
+                    if (std::regex_match(ac, composition::CompositionCompiler::get_simp_cond())) {
                         if (ac.find("!=") != std::string::npos) {
                             t1 = tokenize(t0.at(0), "!=\"");
                             if (t1.size() != 2) {
@@ -131,7 +150,7 @@ namespace condition {
             } else if (cs.find("!!") != std::string::npos && cs.find("&&") == std::string::npos) {
                 t0 = tokenize(cs, logic_operator);
                 for (std::string ac : t0) {
-                    if (std::regex_search(ac, matcher, composition::CompositionCompiler::get_simp_cond())) {
+                    if (std::regex_match(ac, composition::CompositionCompiler::get_simp_cond())) {
                         if (ac.find("!=") != std::string::npos) {
                             t1 = tokenize(t0.at(0), "!=\"");
                             if (t1.size() != 2) {

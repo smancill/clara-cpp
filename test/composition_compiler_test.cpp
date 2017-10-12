@@ -2,6 +2,7 @@
 /* vim: set ts=8 sts=4 et sw=4 tw=80: */
 
 #include "composition.hpp"
+#include <iostream>
 
 #include <gmock/gmock.h>
 
@@ -60,6 +61,30 @@ TEST(SimpleCompiler, MultipleCalls)
 
     auto expected = output_set{"10.10.10.1_java:C:S5"};
     ASSERT_THAT(cc.outputs(), ContainerEq(expected));
+}
+
+TEST(CompositionCompiler, ServiceAtTheBeginning)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    cc.compile(composition);
+
+    ASSERT_THAT(cc.get_unconditional_links().at(0), Eq("10.10.10.1_java:C:S2"));
+}
+
+TEST(CompositionCompiler, ServiceAtTheMiddle)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S2"};
+    cc.compile(composition);
+
+    ASSERT_THAT(cc.get_unconditional_links().at(0), Eq("10.10.10.1_java:C:S3"));
+}
+
+TEST(CompositionCompiler, ServiceAtTheEnd)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S4"};
+    cc.compile(composition);
+
+    ASSERT_THAT(cc.get_unconditional_links().empty(), Eq(true));
 }
 
 

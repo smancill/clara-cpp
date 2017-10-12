@@ -84,7 +84,7 @@ std::string IP = "([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})";
 std::string WORD = "([A-Z|a-z]+[0-9]*)";
 std::string PORT = "(%+[0-9]*)*";
 
-std::string SERV_NAME = IP + PORT + "_(java|python|cpp)" + WORD + ":" + WORD;
+std::string SERV_NAME = IP + PORT + "_(java|python|cpp)" + ":" + WORD + ":" + WORD;
 
 std::string STATEMENT = SERV_NAME + "(," + SERV_NAME + ")*"
                         + "((\\+&?" + SERV_NAME + ")*|(\\+" + SERV_NAME
@@ -124,11 +124,10 @@ void CompositionCompiler::compile(std::string iCode)
     int i = -1;
     while (++i < pp.size()) {
         std::string scs1 = pp.at(i); // compile error "expression must be R value" is just a CLion bug
-
         if (std::strncmp(scs1.c_str(), "if(", 3) == 0
                 || std::strncmp(scs1.c_str(), "}if(", 4) == 0
                 || std::strncmp(scs1.c_str(), "}elseif(", 8) == 0
-                || std::strncmp(scs1.c_str(), "}else", 5) == 0) {
+                || std::strncmp(scs1.c_str(), "}else", 5) == 0) { // check to see if scs1 is conditional
 
             instruction::Instruction instruction = parse_condition(scs1);
 
@@ -156,7 +155,6 @@ void CompositionCompiler::compile(std::string iCode)
             parse_statement(scs1);
         }
     }
-
     if (instructions.empty()) {
         throw std::logic_error{"Composition is irrelevant for a service"};
     }
@@ -273,10 +271,8 @@ bool CompositionCompiler::parse_statement(std::string iStmt)
     instruction::Instruction ti(iStmt);
     iStmt = remove_first(iStmt, '}');
 
-    std::smatch matcher;
-
     try {
-        if (std::regex_search(iStmt, matcher, Statement_r)) {  // todo : this might be wrong, test to check
+        if (std::regex_match(iStmt, Statement_r)) {
             if (iStmt.find(my_service_name) == std::string::npos) {
                 return false;
             }
@@ -287,7 +283,7 @@ bool CompositionCompiler::parse_statement(std::string iStmt)
             b = true;
         } else {
             std::cout << "DDD ----- > statement = " + iStmt << std::endl;
-            throw std::logic_error{"Syntax error in the CLARA routing program."
+            throw std::logic_error{"Syntax error in the CLARA routing program. "
                                            "Malformed routing statement"};
         }
     } catch (const std::logic_error& e) {
@@ -299,9 +295,8 @@ bool CompositionCompiler::parse_statement(std::string iStmt)
 bool CompositionCompiler::parse_conditional_statement(std::string iStmt, instruction::Instruction ti)
 {
     bool b = false;
-    std::smatch matcher;
 
-    if (std::regex_search(iStmt, matcher, Statement_r)) {
+    if (std::regex_match(iStmt, Statement_r)) {
         if (iStmt.find(my_service_name) == std::string::npos) {
             return false;
         }
@@ -330,9 +325,8 @@ bool CompositionCompiler::parse_conditional_statement(std::string iStmt, instruc
 instruction::Instruction CompositionCompiler::parse_condition(std::string iCnd)
 {
     instruction::Instruction ti(my_service_name);
-    std::smatch matcher;
 
-    if (std::regex_search(iCnd, matcher, COND)) {
+    if (std::regex_search(iCnd, COND)) {
         try {
             std::string statement_str = iCnd.substr(iCnd.find('{'));
 

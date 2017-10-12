@@ -96,14 +96,15 @@ namespace statement {
             int pIndex = index - 1;
             if (pIndex >= 0) {
                 std::string element = element_set.at(pIndex);
-
-                input_links = tokenize(element, ",");
+                //input_links = tokenize(element, ",");
+                input_links.push_back(element);
             }
 
             int nIndex = index + 1;
             if (element_set.size() > nIndex) {
                 std::string element = element_set.at(nIndex);
-                output_links = tokenize(element, ",");
+                //output_links = tokenize(element, ",");
+                output_links.push_back(element);
             }
         }
 

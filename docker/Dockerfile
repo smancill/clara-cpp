@@ -52,7 +52,7 @@ RUN cd clara-cpp \
 WORKDIR /root
 VOLUME ["${CLARA_HOME}/data/input", "${CLARA_HOME}/data/output", "${CLARA_HOME}/log"]
 
-EXPOSE 7781 7782 7783 7785
+EXPOSE 7781-7785
 
 
 FROM debian:stretch-slim
@@ -77,4 +77,4 @@ COPY --from=build ${CLARA_HOME} ${CLARA_HOME}
 WORKDIR /root
 VOLUME ["${CLARA_HOME}/data/input", "${CLARA_HOME}/data/output", "${CLARA_HOME}/log"]
 
-EXPOSE 7781 7782 7783 7785
+EXPOSE 7781-7785

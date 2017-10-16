@@ -317,12 +317,14 @@ void EventReaderService::Impl::get_next_event(const EngineData& input,
 void EventReaderService::Impl::return_next_event(EngineData& output)
 {
     try {
-        auto event = service_->read_event(current_event_);
+        auto event_id = current_event_++;
+        output.set_communication_id(event_id);
+
+        auto event = service_->read_event(event_id);
         output.set_data(service_->get_data_type(), std::move(event));
         output.set_description("data");
-        output.set_communication_id(current_event_);
-        processing_events_.insert(current_event_);
-        current_event_++;
+
+        processing_events_.insert(event_id);
     } catch (const EventReaderError& e) {
         std::ostringstream msg;
         msg << "Error requesting event " << current_event_

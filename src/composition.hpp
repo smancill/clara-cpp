@@ -76,64 +76,63 @@ private:
 class CompositionCompiler
 {
 public:
-    //CompositionCompiler();
-    CompositionCompiler(std::string service);
-    void compile(std::string iCode);
+    CompositionCompiler(const std::string& service);
+    void compile(const std::string& iCode);
     void reset();
     std::set<Instruction> get_instructions();
     std::set<std::string> get_unconditional_links();
-    std::set<std::string> get_links(ServiceState owner_ss, ServiceState input_ss);
+    std::set<std::string> get_links(const ServiceState& owner_ss, const ServiceState& input_ss);
     static std::regex get_simp_cond();
 
 private:
     std::string STR, STR2, Sn, RStmt, sCond, cCond, Cond;
-    std::vector<Instruction> instructions;
+    std::set<Instruction> instructions;
     std::string my_service_name;
     std::set<std::string> pre_process(std::string pCode);
     bool parse_statement(std::string iStmt);
-    bool parse_conditional_statement(std::string iStmt, Instruction ti);
-    Instruction parse_condition(std::string iCnd);
+    bool parse_conditional_statement(const std::string& iStmt, const Instruction& ti);
+    Instruction parse_condition(const std::string& iCnd);
     std::string no_blanks(std::string x);
 };
 
 class Condition {
 public:
     Condition();
-    Condition(std::string condition_string, std::string service_name);
+    Condition(const std::string& condition_string, const std::string& service_name);
     std::string get_service_name();
     std::set<ServiceState> get_and_states();
     std::set<ServiceState> get_and_not_states();
     std::set<ServiceState> get_or_states();
     std::set<ServiceState> get_or_not_states();
-    bool is_true(ServiceState owner_ss, ServiceState input_ss);
+    bool is_true(const ServiceState& owner_ss, const ServiceState& input_ss);
     std::string to_string();
-    bool equals(Condition c);
+    bool equals(const Condition& c);
 private:
     std::string service_name_;
     std::set<ServiceState> and_states;
     std::set<ServiceState> and_not_states;
     std::set<ServiceState> or_states;
     std::set<ServiceState> or_not_states;
-    void add_and_state(ServiceState and_state);
-    void add_and_not_state(ServiceState and_not_state);
-    void add_or_state(ServiceState or_state);
-    void add_or_not_state(ServiceState or_state);
+    void add_and_state(const ServiceState& and_state);
+    void add_and_not_state(const ServiceState& and_not_state);
+    void add_or_state(const ServiceState& or_state);
+    void add_or_not_state(const ServiceState& or_state);
     void process(std::string cs);
-    void parse_condition(std::string cs, std::string logic_operator);
-    bool check_and_condition(std::set<ServiceState> sc, ServiceState s1, ServiceState s2);
-    bool check_or_condition(std::set<ServiceState> sc, ServiceState s1, ServiceState s2);
+    void parse_condition(const std::string& cs, const std::string& logic_operator);
+    bool check_and_condition(const std::set<ServiceState>& sc, const ServiceState& s1, const ServiceState& s2);
+    bool check_or_condition(const std::set<ServiceState>& sc, const ServiceState& s1, const ServiceState& s2);
 };
 
 class Statement {
 public:
-    Statement(std::string statement_string, std::string service_name);
+    Statement(const std::string& statement_string, const std::string& service_name);
     std::string get_service_name();
     std::string get_statement_string();
     std::set<std::string> get_input_links();
     std::set<std::string> get_output_links();
     std::set<std::string> get_log_and_inputs();
     std::string to_string();
-    bool equals(Statement s);
+    bool equals(const Statement& s);
     int hash_code();
 
 private:
@@ -143,38 +142,38 @@ private:
     std::set<std::string> input_links;
     std::set<std::string> output_links;
 
-    void process(std::string statement);
-    void parse_linked(std::string service_name, std::string statement);
-    bool is_log_and(std::string service_name, std::string composition);
+    void process(const std::string& statement);
+    void parse_linked(const std::string& service_name, const std::string& statement);
+    bool is_log_and(const std::string& service_name, const std::string& composition);
 };
 
 class Instruction {
 public:
-    Instruction(std::string service_name);
+    Instruction(const std::string& service_name);
     std::string get_service_name();
 
     Condition get_if_condition();
-    void set_if_condition(Condition if_condition);
+    void set_if_condition(const Condition& if_condition);
     std::set<Statement> get_if_cond_statements();
-    void set_if_cond_statements(std::set<Statement> if_cond_statements);
-    void add_if_cond_statement(Statement if_cond_statement);
+    void set_if_cond_statements(const std::set<Statement>& if_cond_statements);
+    void add_if_cond_statement(const Statement& if_cond_statement);
 
     Condition get_else_if_condition();
-    void set_else_if_condition(Condition else_if_condition);
+    void set_else_if_condition(const Condition& else_if_condition);
     std::set<Statement> get_else_if_cond_statements();
-    void set_else_if_cond_statements(std::set<Statement> else_if_cond_statements);
-    void add_else_if_cond_statement(Statement else_if_cond_statement);
+    void set_else_if_cond_statements(const std::set<Statement>& else_if_cond_statements);
+    void add_else_if_cond_statement(const Statement& else_if_cond_statement);
 
     std::set<Statement> get_else_cond_statements();
-    void set_else_cond_statements(std::set<Statement> else_cond_statements);
-    void add_else_cond_statement(Statement else_cond_statement);
+    void set_else_cond_statements(const std::set<Statement>& else_cond_statements);
+    void add_else_cond_statement(const Statement& else_cond_statement);
 
     std::set<Statement> get_un_cond_statements();
-    void set_un_cond_statements(std::set<Statement> un_cond_statements);
-    void add_un_cond_statement(Statement un_cond_statement);
+    void set_un_cond_statements(const std::set<Statement>& un_cond_statements);
+    void add_un_cond_statement(const Statement& un_cond_statement);
 
     std::string to_string();
-    bool equals(Instruction i);
+    bool equals(const Instruction& i);
     int hash_code();
 
 private:
@@ -189,14 +188,14 @@ private:
 
 class ServiceState {
 public:
-    ServiceState(std::string name, std::string state);
+    ServiceState(const std::string& name, const std::string& state);
     std::string get_name();
     std::string get_state();
-    void set_state(std::string state);
-    bool equals(ServiceState ss);
+    void set_state(const std::string& state);
+    bool equals(const ServiceState& ss);
     int hash_code();
     std::string to_string();
-    bool operator==(const ServiceState lhs);
+    bool operator==(const ServiceState& lhs);
 private:
     std::string name_;
     std::string state_;

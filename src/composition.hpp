@@ -30,8 +30,6 @@
 #include <string>
 #include <vector>
 #include <regex>
-#include "instruction.hpp"
-#include "service_state.hpp"
 
 namespace clara {
 namespace composition {
@@ -73,26 +71,21 @@ private:
     std::list<std::string> next_;
 };
 
-class CompositionCompiler
-{
-public:
-    CompositionCompiler(const std::string& service);
-    void compile(const std::string& iCode);
-    void reset();
-    std::set<Instruction> get_instructions();
-    std::set<std::string> get_unconditional_links();
-    std::set<std::string> get_links(const ServiceState& owner_ss, const ServiceState& input_ss);
-    static std::regex get_simp_cond();
+// classes for Composition Compiler
 
+class ServiceState {
+public:
+    ServiceState(const std::string& name, const std::string& state);
+    std::string get_name();
+    std::string get_state();
+    void set_state(const std::string& state);
+    bool equals(const ServiceState& ss);
+    int hash_code();
+    std::string to_string();
+    bool operator==(const ServiceState& lhs);
 private:
-    std::string STR, STR2, Sn, RStmt, sCond, cCond, Cond;
-    std::set<Instruction> instructions;
-    std::string my_service_name;
-    std::set<std::string> pre_process(std::string pCode);
-    bool parse_statement(std::string iStmt);
-    bool parse_conditional_statement(const std::string& iStmt, const Instruction& ti);
-    Instruction parse_condition(const std::string& iCnd);
-    std::string no_blanks(std::string x);
+    std::string name_;
+    std::string state_;
 };
 
 class Condition {
@@ -186,19 +179,26 @@ private:
     std::string service_name_;
 };
 
-class ServiceState {
+class CompositionCompiler
+{
 public:
-    ServiceState(const std::string& name, const std::string& state);
-    std::string get_name();
-    std::string get_state();
-    void set_state(const std::string& state);
-    bool equals(const ServiceState& ss);
-    int hash_code();
-    std::string to_string();
-    bool operator==(const ServiceState& lhs);
+    CompositionCompiler(const std::string& service);
+    void compile(const std::string& iCode);
+    void reset();
+    std::set<Instruction> get_instructions();
+    std::set<std::string> get_unconditional_links();
+    std::set<std::string> get_links(const ServiceState& owner_ss, const ServiceState& input_ss);
+    static std::regex get_simp_cond();
+
 private:
-    std::string name_;
-    std::string state_;
+    std::string STR, STR2, Sn, RStmt, sCond, cCond, Cond;
+    std::set<Instruction> instructions;
+    std::string my_service_name;
+    std::vector<std::string> pre_process(const std::string& pCode);
+    bool parse_statement(std::string iStmt);
+    bool parse_conditional_statement(const std::string& iStmt, Instruction& ti);
+    Instruction parse_condition(const std::string& iCnd);
+    std::string no_blanks(std::string x);
 };
 
 } // end namespace composition

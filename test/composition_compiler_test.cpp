@@ -68,7 +68,8 @@ TEST(CompositionCompiler, ServiceAtTheBeginning)
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
     cc.compile(composition);
 
-    ASSERT_THAT(cc.get_unconditional_links().at(0), Eq("10.10.10.1_java:C:S2"));
+    auto expected = output_set{"10.10.10.1_java:C:S2"};
+    ASSERT_THAT(cc.get_unconditional_links(), ContainerEq(expected));
 }
 
 TEST(CompositionCompiler, ServiceAtTheMiddle)
@@ -76,7 +77,8 @@ TEST(CompositionCompiler, ServiceAtTheMiddle)
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S2"};
     cc.compile(composition);
 
-    ASSERT_THAT(cc.get_unconditional_links().at(0), Eq("10.10.10.1_java:C:S3"));
+    auto expected = output_set{"10.10.10.1_java:C:S3"};
+    ASSERT_THAT(cc.get_unconditional_links(), ContainerEq(expected));
 }
 
 TEST(CompositionCompiler, ServiceAtTheEnd)
@@ -87,6 +89,17 @@ TEST(CompositionCompiler, ServiceAtTheEnd)
     ASSERT_THAT(cc.get_unconditional_links().empty(), Eq(true));
 }
 
+TEST(CompositionCompiler, LastServiceOnALoop)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S3"};
+    std::string composition2 = R"(10.10.10.1_java:C:S1+)"
+                                R"(10.10.10.1_java:C:S3+)"
+                                R"(10.10.10.1_java:C:S1;)";
+    cc.compile(composition2);
+
+    auto expected = output_set{"10.10.10.1_java:C:S1"};
+    ASSERT_THAT(cc.get_unconditional_links(), ContainerEq(expected));
+}
 
 int main(int argc, char* argv[])
 {

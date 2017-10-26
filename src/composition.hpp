@@ -83,6 +83,7 @@ public:
     int hash_code();
     std::string to_string();
     bool operator==(const ServiceState& lhs);
+    bool operator<(const ServiceState& lhs) const;
 private:
     std::string name_;
     std::string state_;
@@ -127,6 +128,7 @@ public:
     std::string to_string();
     bool equals(const Statement& s);
     int hash_code();
+    bool operator<(const Statement& lhs) const;
 
 private:
     std::string service_name_;
@@ -168,6 +170,7 @@ public:
     std::string to_string();
     bool equals(const Instruction& i);
     int hash_code();
+    bool operator<(const Instruction& lhs) const;
 
 private:
     Condition if_condition;

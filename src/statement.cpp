@@ -22,12 +22,13 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-#include "statement.hpp"
+#include "composition.hpp"
 
 namespace clara {
-namespace statement {
+namespace composition {
 
-    Statement::Statement(std::string statement_string, std::string service_name) {
+    Statement::Statement(const std::string& statement_string,
+                         const std::string& service_name) {
         if (statement_string.find(service_name) != std::string::npos) {
             this->statement_string_ = statement_string;
             this->service_name_ = service_name;
@@ -45,19 +46,19 @@ namespace statement {
         return statement_string_;
     }
 
-    std::vector<std::string> Statement::get_input_links() {
+    std::set<std::string> Statement::get_input_links() {
         return input_links;
     }
 
-    std::vector<std::string> Statement::get_output_links() {
+    std::set<std::string> Statement::get_output_links() {
         return output_links;
     }
 
-    std::vector<std::string> Statement::get_log_and_inputs() {
+    std::set<std::string> Statement::get_log_and_inputs() {
         return log_and_inputs;
     };
 
-    void Statement::process(std::string statement) {
+    void Statement::process(const std::string& statement) {
         input_links.clear();
         output_links.clear();
         log_and_inputs.clear();
@@ -66,13 +67,14 @@ namespace statement {
             parse_linked(service_name_, statement);
             if (is_log_and(service_name_, statement)) {
                 for (std::string sn : input_links) {
-                    log_and_inputs.push_back(sn);
+                    log_and_inputs.insert(sn);
                 }
             }
         }
     }
 
-    void Statement::parse_linked(std::string service_name, std::string statement) {
+    void Statement::parse_linked(const std::string& service_name,
+                                 const std::string& statement) {
         std::vector<std::string> element_set;
 
         std::vector<std::string> st = tokenize(statement, "+");
@@ -95,22 +97,23 @@ namespace statement {
         } else {
             int pIndex = index - 1;
             if (pIndex >= 0) {
-                std::string element = element_set.at(pIndex);
+                std::string element = element_set[pIndex];
                 //input_links = tokenize(element, ",");
-                input_links.push_back(element);
+                input_links.insert(element);
             }
 
             int nIndex = index + 1;
             if (element_set.size() > nIndex) {
-                std::string element = element_set.at(nIndex);
+                std::string element = element_set[nIndex];
                 //output_links = tokenize(element, ",");
-                output_links.push_back(element);
+                output_links.insert(element);
             }
         }
 
     }
 
-    bool Statement::is_log_and(std::string service_name, std::string composition) {
+    bool Statement::is_log_and(const std::string& service_name,
+                               const std::string& composition) {
         std::string ac = "&" + service_name;
 
         std::vector<std::string> st = tokenize(composition, "+");
@@ -133,7 +136,7 @@ namespace statement {
                 "}";
     }
 
-    bool Statement::equals(Statement s) {
+    bool Statement::equals(const Statement& s) {
         if (!(this->service_name_ == s.service_name_)) {
             return false;
         }
@@ -150,6 +153,10 @@ namespace statement {
             return false;
         }
         return true;
+    }
+
+    bool Statement::operator<(const Statement& lhs) const {
+        return this->service_name_ < lhs.service_name_;
     }
 
     int Statement::hash_code() {

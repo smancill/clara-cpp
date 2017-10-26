@@ -60,6 +60,7 @@ public:
     std::string to_string();
     bool equals(Instruction i);
     int hash_code();
+    bool operator<(const Instruction& lhs);
 
 private:
     condition::Condition if_condition;

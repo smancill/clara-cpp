@@ -64,6 +64,7 @@ public:
     std::string to_string();
     bool equals(Statement s);
     int hash_code();
+    bool operator<(const Statement& lhs);
 
 private:
     std::string service_name_;

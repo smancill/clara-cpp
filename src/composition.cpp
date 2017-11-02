@@ -130,19 +130,19 @@ std::string ServiceState::to_string() {
 /*
  * IP address regex
  */
-        std::string IP = "([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})";
+        std::string IP = "([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3})";
 
 /*
  * String that Starts with a character and can have preceding numbers
  */
-        std::string WORD = "([A-Z|a-z]+[0-9]*)";
-        std::string PORT = "(%+[0-9]*)*";
+        std::string WORD = "([A-Z|a-z]*[0-9]*)";
+        std::string PORT = "(.%[0-9]*)*";
 
 /*
  * Service name
  * Format: dpe_name:container_name:engine_name
  */
-        std::string SERV_NAME = IP + PORT + "_(java|python|cpp)" + ":" + WORD + ":" + WORD;
+        std::string SERV_NAME = IP + PORT + "_(java|python|cpp):" + WORD + ":" + WORD;
 
 /*
  * Routing statement Examples:
@@ -163,7 +163,7 @@ std::string ServiceState::to_string() {
  *      Service == "state_name"
  *      Service != "state_name"
  */
-        std::string simp_cond_s = SERV_NAME + "(==|!=)" + WORD + "\"";
+        std::string simp_cond_s = SERV_NAME + "(==|!=)" + WORD;
         std::regex SIMP_COND(simp_cond_s);
 
 /*
@@ -387,6 +387,9 @@ std::string ServiceState::to_string() {
                     instructions.insert(ti);
                     b = true;
                 }
+                else if (std::regex_match(iStmt, SIMP_COND)) {
+                    throw std::logic_error{"Syntax error: just a simple condition"};
+                }
                 else {
                     std::cout << "DDD ----- > statement = " + iStmt << std::endl;
                     throw std::logic_error{"Syntax error in the CLARA routing program. "
@@ -432,7 +435,9 @@ std::string ServiceState::to_string() {
         {
             Instruction ti(my_service_name);
 
-            if (std::regex_search(iCnd, COND)) {
+            std::string tmp = iCnd.substr(0, iCnd.find(")") + 1);
+
+            if (std::regex_match(tmp, COND)) {
                 try {
                     std::string statement_str = iCnd.substr(iCnd.find('{'));
 
@@ -476,6 +481,24 @@ std::string ServiceState::to_string() {
         {
             x.erase(std::remove (x.begin(), x.end(), ' '), x.end());
             return x;
+        }
+
+        std::string CompositionCompiler::test_regex(std::string s) {
+            if (std::regex_match(s, Statement_r)) {
+                return "STATEMENT";
+            }
+            if (std::regex_match(s, SIMP_COND)) {
+                return "SIMP_COND";
+            }
+            if (std::regex_match(s, COMP_COND)) {
+                return "COMP_COND";
+            }
+            if (std::regex_match(s, COND)) {
+                return "COND";
+            }
+            else {
+                return "did not confine to a regex statement";
+            }
         }
 
 

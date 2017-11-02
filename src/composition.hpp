@@ -45,6 +45,7 @@ inline std::vector<std::string> tokenize(std::string s, std::string delim)
         tv.push_back(token);
         s.erase(0, pos + delim.length());
     }
+    tv.push_back(s);
     return tv;
 }
 

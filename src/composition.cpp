@@ -243,9 +243,8 @@ std::string ServiceState::to_string() {
                             break;
                         }
                     }
-                    // add the instruction to the instructions vector
+                    // add the instruction to the instructions set
                     if (instruction.get_service_name() != "null") {
-                        //instructions.push_back(instruction);
                         instructions.insert(instruction);
                     }
                     i--;
@@ -256,6 +255,7 @@ std::string ServiceState::to_string() {
             }
             if (instructions.empty()) {
                 // if nothing has been added to instructions, throw error
+                // todo : it is throwing error
                 throw std::logic_error{"Composition is irrelevant for a service"};
             }
 
@@ -273,21 +273,24 @@ std::string ServiceState::to_string() {
 
         std::set<std::string> CompositionCompiler::get_unconditional_links()
         {
-            std::vector<std::string> outputs;
+            std::set<std::string> outputs;
             if (!instructions.empty()) {
-                for(int i = 0; i < instructions.size(); i++) {
-//            if (!(instructions.at(i).get_un_cond_statements().empty())) {
-//                // create object for simplicity
-//                auto in = instructions.at(i).get_un_cond_statements();
-//                for (int j = 0; j < in.size(); j++) {
-//                    for (std::string s : in.at(j).get_output_links()) {
-//                        outputs.push_back(s);
-//                    }
-//                }
-//            }
+                std::set<clara::composition::Instruction>::iterator it;
+                for (it = instructions.begin(); it != instructions.end(); ++it) {
+                    auto curr = *it;
+                    if (!(curr.get_un_cond_statements().empty())) {
+                        auto in = curr.get_un_cond_statements();
+                        std::set<clara::composition::Statement>::iterator inner;
+                        for (inner = in.begin(); inner != in.end(); ++inner) {
+                            auto inner_curr = *inner;
+                            for (std::string s : inner_curr.get_output_links()) {
+                                outputs.insert(s);
+                            }
+                        }
+                    }
                 }
             }
-            //return outputs;
+            return outputs;
         }
 
         std::set<std::string> CompositionCompiler::get_links(const ServiceState::ServiceState& owner_ss,
@@ -381,7 +384,7 @@ std::string ServiceState::to_string() {
 
                     Statement ts(iStmt, my_service_name);
                     ti.add_un_cond_statement(ts);
-                    //instructions.push_back(ti);
+                    instructions.insert(ti);
                     b = true;
                 }
                 else {

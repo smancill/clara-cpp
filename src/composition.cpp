@@ -255,7 +255,6 @@ std::string ServiceState::to_string() {
             }
             if (instructions.empty()) {
                 // if nothing has been added to instructions, throw error
-                // todo : it is throwing error
                 throw std::logic_error{"Composition is irrelevant for a service"};
             }
 
@@ -268,7 +267,7 @@ std::string ServiceState::to_string() {
 
         std::set<Instruction> CompositionCompiler::get_instructions()
         {
-            //return instructions;
+            return instructions;
         }
 
         std::set<std::string> CompositionCompiler::get_unconditional_links()
@@ -295,7 +294,7 @@ std::string ServiceState::to_string() {
 
         std::set<std::string> CompositionCompiler::get_links(const ServiceState::ServiceState& owner_ss,
                                                              const ServiceState::ServiceState& input_ss) {
-            std::vector<std::string> outputs;
+            std::set<std::string> outputs;
             bool in_condition = false;
             bool condition_chosen = false;
 
@@ -304,7 +303,7 @@ std::string ServiceState::to_string() {
                     in_condition = false;
                     for (Statement stmt : inst.get_un_cond_statements()) {
                         for (std::string s : stmt.get_output_links()) {
-                            outputs.push_back(s);
+                            outputs.insert(s);
                         }
                     }
                     continue;
@@ -317,7 +316,7 @@ std::string ServiceState::to_string() {
                         condition_chosen = true;
                         for (Statement st : inst.get_if_cond_statements()) {
                             for (std::string s : st.get_output_links()) {
-                                outputs.push_back(s);
+                                outputs.insert(s);
                             }
                         }
                     }
@@ -330,7 +329,7 @@ std::string ServiceState::to_string() {
                             condition_chosen = true;
                             for (Statement stmt : inst.get_else_if_cond_statements()) {
                                 for (std::string s : stmt.get_output_links()) {
-                                    outputs.push_back(s);
+                                    outputs.insert(s);
                                 }
                             }
                         }
@@ -341,13 +340,13 @@ std::string ServiceState::to_string() {
                         condition_chosen = true;
                         for (Statement stmt : inst.get_else_cond_statements()) {
                             for (std::string s : stmt.get_output_links()) {
-                                outputs.push_back(s);
+                                outputs.insert(s);
                             }
                         }
                     }
                 }
             }
-            //return outputs;
+            return outputs;
         }
 
         std::vector<std::string> CompositionCompiler::pre_process(const std::string& pCode)

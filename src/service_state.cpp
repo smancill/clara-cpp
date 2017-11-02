@@ -45,10 +45,7 @@ void ServiceState::set_state(std::string state) {
 }
 
 bool ServiceState::equals(ServiceState ss) {
-    if (this->name_ == ss.name_ && this->state_ == ss.state_) {
-        return true;
-    }
-    return false;
+    return (this->name_ == ss.name_ && this->state_ == ss.state_);
 }
 
 bool ServiceState::operator==(const ServiceState& lhs) {

@@ -93,7 +93,6 @@ namespace composition {
         }
     }
 
-    // todo : make sure std::vector "at()" works as intended and exceptions are fine
     void Condition::parse_condition(const std::string& cs,
                                     const std::string& logic_operator) {
         std::vector<std::string> t0;
@@ -106,14 +105,14 @@ namespace composition {
                     if (t1.size() != 2) {
                         throw std::logic_error{"Condition Exception."};
                     }
-                    ServiceState::ServiceState sst(t1[0], t1[1]);
+                    ServiceState sst(t1[0], t1[1]);
                     add_or_not_state(sst);
                 } else if (cs.find("==") != std::string::npos) {
                     t1 = tokenize(cs, "==\"");
                     if (t1.size() != 2) {
                         throw std::logic_error{"Condition Exception."};
                     }
-                    ServiceState::ServiceState sst(t1[0], t1[1]);
+                    ServiceState sst(t1[0], t1[1]);
                     add_or_state(sst);
                 } else {
                     throw std::logic_error{"Condition Exception"};
@@ -132,14 +131,14 @@ namespace composition {
                             if (t1.size() != 2) {
                                 throw std::logic_error{"Condition Exception."};
                             }
-                            ServiceState::ServiceState sst(t1[0], t1[1]);
+                            ServiceState sst(t1[0], t1[1]);
                             add_and_not_state(sst);
                         } else if (ac.find("==") != std::string::npos) {
                             t1 = tokenize(t0[0], "==\"");
                             if (t1.size() != 2) {
                                 throw std::logic_error{"Condition Exception."};
                             }
-                            ServiceState::ServiceState sst(t1[0], t1[1]);
+                            ServiceState sst(t1[0], t1[1]);
                             add_and_state(sst);
                         } else {
                             throw std::logic_error{"Condition Exception"};
@@ -157,14 +156,14 @@ namespace composition {
                             if (t1.size() != 2) {
                                 throw std::logic_error{"Condition Exception."};
                             }
-                            ServiceState::ServiceState sst(t1[0], t1[1]);
+                            ServiceState sst(t1[0], t1[1]);
                             add_or_not_state(sst);
                         } else if (ac.find("==") != std::string::npos) {
                             t1 = tokenize(t0[0], "==\"");
                             if (t1.size() != 2) {
                                 throw std::logic_error{"Condition Exception."};
                             }
-                            ServiceState::ServiceState sst(t1[0], t1[1]);
+                            ServiceState sst(t1[0], t1[1]);
                             add_or_state(sst);
                         } else {
                             throw std::logic_error{"Condition Exception"};
@@ -182,26 +181,21 @@ namespace composition {
     bool Condition::check_and_condition(const std::set<ServiceState>& sc,
                                         const ServiceState& s1,
                                         const ServiceState& s2) {
-//        if (std::find(sc.begin(), sc.end(), s1) != sc.end()) {
-//            if (std::find(sc.begin(), sc.end(), s2) != sc.end()) {
-//                return true;
-//            }
-//        }
-        // todo : find might not work on sets
-        return false;
+
+        std::set<ServiceState>::iterator it1 = sc.find(s1);
+        std::set<ServiceState>::iterator it2 = sc.find(s2);
+
+        return (it1 != sc.end() && it2 != sc.end());
     }
 
     bool Condition::check_or_condition(const std::set<ServiceState>& sc,
                                        const ServiceState& s1,
                                        const ServiceState& s2) {
-//        if (std::find(sc.begin(), sc.end(), s1) != sc.end()) {
-//            return true;
-//        }
-//        if (std::find(sc.begin(), sc.end(), s2) != sc.end()) {
-//            return true;
-//        }
-        // todo : find might not work on sets
-        return false;
+
+        std::set<ServiceState>::iterator it1 = sc.find(s1);
+        std::set<ServiceState>::iterator it2 = sc.find(s2);
+
+        return (it1 != sc.end() || it2 != sc.end());
     }
 
     bool Condition::is_true(const ServiceState& owner_ss,

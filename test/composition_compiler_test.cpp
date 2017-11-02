@@ -101,6 +101,51 @@ TEST(CompositionCompiler, LastServiceOnALoop)
     ASSERT_THAT(cc.get_unconditional_links(), ContainerEq(expected));
 }
 
+TEST(CompositionCompiler, TestStatementRegex)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    std::string statement = R"(10.10.10.1_java:C:S1,10.10.10.1_java:C:S2+10.10.10.1_java:C:S3)";
+
+    std::string result = cc.test_regex(statement);
+    ASSERT_THAT(result, Eq("STATEMENT"));
+}
+
+TEST(CompositionCompiler, TestSimpCondRegex)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    std::string simple = R"(10.10.10.1_java:C:S1==Foo)";
+
+    std::string result = cc.test_regex(simple);
+    ASSERT_THAT(result, Eq("SIMP_COND"));
+}
+
+TEST(CompositionCompiler, TestCompCondRegex)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    std::string cond = R"(10.10.10.1_java:C:S1==Foo&&10.10.10.1_java:C:S2==Boo)";
+
+    std::string result = cc.test_regex(cond);
+    ASSERT_THAT(result, Eq("COMP_COND"));
+}
+
+TEST(CompositionCompiler, ConditionTest) {
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    cc.compile(composition);
+    std::string simple = R"(10.10.10.1_java:C:S1;)"
+                         R"(if (10.10.10.1_java:C:S1==FOO) {)"
+                         R"(  10.10.10.1_java:C:S1+10.10.10.1_java:C:S2;)"
+                         R"(})";
+
+    cc.compile(simple);
+    auto owner = ServiceState("10.10.10.1_java:C:S1", "FOO");
+    auto input = ServiceState("WHATEVER", "DON'T CARE");
+
+    auto expected = output_set{"10.10.10.1_java:C:S2"};
+
+    ASSERT_THAT(cc.get_links(owner, input), ContainerEq(expected));
+}
+
+
 int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);

@@ -272,14 +272,15 @@ std::string ServiceState::to_string() {
 
         std::set<std::string> CompositionCompiler::get_unconditional_links()
         {
+            std::set<clara::composition::Instruction>::iterator it;
+            std::set<clara::composition::Statement>::iterator inner;
+
             std::set<std::string> outputs;
             if (!instructions.empty()) {
-                std::set<clara::composition::Instruction>::iterator it;
                 for (it = instructions.begin(); it != instructions.end(); ++it) {
                     auto curr = *it;
                     if (!(curr.get_un_cond_statements().empty())) {
                         auto in = curr.get_un_cond_statements();
-                        std::set<clara::composition::Statement>::iterator inner;
                         for (inner = in.begin(); inner != in.end(); ++inner) {
                             auto inner_curr = *inner;
                             for (std::string s : inner_curr.get_output_links()) {

@@ -193,6 +193,7 @@ public:
     std::set<std::string> get_unconditional_links();
     std::set<std::string> get_links(const ServiceState& owner_ss, const ServiceState& input_ss);
     static std::regex get_simp_cond();
+    std::string test_regex(std::string s);
 
 private:
     std::string STR, STR2, Sn, RStmt, sCond, cCond, Cond;

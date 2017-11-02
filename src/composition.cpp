@@ -292,8 +292,8 @@ std::string ServiceState::to_string() {
             return outputs;
         }
 
-        std::set<std::string> CompositionCompiler::get_links(const ServiceState::ServiceState& owner_ss,
-                                                             const ServiceState::ServiceState& input_ss) {
+        std::set<std::string> CompositionCompiler::get_links(const ServiceState& owner_ss,
+                                                             const ServiceState& input_ss) {
             std::set<std::string> outputs;
             bool in_condition = false;
             bool condition_chosen = false;

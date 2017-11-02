@@ -98,14 +98,12 @@ namespace composition {
             int pIndex = index - 1;
             if (pIndex >= 0) {
                 std::string element = element_set[pIndex];
-                //input_links = tokenize(element, ",");
                 input_links.insert(element);
             }
 
             int nIndex = index + 1;
             if (element_set.size() > nIndex) {
                 std::string element = element_set[nIndex];
-                //output_links = tokenize(element, ",");
                 output_links.insert(element);
             }
         }

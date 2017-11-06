@@ -7,12 +7,12 @@ set -eu
 ############################################################################
 
 XMSG_REPO=https://github.com/JeffersonLab/xmsg-cpp.git
-XMSG_DIR="${DEPS_DIR}"/xmsg-cpp
+XMSG_DIR="${TRAVIS_BUILD_DIR}"/deps/xmsg-cpp
 
 git clone --depth 1 "${XMSG_REPO}" "${XMSG_DIR}"
 "${XMSG_DIR}"/.travis/install.sh
 
 cd "${XMSG_DIR}"
 ./configure --prefix="${INSTALL_DIR}" --build-type="${BUILD_TYPE}" --disable-tests
-make -j"${JOBS}"
+make
 make install

@@ -13,6 +13,6 @@ git clone --depth 1 "${XMSG_REPO}" "${XMSG_DIR}"
 "${XMSG_DIR}"/.travis/install.sh
 
 cd "${XMSG_DIR}"
-./configure --build-type="${BUILD_TYPE}" --prefix="${INSTALL_DIR}"
+./configure --prefix="${INSTALL_DIR}" --build-type="${BUILD_TYPE}" --disable-tests
 make -j"${JOBS}"
 make install

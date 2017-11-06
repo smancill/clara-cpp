@@ -9,7 +9,7 @@ set -eu
 XMSG_REPO=https://github.com/JeffersonLab/xmsg-cpp.git
 XMSG_DIR="${DEPS_DIR}"/xmsg-cpp
 
-git clone "${XMSG_REPO}" "${XMSG_DIR}"
+git clone --depth 1 "${XMSG_REPO}" "${XMSG_DIR}"
 "${XMSG_DIR}"/.travis/install.sh
 
 cd "${XMSG_DIR}"

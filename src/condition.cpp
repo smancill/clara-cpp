@@ -108,7 +108,7 @@ namespace composition {
                     ServiceState sst(t1[0], t1[1]);
                     add_or_not_state(sst);
                 } else if (cs.find("==") != std::string::npos) {
-                    t1 = tokenize(cs, "==\"");
+                    t1 = tokenize(cs, "==");
                     if (t1.size() != 2) {
                         throw std::logic_error{"Condition Exception."};
                     }

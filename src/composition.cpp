@@ -171,6 +171,9 @@ std::string ServiceState::to_string() {
         std::string comp_cond_s = simp_cond_s + "((&&|!!)" + simp_cond_s + ")*";
         std::regex COMP_COND(comp_cond_s);
 
+
+        std::string if_else_if_else = "((if|elseif)\\("+simp_cond_s+"\\)|else)";
+        std::regex IEIE_r(if_else_if_else);
 /*
  * CLARA conditional statement
  */
@@ -359,7 +362,7 @@ std::string ServiceState::to_string() {
             std::vector<std::string> st = tokenize(pCode, ";");
 
             for (std::string text : st) {
-                if (text != "" && text != "}") {
+                if (text != "") {
                     r.push_back(text);
                 }
             }
@@ -435,9 +438,10 @@ std::string ServiceState::to_string() {
 
             std::string tmp = iCnd.substr(0, iCnd.find(")") + 1);
 
-            if (std::regex_match(tmp, COND)) {
+            if (std::regex_match(tmp, IEIE_r)) {
                 try {
-                    std::string statement_str = iCnd.substr(iCnd.find('{'));
+                    std::string statement_str = iCnd.substr(iCnd.find('{')+1);
+                    statement_str = statement_str.substr(0, statement_str.size()-1);
 
                     if (statement_str.find(my_service_name) == std::string::npos) {
                         return Instruction("null");
@@ -448,7 +452,8 @@ std::string ServiceState::to_string() {
                     if (std::strncmp(iCnd.c_str(), "}if(", 4) == 0 ||
                         strncmp(iCnd.c_str(), "if(", 3) == 0) {
                         std::string condition_str =
-                                iCnd.substr(iCnd.find('(') + 1, iCnd.find_last_of(')'));
+                                iCnd.substr(iCnd.find('(') + 1);
+                        condition_str = condition_str.substr(0, condition_str.find(')'));
                         Condition tc(condition_str, my_service_name);
                         ti.set_if_condition(tc);
                         ti.add_if_cond_statement(ts);

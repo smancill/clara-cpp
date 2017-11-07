@@ -170,20 +170,18 @@ TEST(CompositionCompiler, TestIfElseCondRegex)
 {
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
     std::string cond =  R"(if(10.10.10.1_java:C:S1==FOO){)"
-            R"(  10.10.10.1_java:C:S1+10.10.10.1_java:C:S4;)"
-            R"(}else{)"
-            R"(  10.10.10.1_java:C:S3+10.10.10.1_java:C:S4;)"
-            R"(})";
+                        R"(  10.10.10.1_java:C:S1+10.10.10.1_java:C:S4;)"
+                        R"(}else{)"
+                        R"(  10.10.10.1_java:C:S3+10.10.10.1_java:C:S4;)"
+                        R"(})";
 
     std::string result = cc.test_regex(cond);
     ASSERT_THAT(result, Eq("COND"));
 }
 
-TEST(CompositionCompiler, ConditionTest) {
+TEST(CompositionCompiler, SimpleConditionTest) {
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
-    cc.compile(composition);
-    std::string simple =    R"(10.10.10.1_java:C:S1;)"
-                            R"(if(10.10.10.1_java:C:S1==FOO){)"
+    std::string simple =    R"(if(10.10.10.1_java:C:S1==FOO){)"
                             R"(  10.10.10.1_java:C:S1+10.10.10.1_java:C:S2;)"
                             R"(})";
 

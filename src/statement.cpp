@@ -81,6 +81,7 @@ namespace composition {
         for (std::string el : st) {
             el = remove_first(el, '&');
             el = remove_first(el, '{');
+            el = remove_first(el, ';');
             element_set.push_back(el);
         }
 

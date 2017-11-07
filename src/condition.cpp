@@ -192,10 +192,16 @@ namespace composition {
                                        const ServiceState& s1,
                                        const ServiceState& s2) {
 
-        std::set<ServiceState>::iterator it1 = sc.find(s1);
-        std::set<ServiceState>::iterator it2 = sc.find(s2);
+        std::set<ServiceState>::iterator it1;
+        for (it1 = sc.begin(); it1 != sc.end(); ++it1)
+        {
+            auto f = *it1;
+            if (s1 == f || s2 == f) {
+                return true;
+            }
+        }
 
-        return (it1 != sc.end() || it2 != sc.end());
+        return false;
     }
 
     bool Condition::is_true(const ServiceState& owner_ss,

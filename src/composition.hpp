@@ -92,7 +92,7 @@ public:
     bool equals(const ServiceState& ss);
     int hash_code();
     std::string to_string();
-    bool operator==(const ServiceState& lhs);
+    bool operator==(const ServiceState& lhs) const;
     bool operator<(const ServiceState& lhs) const;
 private:
     std::string name_;

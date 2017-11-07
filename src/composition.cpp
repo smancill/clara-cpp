@@ -98,14 +98,11 @@ void ServiceState::set_state(const std::string& state) {
 }
 
 bool ServiceState::equals(const ServiceState& ss) {
-    if (this->name_ == ss.name_ && this->state_ == ss.state_) {
-        return true;
-    }
-    return false;
+    return (this->name_ == ss.name_ && this->state_ == ss.state_);
 }
 
-bool ServiceState::operator==(const ServiceState &lhs) {
-    return this->get_name() == lhs.name_;
+bool ServiceState::operator==(const ServiceState &lhs) const {
+    return (this->name_ == lhs.name_ && this->state_ == lhs.state_);
 }
 
 int ServiceState::hash_code() {
@@ -115,7 +112,7 @@ int ServiceState::hash_code() {
 }
 
 bool ServiceState::operator<(const ServiceState& lhs) const {
-    return this->name_ < lhs.name_;
+    return (this->name_ < lhs.name_ && this->state_ < lhs.state_);
 }
 
 std::string ServiceState::to_string() {
@@ -405,7 +402,7 @@ std::string ServiceState::to_string() {
         bool CompositionCompiler::parse_conditional_statement(const std::string& iStmt,
                                                               Instruction& ti)
         {
-            if (std::regex_match(iStmt, Statement_r)) {
+            if (std::regex_match(iStmt, COND)) {
                 if (iStmt.find(my_service_name) == std::string::npos) {
                     return false;
                 }

@@ -17,8 +17,7 @@ set(CLARA_SRC
   service.cpp
   service_engine.cpp
   service_report.cpp
-  service_state.cpp
-  third_party/dropbox/json11.cpp
+    third_party/dropbox/json11.cpp
   statement.cpp
   utils.cpp
 )

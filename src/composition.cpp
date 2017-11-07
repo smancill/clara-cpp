@@ -151,9 +151,7 @@ std::string ServiceState::to_string() {
  *      S1 + S2 , S3;
  *      S1;
  */
-        std::string STATEMENT = SERV_NAME + "(," + SERV_NAME + ")*"
-                                + "((\\+&?" + SERV_NAME + ")*|(\\+" + SERV_NAME
-                                + "(," + SERV_NAME + ")*)*)";
+        std::string STATEMENT = SERV_NAME+"(,"+SERV_NAME+")*((\\+&?"+SERV_NAME+")*|(\\+"+SERV_NAME+"(,"+SERV_NAME+")*)*)";
 
 // creates regex object out of string
         std::regex Statement_r(STATEMENT);
@@ -176,7 +174,7 @@ std::string ServiceState::to_string() {
 /*
  * CLARA conditional statement
  */
-        std::string cond_s = "((\\}?if|\\}elseif)\\(" + comp_cond_s + "\\)\\{" + STATEMENT + ")|(\\}else\\{" + STATEMENT + ")";
+        std::string cond_s = "((if|elseif)\\("+simp_cond_s+"\\)\\{\\s*("+STATEMENT+";\\s*)*\\})*(else\\{\\s*("+STATEMENT+";\\s*)*\\})?";
         std::regex COND(cond_s);
 
         CompositionCompiler::CompositionCompiler(const std::string& service)

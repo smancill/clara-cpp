@@ -128,9 +128,18 @@ public:
 private:
     void run();
 
-    xmsg::Message alive_message();
+    xmsg::Message alive_message()
+    {
+        return build_message(constants::dpe_alive, alive_report());
+    }
 
-    xmsg::Message json_message();
+    xmsg::Message report_message()
+    {
+        return build_message(constants::dpe_report, json_report());
+    }
+
+    xmsg::Message build_message(const std::string& topic_prefix,
+                                const std::string& json);
 
 private:
     bool wait(int time_out)
@@ -469,7 +478,7 @@ void ReportService::run()
         auto con = base_.connect(fe_addr);
         while (true) {
             auto alive_msg = alive_message();
-            auto json_msg = json_message();
+            auto json_msg = report_message();
             base_.publish(con, alive_msg);
             base_.publish(con, json_msg);
             if (!wait(config_.report_period)) {
@@ -482,21 +491,14 @@ void ReportService::run()
 };
 
 
-xmsg::Message ReportService::alive_message()
+xmsg::Message ReportService::build_message(const std::string& topic_prefix,
+                                           const std::string& data)
 {
-    auto topic = xmsg::Topic::build(constants::dpe_alive,
+    auto topic = xmsg::Topic::build(topic_prefix,
                                     config_.session,
                                     base_.name());
-    return util::build_request(std::move(topic), alive_report());
-}
-
-
-xmsg::Message ReportService::json_message()
-{
-    auto topic = xmsg::Topic::build(constants::dpe_report,
-                                    config_.session,
-                                    base_.name());
-    return util::build_request(std::move(topic), json_report());
+    return xmsg::Message{std::move(topic), type::JSON.mime_type(),
+                         std::vector<std::uint8_t>{data.begin(), data.end()}};
 }
 
 } // end namespace clara

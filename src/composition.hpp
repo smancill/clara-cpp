@@ -110,7 +110,8 @@ public:
     std::set<ServiceState> get_or_not_states();
     bool is_true(const ServiceState& owner_ss, const ServiceState& input_ss);
     std::string to_string();
-    bool equals(const Condition& c);
+    bool equals(const Condition& c) const;
+    bool operator<(const Condition& c) const;
 private:
     std::string service_name_;
     std::set<ServiceState> and_states;
@@ -139,6 +140,7 @@ public:
     bool equals(const Statement& s);
     int hash_code();
     bool operator<(const Statement& lhs) const;
+    bool operator==(const Statement& lhs) const;
 
 private:
     std::string service_name_;
@@ -181,6 +183,7 @@ public:
     bool equals(const Instruction& i);
     int hash_code();
     bool operator<(const Instruction& lhs) const;
+    bool operator==(const Instruction& lhs) const;
 
 private:
     Condition if_condition;

@@ -213,8 +213,8 @@ std::string ServiceState::to_string() {
                  */
                 if (std::strncmp(scs1.c_str(), "if(", 3) == 0
                     || std::strncmp(scs1.c_str(), "}if(", 4) == 0
-                    || std::strncmp(scs1.c_str(), "}elseif(", 8) == 0
-                    || std::strncmp(scs1.c_str(), "}else", 5) == 0) {
+                    || std::strncmp(scs1.c_str(), "elseif(", 7) == 0
+                    || std::strncmp(scs1.c_str(), "else", 4) == 0) {
 
                     Instruction instruction = parse_condition(scs1);
 
@@ -226,8 +226,8 @@ std::string ServiceState::to_string() {
                         if (std::strncmp(scs2.c_str(), "}", 1) != 0
                             && std::strncmp(scs2.c_str(), "if(", 3) != 0
                             && std::strncmp(scs2.c_str(), "}if(", 4) != 0
-                            && std::strncmp(scs2.c_str(), "}elseif(", 8) != 0
-                            && std::strncmp(scs2.c_str(), "}else", 5) != 0) {
+                            && std::strncmp(scs2.c_str(), "elseif(", 7) != 0
+                            && std::strncmp(scs2.c_str(), "else", 4) != 0) {
 
                             /*
                              * check to make sure the instruction name is not
@@ -297,10 +297,13 @@ std::string ServiceState::to_string() {
             bool in_condition = false;
             bool condition_chosen = false;
 
-            for (Instruction inst : instructions) {
-                if (!inst.get_un_cond_statements().empty()) {
+            std::set<Instruction>::iterator it;
+            for(it = instructions.begin(); it != instructions.end(); ++it)
+            {
+                auto f = *it;
+                if (!f.get_un_cond_statements().empty()) {
                     in_condition = false;
-                    for (Statement stmt : inst.get_un_cond_statements()) {
+                    for (Statement stmt : f.get_un_cond_statements()) {
                         for (std::string s : stmt.get_output_links()) {
                             outputs.insert(s);
                         }
@@ -308,12 +311,12 @@ std::string ServiceState::to_string() {
                     continue;
                 }
 
-                if (!inst.get_if_condition().get_service_name().empty()) {
+                if (f.get_if_condition().get_service_name() != "default") {
                     in_condition = true;
                     condition_chosen = false;
-                    if (inst.get_if_condition().is_true(owner_ss, input_ss)) {
+                    if (f.get_if_condition().is_true(owner_ss, input_ss)) {
                         condition_chosen = true;
-                        for (Statement st : inst.get_if_cond_statements()) {
+                        for (Statement st : f.get_if_cond_statements()) {
                             for (std::string s : st.get_output_links()) {
                                 outputs.insert(s);
                             }
@@ -322,11 +325,11 @@ std::string ServiceState::to_string() {
                     continue;
                 }
 
-                if (in_condition && !condition_chosen) {
-                    if (!inst.get_else_if_condition().get_service_name().empty()) {
-                        if (inst.get_else_if_condition().is_true(owner_ss, input_ss)) {
+                //if (in_condition && !condition_chosen) {
+                    if (f.get_else_if_condition().get_service_name() != "default") {
+                        if (f.get_else_if_condition().is_true(owner_ss, input_ss)) {
                             condition_chosen = true;
-                            for (Statement stmt : inst.get_else_if_cond_statements()) {
+                            for (Statement stmt : f.get_else_if_cond_statements()) {
                                 for (std::string s : stmt.get_output_links()) {
                                     outputs.insert(s);
                                 }
@@ -335,15 +338,17 @@ std::string ServiceState::to_string() {
                         continue;
                     }
 
-                    if (!inst.get_else_cond_statements().empty()) {
+                    bool t = f.get_else_cond_statements().empty();
+
+                    if (!(f.get_else_cond_statements().empty())) {
                         condition_chosen = true;
-                        for (Statement stmt : inst.get_else_cond_statements()) {
+                        for (Statement stmt : f.get_else_cond_statements()) {
                             for (std::string s : stmt.get_output_links()) {
                                 outputs.insert(s);
                             }
                         }
                     }
-                }
+                //}
             }
             return outputs;
         }
@@ -411,10 +416,10 @@ std::string ServiceState::to_string() {
 
                 // make a default instruction for comparison
                 Instruction di("default_instruction");
-                if (ti.get_if_condition().equals(di.get_if_condition())) {
+                if (!(ti.get_if_condition().equals(di.get_if_condition()))) {
                     ti.add_if_cond_statement(ts);
                 }
-                else if (ti.get_else_if_condition().equals(di.get_else_if_condition())) {
+                else if (!(ti.get_else_if_condition().equals(di.get_else_if_condition()))) {
                     ti.add_else_if_cond_statement(ts);
                 }
                 else {
@@ -433,7 +438,7 @@ std::string ServiceState::to_string() {
         {
             Instruction ti(my_service_name);
 
-            std::string tmp = iCnd.substr(0, iCnd.find(")") + 1);
+            std::string tmp = iCnd.substr(0, iCnd.find("{"));
 
             if (std::regex_match(tmp, IEIE_r)) {
                 try {
@@ -455,14 +460,14 @@ std::string ServiceState::to_string() {
                         ti.set_if_condition(tc);
                         ti.add_if_cond_statement(ts);
                     }
-                    else if (std::strncmp(iCnd.c_str(), "}elseif(", 8) == 0) {
+                    else if (std::strncmp(iCnd.c_str(), "elseif(", 7) == 0) {
                         std::string condition_str = iCnd.substr(iCnd.find('(') + 1,
                                                                 iCnd.find_last_of(')'));
                         Condition tc(condition_str, my_service_name);
                         ti.set_else_if_condition(tc);
                         ti.add_else_if_cond_statement(ts);
                     }
-                    else if (std::strncmp(iCnd.c_str(), "}else", 5) == 0) {
+                    else if (std::strncmp(iCnd.c_str(), "else", 4) == 0) {
                         ti.add_else_cond_statement(ts);
                     }
                 } catch (const std::exception& e) {

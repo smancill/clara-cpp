@@ -158,6 +158,11 @@ namespace composition {
         return this->service_name_ < lhs.service_name_;
     }
 
+    bool Statement::operator==(const Statement& lhs) const {
+        return this->service_name_ == lhs.service_name_;
+        // todo : implement rest
+    }
+
     int Statement::hash_code() {
         int result = std::hash<std::string>{}(service_name_);
         result = 31 * result + std::hash<std::string>{}(statement_string_);

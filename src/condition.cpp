@@ -182,10 +182,21 @@ namespace composition {
                                         const ServiceState& s1,
                                         const ServiceState& s2) {
 
-        std::set<ServiceState>::iterator it1 = sc.find(s1);
-        std::set<ServiceState>::iterator it2 = sc.find(s2);
+        bool one = false, two = false;
+        std::set<ServiceState>::iterator it;
 
-        return (it1 != sc.end() && it2 != sc.end());
+        for(it = sc.begin(); it != sc.end(); ++it)
+        {
+            auto f = *it;
+            if (s1 == f) {
+                one = true;
+            }
+            if (s2 == f) {
+                two = true;
+            }
+        }
+
+        return one && two;
     }
 
     bool Condition::check_or_condition(const std::set<ServiceState>& sc,
@@ -218,17 +229,32 @@ namespace composition {
         return check_and && check_and_not && check_or && check_or_not;
     }
 
-    bool Condition::equals(const Condition& c) {
+    bool Condition::equals(const Condition& c) const {
         if (this->service_name_ == c.service_name_) {
-//            if (this->or_not_states == c.get_or_states()) {
-//                if (this->or_not_states == c.get_or_not_states()) {
-//                    if (this->and_states == c.get_and_states()) {
-//                        if (this->and_not_states == c.get_and_not_states()) {
+            if (this->or_not_states == c.or_states) {
+                if (this->or_not_states == c.or_not_states) {
+                    if (this->and_states == c.and_states) {
+                        if (this->and_not_states == c.and_not_states) {
                             return true;
-//                        }
-//                    }
-//                }
-//            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    bool Condition::operator<(const Condition& c) const {
+        if (this->service_name_ < c.service_name_) {
+            if (this->and_states < c.and_states) {
+                if (this->and_not_states < c.and_not_states) {
+                    if (this->or_states < c.or_states) {
+                        if (this->or_not_states < c.or_states) {
+                            return true;
+                        }
+                    }
+                }
+            }
         }
         return false;
     }

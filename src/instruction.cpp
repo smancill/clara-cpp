@@ -75,7 +75,7 @@ namespace clara {
         }
 
         std::set<Statement> Instruction::get_else_cond_statements() {
-            return else_if_cond_statements;
+            return else_cond_statements;
         }
 
         void Instruction::set_else_cond_statements(const std::set<Statement>& else_cond_statements) {
@@ -119,31 +119,55 @@ namespace clara {
                 return false;
             }
 
-//            if (this->if_cond_statements != i.if_cond_statements) {
-//                return false;
-//            }
+            if (this->if_cond_statements != i.if_cond_statements) {
+                return false;
+            }
 
             if (!(this->else_if_condition.equals(i.else_if_condition))) {
                 return false;
             }
 
-//            if (this->else_if_cond_statements != i.else_if_cond_statements) {
-//                return false;
-//            }
-//
-//            if (this->else_cond_statements != i.else_cond_statements) {
-//                return false;
-//            }
-//
-//            if (this->un_cond_statements != i.un_cond_statements) {
-//                return false;
-//            }
+            if (this->else_if_cond_statements != i.else_if_cond_statements) {
+                return false;
+            }
+
+            if (this->else_cond_statements != i.else_cond_statements) {
+                return false;
+            }
+
+            if (this->un_cond_statements != i.un_cond_statements) {
+                return false;
+            }
 
             return true;
         }
 
         bool Instruction::operator<(const Instruction& lhs) const {
-            return this->service_name_< lhs.service_name_;
+            if(this->service_name_ < lhs.service_name_) {
+                return true;
+            }
+            if(this->if_condition < lhs.if_condition) {
+                return true;
+            }
+            if(this->if_cond_statements < lhs.if_cond_statements) {
+                return true;
+            }
+            if(this->else_if_condition < lhs.else_if_condition) {
+                return true;
+            }
+            if(this->else_if_cond_statements < lhs.else_if_cond_statements) {
+                return true;
+            }
+            if(this->else_cond_statements < lhs.else_cond_statements) {
+                return true;
+            }
+
+            return false;
+        }
+
+        bool Instruction::operator==(const Instruction& lhs) const {
+            return this->service_name_ == lhs.service_name_;
+            // todo : implement rest
         }
 
         int Instruction::hash_code() {

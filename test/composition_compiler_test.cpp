@@ -198,6 +198,67 @@ TEST(CompositionCompiler, MultipleStatementsConditionTest) {
     ASSERT_THAT(cc.get_links(owner, input), ContainerEq(expected));
 }
 
+TEST(CompositionCompiler, IfElseIfElseConditionLinksTest) {
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    std::string cond =  R"(if(10.10.10.1_java:C:S1=="FOO"){)"
+            R"(  10.10.10.1_java:C:S1+10.10.10.1_java:C:S2;)"
+            R"(}elseif(10.10.10.1_java:C:S1=="BOO"){)"
+            R"(  10.10.10.1_java:C:S1+10.10.10.1_java:C:S3;)"
+            R"(}else{)"
+            R"(  10.10.10.1_java:C:S1+10.10.10.1_java:C:S4;)"
+            R"(})";
+
+    cc.compile(cond);
+
+    std::set<std::string> inputLinks;
+    std::set<std::string> outputLinks;
+
+    auto ins = cc.get_instructions();
+    for (Instruction i : ins) {
+        auto ifs = i.get_if_cond_statements();
+        for (Statement s : ifs) {
+            auto ils = s.get_input_links();
+            for (auto l : ils) {
+                inputLinks.insert(l);
+            }
+            auto ols = s.get_output_links();
+            for (auto l : ols) {
+                outputLinks.insert(l);
+            }
+        }
+        auto eifs = i.get_else_if_cond_statements();
+        for (Statement s : eifs) {
+            auto ils = s.get_input_links();
+            for (auto l : ils) {
+                inputLinks.insert(l);
+            }
+            auto ols = s.get_output_links();
+            for (auto l : ols) {
+                outputLinks.insert(l);
+            }
+        }
+        auto es = i.get_else_cond_statements();
+        for (Statement s : es) {
+            auto ils = s.get_input_links();
+            for (auto l : ils) {
+                inputLinks.insert(l);
+            }
+            auto ols = s.get_output_links();
+            for (auto l : ols) {
+                outputLinks.insert(l);
+            }
+        }
+    }
+
+    auto expected_o = output_set{"10.10.10.1_java:C:S2", "10.10.10.1_java:C:S3", "10.10.10.1_java:C:S4"};
+
+    ASSERT_THAT(outputLinks, ContainerEq(expected_o));
+
+    auto expected_i = output_set{"10.10.10.1_java:C:S1"};
+
+    ASSERT_THAT(inputLinks, ContainerEq(expected_i));
+}
+
 int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);

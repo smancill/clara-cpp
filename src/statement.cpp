@@ -100,10 +100,11 @@ namespace composition {
             throw std::logic_error{"Routing statement parsing exception. "
                                            "Service name can not be found in the statement."};
         } else {
-            int pIndex = index - 1;
-            if (pIndex >= 0) {
-                std::string element = element_set[pIndex];
-                input_links.insert(element);
+            if (index == 0) {
+                std::string element = element_set[0];
+                if (element != "") {
+                    input_links.insert(element);
+                }
             }
 
             int nIndex = index + 1;

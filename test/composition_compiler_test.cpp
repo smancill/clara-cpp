@@ -101,6 +101,19 @@ TEST(CompositionCompiler, LastServiceOnALoop)
     ASSERT_THAT(cc.get_unconditional_links(), ContainerEq(expected));
 }
 
+TEST(CompositionCompiler, MultipleOutputs)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    std::string composition2 =  R"(10.10.10.1_java:C:S1+)"
+                                R"(10.10.10.1_java:C:S3;)"
+                                R"(10.10.10.1_java:C:S1+)"
+                                R"(10.10.10.1_java:C:S4;)";
+    cc.compile(composition2);
+
+    auto expected = output_set{"10.10.10.1_java:C:S3", "10.10.10.1_java:C:S4"};
+    ASSERT_THAT(cc.get_unconditional_links(), ContainerEq(expected));
+}
+
 TEST(CompositionCompiler, SimpleConditionTest) {
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
     std::string simple =    R"(if(10.10.10.1_java:C:S1=="FOO"){)"
@@ -165,6 +178,22 @@ TEST(CompositionCompiler, IfElseIfElseConditionTest) {
     auto input = ServiceState("WHATEVER", "DON'T CARE");
 
     auto expected = output_set{"10.10.10.1_java:C:S2"};
+
+    ASSERT_THAT(cc.get_links(owner, input), ContainerEq(expected));
+}
+
+TEST(CompositionCompiler, MultipleStatementsConditionTest) {
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    std::string simple =    R"(if(10.10.10.1_java:C:S1=="FOO"){)"
+                            R"(  10.10.10.1_java:C:S1+10.10.10.1_java:C:S2;)"
+                            R"(  10.10.10.1_java:C:S1+10.10.10.1_java:C:S3;)"
+                            R"(})";
+
+    cc.compile(simple);
+    auto owner = ServiceState("10.10.10.1_java:C:S1", "FOO");
+    auto input = ServiceState("WHATEVER", "DON'T CARE");
+
+    auto expected = output_set{"10.10.10.1_java:C:S2", "10.10.10.1_java:C:S3"};
 
     ASSERT_THAT(cc.get_links(owner, input), ContainerEq(expected));
 }

@@ -64,7 +64,12 @@ namespace composition {
         log_and_inputs.clear();
 
         if(statement.find(service_name_) != std::string::npos) {
-            parse_linked(service_name_, statement);
+
+            std::vector<std::string> statements = tokenize(statement, ";");
+            for (std::string s : statements) {
+                parse_linked(service_name_, s);
+            }
+
             if (is_log_and(service_name_, statement)) {
                 for (std::string sn : input_links) {
                     log_and_inputs.insert(sn);
@@ -76,7 +81,6 @@ namespace composition {
     void Statement::parse_linked(const std::string& service_name,
                                  const std::string& statement) {
         std::vector<std::string> element_set;
-
         std::vector<std::string> st = tokenize(statement, "+");
         for (std::string el : st) {
             el = remove_first(el, '&');
@@ -94,7 +98,7 @@ namespace composition {
         }
         if (index == -1) {
             throw std::logic_error{"Routing statement parsing exception. "
-                       "Service name can not be found in the statement."};
+                                           "Service name can not be found in the statement."};
         } else {
             int pIndex = index - 1;
             if (pIndex >= 0) {
@@ -108,7 +112,6 @@ namespace composition {
                 output_links.insert(element);
             }
         }
-
     }
 
     bool Statement::is_log_and(const std::string& service_name,

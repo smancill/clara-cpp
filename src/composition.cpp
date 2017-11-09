@@ -297,8 +297,17 @@ std::string ServiceState::to_string() {
             bool in_condition = false;
             bool condition_chosen = false;
 
-            std::set<Instruction>::iterator it;
-            for(it = instructions.begin(); it != instructions.end(); ++it)
+
+            /**
+             * Reverse through instruction set backwards, starting with 'if' conditions
+             *
+             * If not reversed, ran into issue where the else condition statement's output
+             * would always be added, so now else is the last condition evaluated and
+             * can only be added to the output if nothing else has been added (the IFs and
+             * ELSE IFs before were not true)
+             */
+            std::set<Instruction>::reverse_iterator it;
+            for(it = instructions.rbegin(); it != instructions.rend(); ++it)
             {
                 auto f = *it;
                 if (!f.get_un_cond_statements().empty()) {
@@ -312,43 +321,32 @@ std::string ServiceState::to_string() {
                 }
 
                 if (f.get_if_condition().get_service_name() != "default") {
-                    in_condition = true;
-                    condition_chosen = false;
                     if (f.get_if_condition().is_true(owner_ss, input_ss)) {
-                        condition_chosen = true;
                         for (Statement st : f.get_if_cond_statements()) {
                             for (std::string s : st.get_output_links()) {
                                 outputs.insert(s);
                             }
                         }
                     }
-                    continue;
                 }
-
-                //if (in_condition && !condition_chosen) {
-                    if (f.get_else_if_condition().get_service_name() != "default") {
-                        if (f.get_else_if_condition().is_true(owner_ss, input_ss)) {
-                            condition_chosen = true;
-                            for (Statement stmt : f.get_else_if_cond_statements()) {
-                                for (std::string s : stmt.get_output_links()) {
-                                    outputs.insert(s);
-                                }
+                else if (f.get_else_if_condition().get_service_name() != "default") {
+                    if (f.get_else_if_condition().is_true(owner_ss, input_ss)) {
+                        for (Statement stmt : f.get_else_if_cond_statements()) {
+                            for (std::string s : stmt.get_output_links()) {
+                                outputs.insert(s);
                             }
                         }
-                        continue;
                     }
-
-                    bool t = f.get_else_cond_statements().empty();
-
-                    if (!(f.get_else_cond_statements().empty())) {
-                        condition_chosen = true;
+                }
+                else {
+                    if ((!(f.get_else_cond_statements().empty())) && outputs.empty()) {
                         for (Statement stmt : f.get_else_cond_statements()) {
                             for (std::string s : stmt.get_output_links()) {
                                 outputs.insert(s);
                             }
                         }
                     }
-                //}
+                }
             }
             return outputs;
         }
@@ -453,16 +451,15 @@ std::string ServiceState::to_string() {
 
                     if (std::strncmp(iCnd.c_str(), "}if(", 4) == 0 ||
                         strncmp(iCnd.c_str(), "if(", 3) == 0) {
-                        std::string condition_str =
-                                iCnd.substr(iCnd.find('(') + 1);
+                        std::string condition_str = iCnd.substr(iCnd.find('(') + 1);
                         condition_str = condition_str.substr(0, condition_str.find(')'));
                         Condition tc(condition_str, my_service_name);
                         ti.set_if_condition(tc);
                         ti.add_if_cond_statement(ts);
                     }
                     else if (std::strncmp(iCnd.c_str(), "elseif(", 7) == 0) {
-                        std::string condition_str = iCnd.substr(iCnd.find('(') + 1,
-                                                                iCnd.find_last_of(')'));
+                        std::string condition_str = iCnd.substr(iCnd.find('(') + 1);
+                        condition_str = condition_str.substr(0, condition_str.find(')'));
                         Condition tc(condition_str, my_service_name);
                         ti.set_else_if_condition(tc);
                         ti.add_else_if_cond_statement(ts);
@@ -484,6 +481,7 @@ std::string ServiceState::to_string() {
 
         std::string CompositionCompiler::no_blanks(std::string x)
         {
+            x.erase(std::remove (x.begin(), x.end(), '"'), x.end());
             x.erase(std::remove (x.begin(), x.end(), ' '), x.end());
             return x;
         }

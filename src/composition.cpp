@@ -124,56 +124,52 @@ std::string ServiceState::to_string() {
 //composition compiler class implementation
 //*****************************************
 
-/*
- * IP address regex
- */
+
+        //IP address regex
         std::string IP = "([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3})";
 
-/*
- * String that Starts with a character and can have preceding numbers
- */
+        //String that Starts with a character and can have preceding numbers
         std::string WORD = "([A-Z|a-z]*[0-9]*)";
         std::string PORT = "(.%[0-9]*)*";
 
-/*
- * Service name
- * Format: dpe_name:container_name:engine_name
- */
+        /*
+         * Service name
+         * Format: dpe_name:container_name:engine_name
+         */
         std::string SERV_NAME = IP + PORT + "_(java|python|cpp):" + WORD + ":" + WORD;
 
-/*
- * Routing statement Examples:
- *      S1 + S2 + S3;
- *      S1 , S2 + S3;
- *      S1 + S2 , S3;
- *      S1;
- */
+        /*
+         * Routing statement Examples:
+         *      S1 + S2 + S3;
+         *      S1 , S2 + S3;
+         *      S1 + S2 , S3;
+         *      S1;
+         */
         std::string STATEMENT = SERV_NAME+"(,"+SERV_NAME+")*((\\+&?"+SERV_NAME+")*|(\\+"+SERV_NAME+"(,"+SERV_NAME+")*)*)";
 
-// creates regex object out of string
+        // creates regex object out of string for statement
         std::regex Statement_r(STATEMENT);
 
-/*
- * CLARA simple Condition. Example:
- *      Service == "state_name"
- *      Service != "state_name"
- */
+        /*
+         * CLARA simple Condition. Example:
+         *      Service == "state_name"
+         *      Service != "state_name"
+         */
         std::string simp_cond_s = SERV_NAME + "(==|!=)" + WORD;
         std::regex SIMP_COND(simp_cond_s);
 
-/*
- * CLARA complex Condition. Example:
- *      Service1 == "state_name1" && Service2 == "state_name2"
- */
+        /*
+         * CLARA complex Condition. Example:
+         *      Service1 == "state_name1" && Service2 == "state_name2"
+         */
         std::string comp_cond_s = simp_cond_s + "((&&|!!)" + simp_cond_s + ")*";
         std::regex COMP_COND(comp_cond_s);
 
-
+        // regex statement to be used for checking (if | else if | else) statements
         std::string if_else_if_else = "((if|elseif)\\("+simp_cond_s+"\\)|else)";
         std::regex IEIE_r(if_else_if_else);
-/*
- * CLARA conditional statement
- */
+
+        //CLARA conditional statement
         std::string cond_s = "((if|elseif)\\("+simp_cond_s+"\\)\\{\\s*("+STATEMENT+";\\s*)*\\})*(else\\{\\s*("+STATEMENT+";\\s*)*\\})?";
         std::regex COND(cond_s);
 
@@ -205,16 +201,8 @@ std::string ServiceState::to_string() {
             while (++i < pp.size()) {
                 std::string scs1 = pp[i];
 
-                /*
-                 * check if conditional statements using
-                 * strncmp, checks the specified amount of
-                 * chars from the beginning of the given
-                 * string, if 0 it is found
-                 */
-                if (std::strncmp(scs1.c_str(), "if(", 3) == 0
-                    || std::strncmp(scs1.c_str(), "}if(", 4) == 0
-                    || std::strncmp(scs1.c_str(), "elseif(", 7) == 0
-                    || std::strncmp(scs1.c_str(), "else", 4) == 0) {
+                //check if conditional statements using regex statements
+                if (std::regex_match(scs1, COND)) {
 
                     Instruction instruction = parse_condition(scs1);
 
@@ -222,13 +210,7 @@ std::string ServiceState::to_string() {
                     while (++i < pp.size()) {
                         std::string scs2 = pp[i];
 
-                        // using strncmp like before, making sure not found this time
-                        if (std::strncmp(scs2.c_str(), "}", 1) != 0
-                            && std::strncmp(scs2.c_str(), "if(", 3) != 0
-                            && std::strncmp(scs2.c_str(), "}if(", 4) != 0
-                            && std::strncmp(scs2.c_str(), "elseif(", 7) != 0
-                            && std::strncmp(scs2.c_str(), "else", 4) != 0) {
-
+                        if (!(std::regex_match(scs2, COND))) {
                             /*
                              * check to make sure the instruction name is not
                              * set to null, which is set in default, call parse
@@ -241,8 +223,8 @@ std::string ServiceState::to_string() {
                             break;
                         }
                     }
-                    // add the instruction to the instructions set
                     if (instruction.get_service_name() != "null") {
+                        // add the instruction to the instructions set
                         instructions.insert(instruction);
                     }
                     i--;
@@ -294,9 +276,6 @@ std::string ServiceState::to_string() {
         std::set<std::string> CompositionCompiler::get_links(const ServiceState& owner_ss,
                                                              const ServiceState& input_ss) {
             std::set<std::string> outputs;
-            bool in_condition = false;
-            bool condition_chosen = false;
-
 
             /**
              * Reverse through instruction set backwards, starting with 'if' conditions
@@ -311,7 +290,6 @@ std::string ServiceState::to_string() {
             {
                 auto f = *it;
                 if (!f.get_un_cond_statements().empty()) {
-                    in_condition = false;
                     for (Statement stmt : f.get_un_cond_statements()) {
                         for (std::string s : stmt.get_output_links()) {
                             outputs.insert(s);
@@ -338,12 +316,10 @@ std::string ServiceState::to_string() {
                         }
                     }
                 }
-                else {
-                    if ((!(f.get_else_cond_statements().empty())) && outputs.empty()) {
-                        for (Statement stmt : f.get_else_cond_statements()) {
-                            for (std::string s : stmt.get_output_links()) {
-                                outputs.insert(s);
-                            }
+                else if ((!(f.get_else_cond_statements().empty())) && outputs.empty()) {
+                    for (Statement stmt : f.get_else_cond_statements()) {
+                        for (std::string s : stmt.get_output_links()) {
+                            outputs.insert(s);
                         }
                     }
                 }
@@ -393,8 +369,7 @@ std::string ServiceState::to_string() {
                 }
                 else {
                     std::cout << "DDD ----- > statement = " + iStmt << std::endl;
-                    throw std::logic_error{"Syntax error in the CLARA routing program. "
-                                                   "Malformed routing statement"};
+                    throw std::logic_error{"Syntax error in the CLARA routing program. Malformed routing statement"};
                 }
             } catch (const std::logic_error& e) {
                 std::cout << e.what() << std::endl;
@@ -450,7 +425,8 @@ std::string ServiceState::to_string() {
                     Statement ts(statement_str, my_service_name);
 
                     if (std::strncmp(iCnd.c_str(), "}if(", 4) == 0 ||
-                        strncmp(iCnd.c_str(), "if(", 3) == 0) {
+                                strncmp(iCnd.c_str(), "if(", 3) == 0) {
+
                         std::string condition_str = iCnd.substr(iCnd.find('(') + 1);
                         condition_str = condition_str.substr(0, condition_str.find(')'));
                         Condition tc(condition_str, my_service_name);
@@ -485,25 +461,6 @@ std::string ServiceState::to_string() {
             x.erase(std::remove (x.begin(), x.end(), ' '), x.end());
             return x;
         }
-
-        std::string CompositionCompiler::test_regex(std::string s) {
-            if (std::regex_match(s, Statement_r)) {
-                return "STATEMENT";
-            }
-            if (std::regex_match(s, SIMP_COND)) {
-                return "SIMP_COND";
-            }
-            if (std::regex_match(s, COMP_COND)) {
-                return "COMP_COND";
-            }
-            if (std::regex_match(s, COND)) {
-                return "COND";
-            }
-            else {
-                return "did not confine to a regex statement";
-            }
-        }
-
 
 } // end namespace composition
 } // end namespace clara

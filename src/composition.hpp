@@ -138,7 +138,6 @@ public:
     std::set<std::string> get_output_links();
     std::set<std::string> get_log_and_inputs();
     std::string to_string();
-    bool equals(const Statement& s);
     int hash_code();
     bool operator<(const Statement& lhs) const;
     bool operator==(const Statement& lhs) const;
@@ -181,7 +180,6 @@ public:
     void add_un_cond_statement(const Statement& un_cond_statement);
 
     std::string to_string();
-    bool equals(const Instruction& i);
     int hash_code();
     bool operator<(const Instruction& lhs) const;
     bool operator==(const Instruction& lhs) const;

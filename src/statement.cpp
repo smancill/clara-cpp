@@ -129,42 +129,27 @@ namespace composition {
         return false;
     }
 
-    std::string Statement::to_string() {
-        return "Statement {"
-                "serviceName='" + service_name_ + "'"
-//                ", statementString='" + statement_string_ + "'"
-//                ", logAndInputs='"
-//                ", inputLinks=" + input_links + ""
-//                ", outputLinks=" + output_links + ""
-                "}";
-    }
-
-    bool Statement::equals(const Statement& s) {
-        if (!(this->service_name_ == s.service_name_)) {
-            return false;
-        }
-        if (!(this->statement_string_ == s.statement_string_)) {
-            return false;
-        }
-        if (!(this->log_and_inputs == s.log_and_inputs)) {
-            return false;
-        }
-        if (!(this->input_links == s.input_links)) {
-            return false;
-        }
-        if (!(this->output_links == s.output_links)) {
-            return false;
-        }
-        return true;
-    }
-
     bool Statement::operator<(const Statement& lhs) const {
         return this->service_name_ < lhs.service_name_;
     }
 
     bool Statement::operator==(const Statement& lhs) const {
-        return this->service_name_ == lhs.service_name_;
-        // todo : implement rest
+        if (!(this->service_name_ == lhs.service_name_)) {
+            return false;
+        }
+        if (!(this->statement_string_ == lhs.statement_string_)) {
+            return false;
+        }
+        if (!(this->log_and_inputs == lhs.log_and_inputs)) {
+            return false;
+        }
+        if (!(this->input_links == lhs.input_links)) {
+            return false;
+        }
+        if (!(this->output_links == lhs.output_links)) {
+            return false;
+        }
+        return true;
     }
 
     int Statement::hash_code() {
@@ -174,6 +159,16 @@ namespace composition {
         //result = 31 * result + std::hash<std::string>{}(input_links);
         //result = 31 * result + std::hash<std::string>{}(output_links);
         return result;
+    }
+
+    std::string Statement::to_string() {
+        return "Statement {"
+                       "serviceName='" + service_name_ + "'"
+//                ", statementString='" + statement_string_ + "'"
+//                ", logAndInputs='"
+//                ", inputLinks=" + input_links + ""
+//                ", outputLinks=" + output_links + ""
+                       "}";
     }
 
 }

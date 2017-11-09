@@ -98,50 +98,6 @@ namespace clara {
             this->un_cond_statements.insert(un_cond_statement);
         }
 
-        std::string Instruction::to_string() {
-            return "Instruction{"
-//                   "ifCondition=" + if_condition
-//                   + ", ifCondStatements=" + if_cond_statements
-//                   + ", elseifCondition=" + else_if_condition
-//                   + ", elseifCondStatements=" + else_if_cond_statements
-//                   + ", elseCondStatements=" + else_cond_statements
-//                   + ", unCondStatements=" + un_cond_statements
-                   ", serviceName='" + service_name_ + '\''
-                   + '}';
-        }
-
-        bool Instruction::equals(const Instruction& i) {
-            if (this->service_name_ != i.service_name_) {
-                return false;
-            }
-
-            if (!(this->if_condition.equals(i.if_condition))) {
-                return false;
-            }
-
-            if (this->if_cond_statements != i.if_cond_statements) {
-                return false;
-            }
-
-            if (!(this->else_if_condition.equals(i.else_if_condition))) {
-                return false;
-            }
-
-            if (this->else_if_cond_statements != i.else_if_cond_statements) {
-                return false;
-            }
-
-            if (this->else_cond_statements != i.else_cond_statements) {
-                return false;
-            }
-
-            if (this->un_cond_statements != i.un_cond_statements) {
-                return false;
-            }
-
-            return true;
-        }
-
         bool Instruction::operator<(const Instruction& lhs) const {
             if(this->service_name_ < lhs.service_name_) {
                 return true;
@@ -199,6 +155,18 @@ namespace clara {
 
         int Instruction::hash_code() {
             return 0;
+        }
+
+        std::string Instruction::to_string() {
+           return "Instruction{"
+//                   "ifCondition=" + if_condition
+//                   + ", ifCondStatements=" + if_cond_statements
+//                   + ", elseifCondition=" + else_if_condition
+//                   + ", elseifCondStatements=" + else_if_cond_statements
+//                   + ", elseCondStatements=" + else_cond_statements
+//                   + ", unCondStatements=" + un_cond_statements
+                          ", serviceName='" + service_name_ + '\''
+                  + '}';
         }
 
     }

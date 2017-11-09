@@ -84,6 +84,7 @@ namespace composition {
             std::replace(cs.begin(), cs.end(), ')', ' ');
         }
 
+
         if (cs.find("&&") != std::string::npos)  {
             parse_condition(cs, "&&");
         } else if (cs.find("!!") != std::string::npos) {

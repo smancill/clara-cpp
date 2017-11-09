@@ -43,16 +43,17 @@ inline std::vector<std::string> tokenize(std::string s, std::string delim)
     while ((pos = s.find(delim)) != std::string::npos) {
         if (std::strncmp(s.c_str(), "if(", 3) == 0
             || std::strncmp(s.c_str(), "}if(", 4) == 0
-            || std::strncmp(s.c_str(), "}elseif(", 8) == 0
-            || std::strncmp(s.c_str(), "}else", 5) == 0) {
+            || std::strncmp(s.c_str(), "elseif(", 7) == 0
+            || std::strncmp(s.c_str(), "else", 4) == 0) {
             pos = s.find("}");
             token = s.substr(0, pos+1);
             tv.push_back(token);
             s.erase(0, pos + 1);
+        } else {
+            token = s.substr(0, pos);
+            tv.push_back(token);
+            s.erase(0, pos + delim.length());
         }
-        token = s.substr(0, pos);
-        tv.push_back(token);
-        s.erase(0, pos + delim.length());
     }
     tv.push_back(s);
     return tv;

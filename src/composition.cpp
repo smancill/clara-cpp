@@ -126,11 +126,11 @@ std::string ServiceState::to_string() {
 
 
         //IP address regex
-        std::string IP = "([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3})";
+        std::string IP = "([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})";
 
         //String that Starts with a character and can have preceding numbers
-        std::string WORD = "([A-Z|a-z]*[0-9]*)";
-        std::string PORT = "(.%[0-9]*)*";
+        std::string WORD = "([A-Za-z]+[0-9]*)";
+        std::string PORT = "(%[0-9]*)*";
 
         /*
          * Service name

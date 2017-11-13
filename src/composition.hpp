@@ -203,6 +203,8 @@ public:
     std::set<Instruction> get_instructions();
     std::set<std::string> get_unconditional_links();
     std::set<std::string> get_links(const ServiceState& owner_ss, const ServiceState& input_ss);
+    std::set<std::string> get_output_links();
+    std::set<std::string> get_input_links();
     static std::regex get_simp_cond();
 
 private:

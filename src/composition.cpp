@@ -455,6 +455,69 @@ std::string ServiceState::to_string() {
             return ti;
         }
 
+        std::set<std::string> CompositionCompiler::get_output_links()
+        {
+            std::set<std::string> outputLinks;
+            auto ins = get_instructions();
+            for (Instruction i : ins) {
+                auto ifs = i.get_if_cond_statements();
+                for (Statement s : ifs) {
+                    auto ols = s.get_output_links();
+                    for (auto l : ols) {
+                        outputLinks.insert(l);
+                    }
+                }
+                auto eifs = i.get_else_if_cond_statements();
+                for (Statement s : eifs) {
+                    auto ols = s.get_output_links();
+                    for (auto l : ols) {
+                        outputLinks.insert(l);
+                    }
+                }
+                auto es = i.get_else_cond_statements();
+                for (Statement s : es) {
+                    auto ols = s.get_output_links();
+                    for (auto l : ols) {
+                        outputLinks.insert(l);
+                    }
+                }
+            }
+
+            return outputLinks;
+        }
+
+        std::set<std::string> CompositionCompiler::get_input_links()
+        {
+            std::set<std::string> inputLinks;
+
+            auto ins = get_instructions();
+            for (Instruction i : ins) {
+                auto ifs = i.get_if_cond_statements();
+                for (Statement s : ifs) {
+                    auto ils = s.get_input_links();
+                    for (auto l : ils) {
+                        inputLinks.insert(l);
+                    }
+                }
+                auto eifs = i.get_else_if_cond_statements();
+                for (Statement s : eifs) {
+                    auto ils = s.get_input_links();
+                    for (auto l : ils) {
+                        inputLinks.insert(l);
+                    }
+                }
+                auto es = i.get_else_cond_statements();
+                for (Statement s : es) {
+                    auto ils = s.get_input_links();
+                    for (auto l : ils) {
+                        inputLinks.insert(l);
+                    }
+                }
+            }
+
+            return inputLinks;
+        }
+
         std::string CompositionCompiler::no_blanks(std::string x)
         {
             x.erase(std::remove (x.begin(), x.end(), '"'), x.end());

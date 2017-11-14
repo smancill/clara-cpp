@@ -46,11 +46,11 @@ namespace composition {
         return statement_string_;
     }
 
-    std::set<std::string> Statement::get_input_links() {
+    std::set<std::string> Statement::get_input_links() const {
         return input_links;
     }
 
-    std::set<std::string> Statement::get_output_links() {
+    std::set<std::string> Statement::get_output_links() const {
         return output_links;
     }
 
@@ -66,12 +66,12 @@ namespace composition {
         if(statement.find(service_name_) != std::string::npos) {
 
             std::vector<std::string> statements = tokenize(statement, ";");
-            for (std::string s : statements) {
+            for (const std::string& s : statements) {
                 parse_linked(service_name_, s);
             }
 
             if (is_log_and(service_name_, statement)) {
-                for (std::string sn : input_links) {
+                for (const std::string& sn : input_links) {
                     log_and_inputs.insert(sn);
                 }
             }
@@ -90,7 +90,7 @@ namespace composition {
         }
 
         int index = -1;
-        for (std::string s : element_set) {
+        for (const std::string& s : element_set) {
             index++;
             if (s.find(service_name) != std::string::npos) {
                 break;
@@ -120,7 +120,7 @@ namespace composition {
         std::string ac = "&" + service_name;
 
         std::vector<std::string> st = tokenize(composition, "+");
-        for (std::string s : st) {
+        for (const std::string& s : st) {
             if (s == ac) {
                 return true;
             }

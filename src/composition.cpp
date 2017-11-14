@@ -263,7 +263,7 @@ std::string ServiceState::to_string() {
                         auto in = curr.get_un_cond_statements();
                         for (inner = in.begin(); inner != in.end(); ++inner) {
                             auto inner_curr = *inner;
-                            for (std::string s : inner_curr.get_output_links()) {
+                            for (const std::string& s : inner_curr.get_output_links()) {
                                 outputs.insert(s);
                             }
                         }
@@ -290,8 +290,8 @@ std::string ServiceState::to_string() {
             {
                 auto f = *it;
                 if (!f.get_un_cond_statements().empty()) {
-                    for (Statement stmt : f.get_un_cond_statements()) {
-                        for (std::string s : stmt.get_output_links()) {
+                    for (const Statement& stmt : f.get_un_cond_statements()) {
+                        for (const std::string& s : stmt.get_output_links()) {
                             outputs.insert(s);
                         }
                     }
@@ -300,8 +300,8 @@ std::string ServiceState::to_string() {
 
                 if (f.get_if_condition().get_service_name() != "default") {
                     if (f.get_if_condition().is_true(owner_ss, input_ss)) {
-                        for (Statement st : f.get_if_cond_statements()) {
-                            for (std::string s : st.get_output_links()) {
+                        for (const Statement& st : f.get_if_cond_statements()) {
+                            for (const std::string& s : st.get_output_links()) {
                                 outputs.insert(s);
                             }
                         }
@@ -309,16 +309,16 @@ std::string ServiceState::to_string() {
                 }
                 else if (f.get_else_if_condition().get_service_name() != "default") {
                     if (f.get_else_if_condition().is_true(owner_ss, input_ss)) {
-                        for (Statement stmt : f.get_else_if_cond_statements()) {
-                            for (std::string s : stmt.get_output_links()) {
+                        for (const Statement& stmt : f.get_else_if_cond_statements()) {
+                            for (const std::string& s : stmt.get_output_links()) {
                                 outputs.insert(s);
                             }
                         }
                     }
                 }
                 else if ((!(f.get_else_cond_statements().empty())) && outputs.empty()) {
-                    for (Statement stmt : f.get_else_cond_statements()) {
-                        for (std::string s : stmt.get_output_links()) {
+                    for (const Statement& stmt : f.get_else_cond_statements()) {
+                        for (const std::string& s : stmt.get_output_links()) {
                             outputs.insert(s);
                         }
                     }
@@ -337,7 +337,7 @@ std::string ServiceState::to_string() {
             std::vector<std::string> r;
             std::vector<std::string> st = tokenize(pCode, ";");
 
-            for (std::string text : st) {
+            for (const std::string& text : st) {
                 if (text != "") {
                     r.push_back(text);
                 }
@@ -455,29 +455,29 @@ std::string ServiceState::to_string() {
             return ti;
         }
 
-        std::set<std::string> CompositionCompiler::get_output_links()
+        std::set<std::string> CompositionCompiler::get_output_links_test()
         {
             std::set<std::string> outputLinks;
             auto ins = get_instructions();
             for (Instruction i : ins) {
                 auto ifs = i.get_if_cond_statements();
-                for (Statement s : ifs) {
-                    auto ols = s.get_output_links();
-                    for (auto l : ols) {
+                for (const Statement& s : ifs) {
+                    const auto& ols = s.get_output_links();
+                    for (const std::string& l : ols) {
                         outputLinks.insert(l);
                     }
                 }
                 auto eifs = i.get_else_if_cond_statements();
-                for (Statement s : eifs) {
-                    auto ols = s.get_output_links();
-                    for (auto l : ols) {
+                for (const Statement& s : eifs) {
+                    const auto& ols = s.get_output_links();
+                    for (const std::string& l : ols) {
                         outputLinks.insert(l);
                     }
                 }
                 auto es = i.get_else_cond_statements();
-                for (Statement s : es) {
-                    auto ols = s.get_output_links();
-                    for (auto l : ols) {
+                for (const Statement& s : es) {
+                    const auto& ols = s.get_output_links();
+                    for (const std::string& l : ols) {
                         outputLinks.insert(l);
                     }
                 }
@@ -486,30 +486,29 @@ std::string ServiceState::to_string() {
             return outputLinks;
         }
 
-        std::set<std::string> CompositionCompiler::get_input_links()
+        std::set<std::string> CompositionCompiler::get_input_links_test()
         {
             std::set<std::string> inputLinks;
 
-            auto ins = get_instructions();
-            for (Instruction i : ins) {
-                auto ifs = i.get_if_cond_statements();
-                for (Statement s : ifs) {
-                    auto ils = s.get_input_links();
-                    for (auto l : ils) {
+            for (const Instruction& i : get_instructions()) {
+                const auto& ifs = i.get_if_cond_statements();
+                for (const Statement& s : ifs) {
+                    const auto& ils = s.get_input_links();
+                    for (const std::string& l : ils) {
                         inputLinks.insert(l);
                     }
                 }
-                auto eifs = i.get_else_if_cond_statements();
-                for (Statement s : eifs) {
-                    auto ils = s.get_input_links();
-                    for (auto l : ils) {
+                const auto& eifs = i.get_else_if_cond_statements();
+                for (const Statement& s : eifs) {
+                    const auto& ils = s.get_input_links();
+                    for (const std::string& l : ils) {
                         inputLinks.insert(l);
                     }
                 }
-                auto es = i.get_else_cond_statements();
-                for (Statement s : es) {
-                    auto ils = s.get_input_links();
-                    for (auto l : ils) {
+                const auto& es = i.get_else_cond_statements();
+                for (const Statement& s : es) {
+                    const auto& ils = s.get_input_links();
+                    for (const std::string& l : ils) {
                         inputLinks.insert(l);
                     }
                 }

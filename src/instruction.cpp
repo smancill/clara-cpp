@@ -46,7 +46,7 @@ namespace clara {
             this->if_cond_statements = if_cond_statements;
         }
 
-        std::set<Statement> Instruction::get_if_cond_statements() {
+        std::set<Statement> Instruction::get_if_cond_statements() const {
             return if_cond_statements;
         }
 
@@ -62,7 +62,7 @@ namespace clara {
             this->else_if_condition = else_if_condition;
         }
 
-        std::set<Statement> Instruction::get_else_if_cond_statements() {
+        std::set<Statement> Instruction::get_else_if_cond_statements() const {
             return else_if_cond_statements;
         }
 
@@ -74,7 +74,7 @@ namespace clara {
             this->else_if_cond_statements.insert(else_if_cond_statement);
         }
 
-        std::set<Statement> Instruction::get_else_cond_statements() {
+        std::set<Statement> Instruction::get_else_cond_statements() const {
             return else_cond_statements;
         }
 
@@ -86,7 +86,7 @@ namespace clara {
             this->else_cond_statements.insert(else_cond_statement);
         }
 
-        std::set<Statement> Instruction::get_un_cond_statements() {
+        std::set<Statement> Instruction::get_un_cond_statements() const {
             return un_cond_statements;
         }
 

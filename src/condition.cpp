@@ -130,7 +130,7 @@ namespace composition {
         else {
             if (cs.find("&&") != std::string::npos && cs.find("!!") == std::string::npos) {
                 t0 = tokenize(cs, logic_operator);
-                for (std::string ac : t0) {
+                for (const std::string& ac : t0) {
                     if (std::regex_match(ac, composition::CompositionCompiler::get_simp_cond())) {
                         if (ac.find("!=") != std::string::npos) {
                             t1 = tokenize(t0[0], "!=\"");
@@ -159,7 +159,7 @@ namespace composition {
             }
             else if (cs.find("!!") != std::string::npos && cs.find("&&") == std::string::npos) {
                 t0 = tokenize(cs, logic_operator);
-                for (std::string ac : t0) {
+                for (const std::string& ac : t0) {
                     if (std::regex_match(ac, composition::CompositionCompiler::get_simp_cond())) {
                         if (ac.find("!=") != std::string::npos) {
                             t1 = tokenize(t0[0], "!=\"");

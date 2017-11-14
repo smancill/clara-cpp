@@ -134,8 +134,8 @@ public:
     Statement(const std::string& statement_string, const std::string& service_name);
     std::string get_service_name();
     std::string get_statement_string();
-    std::set<std::string> get_input_links();
-    std::set<std::string> get_output_links();
+    std::set<std::string> get_input_links() const;
+    std::set<std::string> get_output_links() const;
     std::set<std::string> get_log_and_inputs();
     std::string to_string();
     int hash_code();
@@ -161,21 +161,21 @@ public:
 
     Condition get_if_condition();
     void set_if_condition(const Condition& if_condition);
-    std::set<Statement> get_if_cond_statements();
+    std::set<Statement> get_if_cond_statements() const;
     void set_if_cond_statements(const std::set<Statement>& if_cond_statements);
     void add_if_cond_statement(const Statement& if_cond_statement);
 
     Condition get_else_if_condition();
     void set_else_if_condition(const Condition& else_if_condition);
-    std::set<Statement> get_else_if_cond_statements();
+    std::set<Statement> get_else_if_cond_statements() const;
     void set_else_if_cond_statements(const std::set<Statement>& else_if_cond_statements);
     void add_else_if_cond_statement(const Statement& else_if_cond_statement);
 
-    std::set<Statement> get_else_cond_statements();
+    std::set<Statement> get_else_cond_statements() const;
     void set_else_cond_statements(const std::set<Statement>& else_cond_statements);
     void add_else_cond_statement(const Statement& else_cond_statement);
 
-    std::set<Statement> get_un_cond_statements();
+    std::set<Statement> get_un_cond_statements() const;
     void set_un_cond_statements(const std::set<Statement>& un_cond_statements);
     void add_un_cond_statement(const Statement& un_cond_statement);
 
@@ -203,8 +203,8 @@ public:
     std::set<Instruction> get_instructions();
     std::set<std::string> get_unconditional_links();
     std::set<std::string> get_links(const ServiceState& owner_ss, const ServiceState& input_ss);
-    std::set<std::string> get_output_links();
-    std::set<std::string> get_input_links();
+    std::set<std::string> get_output_links_test();
+    std::set<std::string> get_input_links_test();
     static std::regex get_simp_cond();
 
 private:

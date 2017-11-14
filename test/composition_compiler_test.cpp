@@ -212,11 +212,11 @@ TEST(CompositionCompiler, IfElseIfElseConditionLinksTest) {
 
     auto expected_o = output_set{"10.10.10.1_java:C:S2", "10.10.10.1_java:C:S3", "10.10.10.1_java:C:S4"};
 
-    ASSERT_THAT(cc.get_output_links(), ContainerEq(expected_o));
+    ASSERT_THAT(cc.get_output_links_test(), ContainerEq(expected_o));
 
     auto expected_i = output_set{"10.10.10.1_java:C:S1"};
 
-    ASSERT_THAT(cc.get_input_links(), ContainerEq(expected_i));
+    ASSERT_THAT(cc.get_input_links_test(), ContainerEq(expected_i));
 }
 
 int main(int argc, char* argv[])

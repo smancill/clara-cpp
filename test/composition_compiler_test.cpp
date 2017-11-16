@@ -114,6 +114,55 @@ TEST(CompositionCompiler, MultipleOutputs)
     ASSERT_THAT(cc.get_unconditional_links(), ContainerEq(expected));
 }
 
+TEST(CompositionCompiler, CheckUnconditionalSingleInput)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    std::string comp =  "10.10.10.1_java:C:S1+"
+                        "10.10.10.1_java:C:S3;";
+    cc.compile(comp);
+
+    auto expected = output_set{"10.10.10.1_java:C:S1"};
+    ASSERT_THAT(cc.get_input_links_test(), ContainerEq(expected));
+}
+
+TEST(CompositionCompiler, CheckUnconditionalMultipleSameInput)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    std::string comp =  "10.10.10.1_java:C:S1+"
+                        "10.10.10.1_java:C:S3;"
+                        "10.10.10.1_java:C:S1+"
+                        "10.10.10.1_java:C:S4;";
+    cc.compile(comp);
+
+    auto expected = output_set{"10.10.10.1_java:C:S1"};
+    ASSERT_THAT(cc.get_input_links_test(), ContainerEq(expected));
+}
+
+TEST(CompositionCompiler, CheckUnconditionalMultipleInputs)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S2"};
+    std::string comp =  "10.10.10.1_java:C:S1+"
+                        "10.10.10.1_java:C:S3;"
+                        "10.10.10.1_java:C:S2+"
+                        "10.10.10.1_java:C:S4;";
+    cc.compile(comp);
+
+    auto expected = output_set{"10.10.10.1_java:C:S2"};
+    ASSERT_THAT(cc.get_input_links_test(), ContainerEq(expected));
+}
+
+TEST(CompositionCompiler, CheckUnconditionalMultipleInputsOneOutput)
+{
+    auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
+    std::string comp =  "10.10.10.1_java:C:S1,"
+                        "10.10.10.1_java:C:S2+"
+                        "10.10.10.1_java:C:S3;";
+    cc.compile(comp);
+
+    auto expected = output_set{"10.10.10.1_java:C:S1", "10.10.10.1_java:C:S2"};
+    ASSERT_THAT(cc.get_input_links_test(), ContainerEq(expected));
+}
+
 TEST(CompositionCompiler, SimpleConditionTest)
 {
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};

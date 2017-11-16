@@ -460,6 +460,13 @@ std::string ServiceState::to_string() {
             std::set<std::string> outputLinks;
             auto ins = get_instructions();
             for (Instruction i : ins) {
+                const auto& unc = i.get_un_cond_statements();
+                for (const Statement& s : unc) {
+                    const auto& ols = s.get_output_links();
+                    for (const std::string& l : ols) {
+                        outputLinks.insert(l);
+                    }
+                }
                 auto ifs = i.get_if_cond_statements();
                 for (const Statement& s : ifs) {
                     const auto& ols = s.get_output_links();
@@ -491,6 +498,13 @@ std::string ServiceState::to_string() {
             std::set<std::string> inputLinks;
 
             for (const Instruction& i : get_instructions()) {
+                const auto& unc = i.get_un_cond_statements();
+                for (const Statement& s : unc) {
+                    const auto& ils = s.get_input_links();
+                    for (const std::string& l : ils) {
+                        inputLinks.insert(l);
+                    }
+                }
                 const auto& ifs = i.get_if_cond_statements();
                 for (const Statement& s : ifs) {
                     const auto& ils = s.get_input_links();

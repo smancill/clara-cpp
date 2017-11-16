@@ -103,7 +103,14 @@ namespace composition {
             if (index == 0) {
                 std::string element = element_set[0];
                 if (element != "") {
-                    input_links.insert(element);
+                    if(element.find(',') != std::string::npos) {
+                        std::vector<std::string> cs = tokenize(element, ",");
+                        for (const std::string& s : cs) {
+                            input_links.insert(s);
+                        }
+                    } else {
+                        input_links.insert(element);
+                    }
                 }
             }
 

@@ -112,7 +112,11 @@ int ServiceState::hash_code() {
 }
 
 bool ServiceState::operator<(const ServiceState& lhs) const {
-    return (this->name_ < lhs.name_ && this->state_ < lhs.state_);
+    if (this->name_ == lhs.name_) {
+        return this->state_ < lhs.state_;
+    } else {
+        return this->name_ < lhs.name_;
+    }
 }
 
 std::string ServiceState::to_string() {
@@ -169,9 +173,17 @@ std::string ServiceState::to_string() {
         std::string if_else_if_else = "((if|elseif)\\("+simp_cond_s+"\\)|else)";
         std::regex IEIE_r(if_else_if_else);
 
-        //CLARA conditional statement
+        // regex statement to be used for checking (if | else if | else) complex statements
+        std::string if_else_if_else_c = "((if|elseif)\\("+comp_cond_s+"\\)|else)";
+        std::regex IEIE_C(if_else_if_else_c);
+
+        //CLARA simple conditional statement
         std::string cond_s = "((if|elseif)\\("+simp_cond_s+"\\)\\{\\s*("+STATEMENT+";\\s*)*\\})*(else\\{\\s*("+STATEMENT+";\\s*)*\\})?";
         std::regex COND(cond_s);
+
+        //CLARA complex conditional statement
+        std::string cond_c = "((if|elseif)\\("+comp_cond_s+"\\)\\{\\s*("+STATEMENT+";\\s*)*\\})*(else\\{\\s*("+STATEMENT+";\\s*)*\\})?";
+        std::regex COND_C(cond_c);
 
         CompositionCompiler::CompositionCompiler(const std::string& service)
                 : my_service_name{std::move(service)}
@@ -202,7 +214,7 @@ std::string ServiceState::to_string() {
                 std::string scs1 = pp[i];
 
                 //check if conditional statements using regex statements
-                if (std::regex_match(scs1, COND)) {
+                if (std::regex_match(scs1, COND) || std::regex_match(scs1, COND_C)) {
 
                     Instruction instruction = parse_condition(scs1);
 
@@ -299,13 +311,15 @@ std::string ServiceState::to_string() {
                 }
 
                 if (f.get_if_condition().get_service_name() != "default") {
-                    if (f.get_if_condition().is_true(owner_ss, input_ss)) {
-                        for (const Statement& st : f.get_if_cond_statements()) {
-                            for (const std::string& s : st.get_output_links()) {
-                                outputs.insert(s);
+                    //for (const auto& ic : f.get_if_condition()) {
+                        if (f.get_if_condition().is_true(owner_ss, input_ss)) {
+                            for (const Statement& st : f.get_if_cond_statements()) {
+                                for (const std::string& s : st.get_output_links()) {
+                                    outputs.insert(s);
+                                }
                             }
                         }
-                    }
+                    //}
                 }
                 else if (f.get_else_if_condition().get_service_name() != "default") {
                     if (f.get_else_if_condition().is_true(owner_ss, input_ss)) {
@@ -413,7 +427,7 @@ std::string ServiceState::to_string() {
 
             std::string tmp = iCnd.substr(0, iCnd.find("{"));
 
-            if (std::regex_match(tmp, IEIE_r)) {
+            if (std::regex_match(tmp, IEIE_r) || std::regex_match(tmp, IEIE_C)) {
                 try {
                     std::string statement_str = iCnd.substr(iCnd.find('{')+1);
                     statement_str = statement_str.substr(0, statement_str.size()-1);

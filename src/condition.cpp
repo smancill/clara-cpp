@@ -104,7 +104,7 @@ namespace composition {
         if (logic_operator == "") {
             if (std::regex_match(cs, composition::CompositionCompiler::get_simp_cond())) {
                 if (cs.find("!=") != std::string::npos) {
-                    t1 = tokenize(cs, "!=\"");
+                    t1 = tokenize(cs, "!=");
                     if (t1.size() != 2) {
                         throw std::logic_error{"Condition Exception."};
                     }
@@ -133,7 +133,7 @@ namespace composition {
                 for (const std::string& ac : t0) {
                     if (std::regex_match(ac, composition::CompositionCompiler::get_simp_cond())) {
                         if (ac.find("!=") != std::string::npos) {
-                            t1 = tokenize(t0[0], "!=\"");
+                            t1 = tokenize(ac, "!=");      // changed from t0[0] which doesnt iterate
                             if (t1.size() != 2) {
                                 throw std::logic_error{"Condition Exception."};
                             }
@@ -141,7 +141,7 @@ namespace composition {
                             add_and_not_state(sst);
                         }
                         else if (ac.find("==") != std::string::npos) {
-                            t1 = tokenize(t0[0], "==\"");
+                            t1 = tokenize(ac, "==");
                             if (t1.size() != 2) {
                                 throw std::logic_error{"Condition Exception."};
                             }
@@ -162,7 +162,7 @@ namespace composition {
                 for (const std::string& ac : t0) {
                     if (std::regex_match(ac, composition::CompositionCompiler::get_simp_cond())) {
                         if (ac.find("!=") != std::string::npos) {
-                            t1 = tokenize(t0[0], "!=\"");
+                            t1 = tokenize(ac, "!=");
                             if (t1.size() != 2) {
                                 throw std::logic_error{"Condition Exception."};
                             }
@@ -170,7 +170,7 @@ namespace composition {
                             add_or_not_state(sst);
                         }
                         else if (ac.find("==") != std::string::npos) {
-                            t1 = tokenize(t0[0], "==\"");
+                            t1 = tokenize(ac, "==");
                             if (t1.size() != 2) {
                                 throw std::logic_error{"Condition Exception."};
                             }
@@ -234,11 +234,11 @@ namespace composition {
         bool check_and = get_and_states().empty() ||
                 check_and_condition(get_and_states(), owner_ss, input_ss);
         bool check_and_not = get_and_not_states().empty() ||
-                 check_and_condition(get_and_not_states(), owner_ss, input_ss);
+                !check_and_condition(get_and_not_states(), owner_ss, input_ss);
         bool check_or = get_or_states().empty() ||
-                         check_or_condition(get_or_states(), owner_ss, input_ss);
+                check_or_condition(get_or_states(), owner_ss, input_ss);
         bool check_or_not = get_or_not_states().empty() ||
-                             check_or_condition(get_or_not_states(), owner_ss, input_ss);
+                !check_or_condition(get_or_not_states(), owner_ss, input_ss);
 
         return check_and && check_and_not && check_or && check_or_not;
     }

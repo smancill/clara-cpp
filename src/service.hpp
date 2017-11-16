@@ -28,17 +28,15 @@
 #include <clara/engine.hpp>
 
 #include "base.hpp"
+#include "concurrent_utils.hpp"
 #include "service_config.hpp"
 #include "service_engine.hpp"
 #include "service_loader.hpp"
 #include "service_report.hpp"
 
-#include "thread_pool/thread_pool.hpp"
-
 #include <mutex>
 
 namespace clara {
-
 
 class Service : public Base
 {
@@ -73,7 +71,7 @@ private:
     std::mutex cb_mutex_;
 
     ServiceLoader loader_;
-    tp::ThreadPool thread_pool_;
+    util::ThreadPool thread_pool_;
 
     std::shared_ptr<ServiceConfig> sys_config_;
     std::shared_ptr<ServiceReport> report_;

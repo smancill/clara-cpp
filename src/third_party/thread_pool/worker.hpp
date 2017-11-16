@@ -165,7 +165,7 @@ inline void Worker<Task, Queue>::threadFunc(size_t id, Worker* steal_donor)
 
     while (m_running_flag.load(std::memory_order_relaxed))
     {
-        if (m_queue.pop(handler) || steal_donor->steal(handler))
+        if (m_queue.pop(handler, 1000) || steal_donor->steal(handler))
         {
             try
             {
@@ -175,10 +175,6 @@ inline void Worker<Task, Queue>::threadFunc(size_t id, Worker* steal_donor)
             {
                 // suppress all exceptions
             }
-        }
-        else
-        {
-            std::this_thread::sleep_for(std::chrono::microseconds(250));
         }
     }
 }

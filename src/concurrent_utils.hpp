@@ -31,8 +31,45 @@
 #include <mutex>
 #include <vector>
 
+#include "concurrent_queue/blockingconcurrentqueue.h"
+#include "thread_pool/thread_pool.hpp"
+
 namespace clara {
 namespace util {
+
+template <typename Task>
+class BlockingQueue
+{
+public:
+    explicit BlockingQueue(size_t /*size*/)
+    {
+        // TODO: use size parameter
+    }
+
+    template <typename U>
+    bool push(U&& data)
+    {
+        return queue_.try_enqueue(std::forward<U>(data));
+    }
+
+    bool pop(Task& data)
+    {
+        return queue_.try_dequeue(data);
+    }
+
+    bool pop(Task& data, std::int64_t timeout_usecs)
+    {
+        return queue_.wait_dequeue_timed(data, timeout_usecs);
+    }
+
+private:
+    moodycamel::BlockingConcurrentQueue<Task> queue_;
+};
+
+
+using ThreadPool = tp::ThreadPoolImpl<tp::FixedFunction<void(), 128>,
+                                      BlockingQueue>;
+
 
 template <typename T>
 class ConcurrentRange

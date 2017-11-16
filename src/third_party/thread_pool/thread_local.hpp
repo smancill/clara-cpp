@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
+namespace tp {
 namespace detail {
 
 template <class T>
@@ -59,5 +60,6 @@ template <class T>
 pthread_once_t ThreadLocal<T>::once_control = PTHREAD_ONCE_INIT;
 
 } // end namespace detail
+} // end namespace tp
 
 #endif  // DETAIL_THREAD_LOCAL_H

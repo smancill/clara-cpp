@@ -1,144 +1,161 @@
-#ifndef THREAD_POOL_HPP
-#define THREAD_POOL_HPP
+#pragma once
 
+#include "fixed_function.hpp"
+#include "mpmc_bounded_queue.hpp"
+#include "thread_pool_options.hpp"
 #include "worker.hpp"
 
 #include <atomic>
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
 #include <vector>
-#include <future>
-#include <type_traits>
 
-/**
- * @brief The ThreadPoolOptions struct provides construction options for ThreadPool.
- */
-struct ThreadPoolOptions {
-    enum {AUTODETECT = 0};
-    size_t threads_count = AUTODETECT;
-    size_t worker_queue_size = 1024;
-};
+namespace tp
+{
+
+template <typename Task, template<typename> class Queue>
+class ThreadPoolImpl;
+using ThreadPool = ThreadPoolImpl<FixedFunction<void(), 128>,
+                                  MPMCBoundedQueue>;
 
 /**
  * @brief The ThreadPool class implements thread pool pattern.
  * It is highly scalable and fast.
  * It is header only.
- * It implements both work-stealing and work-distribution balancing startegies.
+ * It implements both work-stealing and work-distribution balancing
+ * startegies.
  * It implements cooperative scheduling strategy for tasks.
  */
-class ThreadPool {
+template <typename Task, template<typename> class Queue>
+class ThreadPoolImpl {
 public:
     /**
      * @brief ThreadPool Construct and start new thread pool.
      * @param options Creation options.
      */
-    explicit ThreadPool(const ThreadPoolOptions &options = ThreadPoolOptions());
+    explicit ThreadPoolImpl(
+        const ThreadPoolOptions& options = ThreadPoolOptions());
+
+    /**
+     * @brief Move ctor implementation.
+     */
+    ThreadPoolImpl(ThreadPoolImpl&& rhs) noexcept;
 
     /**
      * @brief ~ThreadPool Stop all workers and destroy thread pool.
      */
-    ~ThreadPool();
+    ~ThreadPoolImpl();
 
     /**
-     * @brief post Post piece of job to thread pool.
-     * @param handler Handler to be called from thread pool worker. It has to be callable as 'handler()'.
-     * @throws std::overflow_error if worker's queue is full.
-     * @note All exceptions thrown by handler will be suppressed. Use 'process()' to get result of handler's
-     * execution or exception thrown.
+     * @brief Move assignment implementaion.
+     */
+    ThreadPoolImpl& operator=(ThreadPoolImpl&& rhs) noexcept;
+
+    /**
+     * @brief post Try post job to thread pool.
+     * @param handler Handler to be called from thread pool worker. It has
+     * to be callable as 'handler()'.
+     * @return 'true' on success, false otherwise.
+     * @note All exceptions thrown by handler will be suppressed.
      */
     template <typename Handler>
-    void post(Handler &&handler);
+    bool tryPost(Handler&& handler);
 
     /**
-     * @brief process Post piece of job to thread pool and get future for this job.
-     * @param handler Handler to be called from thread pool worker. It has to be callable as 'handler()'.
-     * @return Future which hold handler result or exception thrown.
-     * @throws std::overflow_error if worker's queue is full.
-     * @note This method of posting job to thread pool is much slower than 'post()' due to std::future and
-     * std::packaged_task construction overhead.
+     * @brief post Post job to thread pool.
+     * @param handler Handler to be called from thread pool worker. It has
+     * to be callable as 'handler()'.
+     * @throw std::overflow_error if worker's queue is full.
+     * @note All exceptions thrown by handler will be suppressed.
      */
-    template <typename Handler, typename R = typename std::result_of<Handler()>::type>
-    typename std::future<R> process(Handler &&handler);
+    template <typename Handler>
+    void post(Handler&& handler);
 
 private:
-    ThreadPool(const ThreadPool&) = delete;
-    ThreadPool & operator=(const ThreadPool&) = delete;
+    Worker<Task, Queue>& getWorker();
 
-    Worker & getWorker();
-
-    std::vector<std::unique_ptr<Worker>> m_workers;
+    std::vector<std::unique_ptr<Worker<Task, Queue>>> m_workers;
     std::atomic<size_t> m_next_worker;
 };
 
 
 /// Implementation
 
-inline ThreadPool::ThreadPool(const ThreadPoolOptions &options)
-    : m_next_worker(0)
+template <typename Task, template<typename> class Queue>
+inline ThreadPoolImpl<Task, Queue>::ThreadPoolImpl(
+                                            const ThreadPoolOptions& options)
+    : m_workers(options.threadCount())
+    , m_next_worker(0)
 {
-    size_t workers_count = options.threads_count;
-
-    if (ThreadPoolOptions::AUTODETECT == options.threads_count) {
-        workers_count = std::thread::hardware_concurrency();
+    for(auto& worker_ptr : m_workers)
+    {
+        worker_ptr.reset(new Worker<Task, Queue>(options.queueSize()));
     }
 
-    if (0 == workers_count) {
-        workers_count = 1;
-    }
-
-    m_workers.resize(workers_count);
-    for (auto &worker_ptr : m_workers) {
-        worker_ptr.reset(new Worker(options.worker_queue_size));
-    }
-
-    for (size_t i = 0; i < m_workers.size(); ++i) {
-        Worker *steal_donor = m_workers[(i + 1) % m_workers.size()].get();
+    for(size_t i = 0; i < m_workers.size(); ++i)
+    {
+        Worker<Task, Queue>* steal_donor =
+                                m_workers[(i + 1) % m_workers.size()].get();
         m_workers[i]->start(i, steal_donor);
     }
 }
 
-inline ThreadPool::~ThreadPool()
+template <typename Task, template<typename> class Queue>
+inline ThreadPoolImpl<Task, Queue>::ThreadPoolImpl(ThreadPoolImpl<Task, Queue>&& rhs) noexcept
 {
-    for (auto &worker_ptr : m_workers) {
+    *this = rhs;
+}
+
+template <typename Task, template<typename> class Queue>
+inline ThreadPoolImpl<Task, Queue>::~ThreadPoolImpl()
+{
+    for (auto& worker_ptr : m_workers)
+    {
         worker_ptr->stop();
     }
 }
 
+template <typename Task, template<typename> class Queue>
+inline ThreadPoolImpl<Task, Queue>&
+ThreadPoolImpl<Task, Queue>::operator=(ThreadPoolImpl<Task, Queue>&& rhs) noexcept
+{
+    if (this != &rhs)
+    {
+        m_workers = std::move(rhs.m_workers);
+        m_next_worker = rhs.m_next_worker.load();
+    }
+    return *this;
+}
+
+template <typename Task, template<typename> class Queue>
 template <typename Handler>
-inline void ThreadPool::post(Handler &&handler)
+inline bool ThreadPoolImpl<Task, Queue>::tryPost(Handler&& handler)
 {
-    if (!getWorker().post(std::forward<Handler>(handler))) {
-        throw std::overflow_error("worker queue is full");
+    return getWorker().post(std::forward<Handler>(handler));
+}
+
+template <typename Task, template<typename> class Queue>
+template <typename Handler>
+inline void ThreadPoolImpl<Task, Queue>::post(Handler&& handler)
+{
+    const auto ok = tryPost(std::forward<Handler>(handler));
+    if (!ok)
+    {
+        throw std::runtime_error("thread pool queue is full");
     }
 }
 
-template <typename Handler, typename R>
-typename std::future<R> ThreadPool::process(Handler &&handler)
+template <typename Task, template<typename> class Queue>
+inline Worker<Task, Queue>& ThreadPoolImpl<Task, Queue>::getWorker()
 {
-    std::packaged_task<R()> task([handler = std::move(handler)] () {
-        return handler();
-    });
+    auto id = Worker<Task, Queue>::getWorkerIdForCurrentThread();
 
-    std::future<R> result = task.get_future();
-
-    if (!getWorker().post(task)) {
-        throw std::overflow_error("worker queue is full");
-    }
-
-    return result;
-}
-
-
-inline Worker & ThreadPool::getWorker()
-{
-    size_t id = Worker::getWorkerIdForCurrentThread();
-
-    if (id > m_workers.size()) {
-        id = m_next_worker.fetch_add(1, std::memory_order_relaxed) % m_workers.size();
+    if (id > m_workers.size())
+    {
+        id = m_next_worker.fetch_add(1, std::memory_order_relaxed) %
+             m_workers.size();
     }
 
     return *m_workers[id];
 }
-
-#endif
-
+}

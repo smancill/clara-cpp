@@ -37,6 +37,7 @@
 #include <xmsg/proxy.h>
 #include <xmsg/xmsg.h>
 
+#include <condition_variable>
 #include <mutex>
 #include <thread>
 

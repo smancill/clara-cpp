@@ -28,11 +28,11 @@
 #include "logging.hpp"
 
 
-static ThreadPoolOptions thread_pool_options(int pool_size, int queue_size)
+static tp::ThreadPoolOptions thread_pool_options(int pool_size, int queue_size)
 {
-    ThreadPoolOptions opts;
-    opts.threads_count = static_cast<size_t>(pool_size);
-    opts.worker_queue_size = static_cast<size_t>(queue_size);
+    tp::ThreadPoolOptions opts;
+    opts.setThreadCount(static_cast<size_t>(pool_size));
+    opts.setQueueSize(static_cast<size_t>(queue_size));
     return opts;
 }
 

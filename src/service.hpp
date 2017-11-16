@@ -73,7 +73,7 @@ private:
     std::mutex cb_mutex_;
 
     ServiceLoader loader_;
-    ThreadPool thread_pool_;
+    tp::ThreadPool thread_pool_;
 
     std::shared_ptr<ServiceConfig> sys_config_;
     std::shared_ptr<ServiceReport> report_;

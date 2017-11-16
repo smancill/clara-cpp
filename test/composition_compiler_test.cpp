@@ -114,7 +114,8 @@ TEST(CompositionCompiler, MultipleOutputs)
     ASSERT_THAT(cc.get_unconditional_links(), ContainerEq(expected));
 }
 
-TEST(CompositionCompiler, SimpleConditionTest) {
+TEST(CompositionCompiler, SimpleConditionTest)
+{
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
     std::string simple =    "if(10.10.10.1_java:C:S1==\"FOO\"){"
                             "  10.10.10.1_java:C:S1+10.10.10.1_java:C:S2;"
@@ -129,7 +130,8 @@ TEST(CompositionCompiler, SimpleConditionTest) {
     ASSERT_THAT(cc.get_links(owner, input), ContainerEq(expected));
 }
 
-TEST(CompositionCompiler, IfElseConditionTest) {
+TEST(CompositionCompiler, IfElseConditionTest)
+{
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
     std::string cond =  "if(10.10.10.1_java:C:S1==\"FOO\"){"
                         "  10.10.10.1_java:C:S1+10.10.10.1_java:C:S4;"
@@ -146,7 +148,8 @@ TEST(CompositionCompiler, IfElseConditionTest) {
     ASSERT_THAT(cc.get_links(owner, input), ContainerEq(expected));
 }
 
-TEST(CompositionCompiler, IfElseIfConditionTest) {
+TEST(CompositionCompiler, IfElseIfConditionTest)
+{
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
     std::string cond =  "if(10.10.10.1_java:C:S1==\"FOO\"){"
                         "  10.10.10.1_java:C:S1+10.10.10.1_java:C:S2;"
@@ -163,7 +166,8 @@ TEST(CompositionCompiler, IfElseIfConditionTest) {
     ASSERT_THAT(cc.get_links(owner, input), ContainerEq(expected));
 }
 
-TEST(CompositionCompiler, IfElseIfElseConditionTest) {
+TEST(CompositionCompiler, IfElseIfElseConditionTest)
+{
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
     std::string cond =  "if(10.10.10.1_java:C:S1==\"FOO\"){"
                         "  10.10.10.1_java:C:S1+10.10.10.1_java:C:S2;"
@@ -182,7 +186,8 @@ TEST(CompositionCompiler, IfElseIfElseConditionTest) {
     ASSERT_THAT(cc.get_links(owner, input), ContainerEq(expected));
 }
 
-TEST(CompositionCompiler, MultipleStatementsConditionTest) {
+TEST(CompositionCompiler, MultipleStatementsConditionTest)
+{
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
     std::string simple =    "if(10.10.10.1_java:C:S1==\"FOO\"){"
                             "  10.10.10.1_java:C:S1+10.10.10.1_java:C:S2;"
@@ -198,7 +203,30 @@ TEST(CompositionCompiler, MultipleStatementsConditionTest) {
     ASSERT_THAT(cc.get_links(owner, input), ContainerEq(expected));
 }
 
-TEST(CompositionCompiler, IfElseIfElseConditionLinksTest) {
+TEST(CompositionCompiler, DifferentServiceNames)
+{
+    auto cc = CompositionCompiler{"10.11.10.1_java:C:S1"};
+    std::string cond =  "if(10.11.10.1_java:C:S1==\"FOO\"){"
+                        "  10.11.10.1_java:C:S1+10.10.10.1_java:C:S2;"
+                        "  10.11.10.1_java:C:S1+10.10.10.1_java:C:S3;"
+                        "}";
+    cc.compile(cond);
+    auto owner = ServiceState("10.10.10.1_java:C:S1", "FOO");
+    auto input = ServiceState("WHATEVER", "DON'T CARE");
+
+    auto expected = output_set{};
+
+    ASSERT_THAT(cc.get_links(owner, input), ContainerEq(expected));
+
+    expected = output_set{"10.11.10.1_java:C:S1"};
+    ASSERT_THAT(cc.get_input_links_test(), ContainerEq(expected));
+
+    expected = output_set{"10.10.10.1_java:C:S2", "10.10.10.1_java:C:S3"};
+    ASSERT_THAT(cc.get_output_links_test(), ContainerEq(expected));
+}
+
+TEST(CompositionCompiler, IfElseIfElseConditionLinksTest)
+{
     auto cc = CompositionCompiler{"10.10.10.1_java:C:S1"};
     std::string cond =  "if(10.10.10.1_java:C:S1==\"FOO\"){"
                         "  10.10.10.1_java:C:S1+10.10.10.1_java:C:S2;"

@@ -50,7 +50,7 @@ add_subdirectory(doc)
 
 if (CLARA_BUILD_TESTS)
   enable_testing()
-  include(cmake/External/GMock.cmake)
+  include(cmake/External/GTest.cmake)
   add_subdirectory(test)
 endif (CLARA_BUILD_TESTS)
 

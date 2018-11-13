@@ -70,18 +70,23 @@ endif (CLARA_BUILD_TESTS)
 
 # export targets
 include(CMakePackageConfigHelpers)
-configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/clara-config.cmake.in
-  ${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/clara-config.cmake
+configure_package_config_file(
+    ${PROJECT_SOURCE_DIR}/cmake/clara-config.cmake.in
+    ${PROJECT_BINARY_DIR}/clara-config.cmake
   INSTALL_DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
-  PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
+  NO_SET_AND_CHECK_MACRO
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 install(EXPORT ClaraTargets
   FILE clara-targets.cmake
   NAMESPACE Clara::
-  DESTINATION ${CMAKE_INSTALL_CONFIGDIR})
+  DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
+  COMPONENT Devel)
 
-install(FILES ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/clara-config.cmake
-  DESTINATION ${CMAKE_INSTALL_CONFIGDIR} COMPONENT Devel)
+install(FILES
+    ${PROJECT_BINARY_DIR}/clara-config.cmake
+  DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
+  COMPONENT Devel)
 
 
 # uninstall target

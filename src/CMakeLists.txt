@@ -36,6 +36,8 @@ target_include_directories(clara PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+add_library(Clara::clara ALIAS clara)
+
 install(TARGETS clara EXPORT ClaraTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

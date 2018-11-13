@@ -10,6 +10,12 @@ endif()
 
 include(GNUInstallDirs)
 
+option(CLARA_BUILD_TESTS "Build tests" ON)
+option(CLARA_BUILD_SHARED_LIBS "Build shared libs" ON)
+
+mark_as_advanced(CLARA_BUILD_SHARED_LIBS)
+set(BUILD_SHARED_LIBS ${CLARA_BUILD_SHARED_LIBS})
+
 
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
@@ -40,9 +46,6 @@ find_package(xMsg CONFIG REQUIRED)
 include(cmake/External/rapidjson.cmake)
 
 string(CONCAT PKGCONF_REQ_PUB "xmsg")
-
-
-option(CLARA_BUILD_TESTS "Build tests" ON)
 
 
 add_subdirectory(src)

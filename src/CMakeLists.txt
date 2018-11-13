@@ -24,7 +24,7 @@ set(CLARA_STD_SRC
 )
 
 add_definitions(-DRAPIDJSON_HAS_STDSTRING)
-add_library(clara SHARED ${CLARA_SRC} ${CLARA_STD_SRC})
+add_library(clara ${CLARA_SRC} ${CLARA_STD_SRC})
 add_dependencies(clara miloyip-rapidjson)
 target_link_libraries(clara PUBLIC xMsg::xmsg PRIVATE ${CMAKE_DL_LIBS} rapidjson)
 

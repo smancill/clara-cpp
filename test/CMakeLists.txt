@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR}/src)
 
 add_executable(test_engine_data_type engine_data_type_test.cpp)
 add_test(test_engine_data_type test_engine_data_type)

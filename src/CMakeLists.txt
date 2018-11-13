@@ -1,4 +1,4 @@
-include("${CMAKE_SOURCE_DIR}/cmake/External/rapidjson.cmake")
+include("${PROJECT_SOURCE_DIR}/cmake/External/rapidjson.cmake")
 
 set(CLARA_SRC
   base.cpp
@@ -31,8 +31,8 @@ add_dependencies(clara miloyip-rapidjson)
 target_link_libraries(clara PUBLIC xMsg::xmsg PRIVATE ${CMAKE_DL_LIBS} rapidjson)
 
 target_include_directories(clara PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/third_party>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/third_party>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
@@ -43,11 +43,11 @@ install(TARGETS clara EXPORT ClaraTargets
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-install(FILES ${CMAKE_SOURCE_DIR}/src/third_party/dropbox/json11.hpp
+install(FILES ${PROJECT_SOURCE_DIR}/src/third_party/dropbox/json11.hpp
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/clara/third_party/dropbox
   COMPONENT Devel
 )
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/clara
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/clara
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   COMPONENT Devel
 )
@@ -57,7 +57,7 @@ add_executable(c_dpe run_dpe.cpp)
 target_link_libraries(c_dpe clara)
 
 install(TARGETS c_dpe DESTINATION ${CMAKE_INSTALL_LIBDIR}/clara)
-install(FILES ${CMAKE_SOURCE_DIR}/scripts/unix/c_dpe
+install(FILES ${PROJECT_SOURCE_DIR}/scripts/unix/c_dpe
   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
               GROUP_READ GROUP_EXECUTE
               WORLD_READ WORLD_EXECUTE

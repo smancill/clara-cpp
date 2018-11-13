@@ -11,7 +11,7 @@ endif()
 include(GNUInstallDirs)
 
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
@@ -58,20 +58,20 @@ set(CMAKE_INSTALL_CONFIGDIR "${CMAKE_INSTALL_LIBDIR}/cmake/clara")
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-    ${PROJECT_SOURCE_DIR}/cmake/clara-config.cmake.in
-    ${PROJECT_BINARY_DIR}/clara-config.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/clara-config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/clara-config.cmake
   INSTALL_DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 install(FILES
-    ${PROJECT_BINARY_DIR}/clara-config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/clara-config.cmake
   DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
   COMPONENT Devel)
 
 # export targets
 export(EXPORT ClaraTargets
-  FILE ${PROJECT_BINARY_DIR}/clara-targets.cmake
+  FILE ${CMAKE_CURRENT_BINARY_DIR}/clara-targets.cmake
   NAMESPACE Clara::
 )
 
@@ -84,12 +84,12 @@ install(EXPORT ClaraTargets
 
 # pkg-config
 configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/clara.pc.in
-    ${PROJECT_BINARY_DIR}/clara.pc
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/clara.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/clara.pc
   @ONLY
 )
 
-install(FILES ${PROJECT_BINARY_DIR}/clara.pc
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/clara.pc
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   COMPONENT Devel)
 

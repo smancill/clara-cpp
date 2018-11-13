@@ -1,5 +1,3 @@
-include("${PROJECT_SOURCE_DIR}/cmake/External/rapidjson.cmake")
-
 set(CLARA_SRC
   base.cpp
   component.cpp

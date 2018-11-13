@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1)
-project(CLARA C CXX)
+project(CLARA LANGUAGES CXX)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, default to Release")
@@ -11,8 +11,6 @@ endif()
 include(GNUInstallDirs)
 
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
-
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
@@ -22,7 +20,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+add_compile_options(-Wall -Wextra)
 
 if(APPLE)
   set(CMAKE_MACOSX_RPATH ON)
@@ -35,7 +33,11 @@ if(APPLE)
   endif()
 endif()
 
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+
 find_package(xMsg CONFIG REQUIRED)
+include(cmake/External/rapidjson.cmake)
 
 string(CONCAT PKGCONF_REQ_PUB "xmsg")
 
@@ -43,13 +45,13 @@ string(CONCAT PKGCONF_REQ_PUB "xmsg")
 option(CLARA_BUILD_TESTS "Build tests" ON)
 
 
-add_subdirectory("src")
-add_subdirectory("doc")
+add_subdirectory(src)
+add_subdirectory(doc)
 
 if (CLARA_BUILD_TESTS)
   enable_testing()
-  include("cmake/External/GMock.cmake")
-  add_subdirectory("test")
+  include(cmake/External/GMock.cmake)
+  add_subdirectory(test)
 endif (CLARA_BUILD_TESTS)
 
 
@@ -97,9 +99,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/clara.pc
 
 # uninstall target
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-  IMMEDIATE @ONLY)
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+  @ONLY)
 
 add_custom_target(uninstall
   COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)

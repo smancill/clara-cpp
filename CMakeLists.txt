@@ -1,53 +1,32 @@
-cmake_minimum_required(VERSION 3.1.3)
-project(CLARA C CXX)
+cmake_minimum_required(VERSION 3.5.1)
+project(CLARA LANGUAGES CXX)
 
-if (NOT CMAKE_BUILD_TYPE)
-  message(STATUS "No build type selected, default to RelWithDebInfo")
-  set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "No build type selected, default to Release")
+  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    Debug Release MinSizeRel RelWithDebInfo)
 endif()
 
-if(NOT CMAKE_INSTALL_BINDIR)
-  set(CMAKE_INSTALL_BINDIR "bin" CACHE PATH "user executables (bin)")
-endif()
+include(GNUInstallDirs)
 
-if(NOT CMAKE_INSTALL_LIBDIR)
-  set(CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "object code libraries (lib)")
-endif()
+option(CLARA_BUILD_TESTS "Build tests" ON)
+option(CLARA_BUILD_SHARED_LIBS "Build shared libs" ON)
 
-if(NOT CMAKE_INSTALL_INCLUDEDIR)
-  set(CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "C header files (include)")
-endif()
+mark_as_advanced(CLARA_BUILD_SHARED_LIBS)
+set(BUILD_SHARED_LIBS ${CLARA_BUILD_SHARED_LIBS})
 
-if(NOT CMAKE_INSTALL_CONFIGDIR)
-  set(CMAKE_INSTALL_CONFIGDIR "${CMAKE_INSTALL_LIBDIR}/cmake/clara"
-    CACHE PATH "CMake project files (${CMAKE_INSTALL_LIBDIR}/cmake/clara")
-endif()
-
-mark_as_advanced(CMAKE_INSTALL_BINDIR)
-mark_as_advanced(CMAKE_INSTALL_LIBDIR)
-mark_as_advanced(CMAKE_INSTALL_INCLUDEDIR)
-mark_as_advanced(CMAKE_INSTALL_CONFIGDIR)
-
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
-set(GCC_MIN_VERSION 4.9.2)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS GCC_MIN_VERSION)
-    message(FATAL_ERROR "Expected GCC >= ${GCC_MIN_VERSION} but found ${CMAKE_CXX_COMPILER_VERSION}")
-  endif()
-endif()
-
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+add_compile_options(-Wall -Wextra)
 
 if(APPLE)
   set(CMAKE_MACOSX_RPATH ON)
@@ -60,42 +39,72 @@ if(APPLE)
   endif()
 endif()
 
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+
 find_package(xMsg CONFIG REQUIRED)
+include(cmake/External/rapidjson.cmake)
 
-option(CLARA_BUILD_TESTS "Build tests" ON)
+string(CONCAT PKGCONF_REQ_PUB "xmsg")
 
 
-add_subdirectory("src")
-add_subdirectory("doc")
+add_subdirectory(src)
+add_subdirectory(doc)
 
 if (CLARA_BUILD_TESTS)
   enable_testing()
-  include("cmake/External/GMock.cmake")
-  add_subdirectory("test")
+  include(cmake/External/GTest.cmake)
+  add_subdirectory(test)
 endif (CLARA_BUILD_TESTS)
 
 
-# export targets
+# package configuration
+set(CMAKE_INSTALL_CONFIGDIR "${CMAKE_INSTALL_LIBDIR}/cmake/clara")
+
 include(CMakePackageConfigHelpers)
-configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/clara-config.cmake.in
-  ${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/clara-config.cmake
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/clara-config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/clara-config.cmake
   INSTALL_DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
-  PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
+  NO_SET_AND_CHECK_MACRO
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/clara-config.cmake
+  DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
+  COMPONENT Devel)
+
+# export targets
+export(EXPORT ClaraTargets
+  FILE ${CMAKE_CURRENT_BINARY_DIR}/clara-targets.cmake
+  NAMESPACE Clara::
+)
 
 install(EXPORT ClaraTargets
   FILE clara-targets.cmake
   NAMESPACE Clara::
-  DESTINATION ${CMAKE_INSTALL_CONFIGDIR})
+  DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
+  COMPONENT Devel)
 
-install(FILES ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/clara-config.cmake
-  DESTINATION ${CMAKE_INSTALL_CONFIGDIR} COMPONENT Devel)
+
+# pkg-config
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/clara.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/clara.pc
+  @ONLY
+)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/clara.pc
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+  COMPONENT Devel)
+
 
 
 # uninstall target
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-  IMMEDIATE @ONLY)
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+  @ONLY)
 
 add_custom_target(uninstall
   COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)

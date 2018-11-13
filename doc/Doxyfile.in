@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "@CMAKE_PROJECT_NAME@"
+PROJECT_NAME           = "@PROJECT_NAME@"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -58,7 +58,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = "@CMAKE_BINARY_DIR@/doc"
+OUTPUT_DIRECTORY       = "@PROJECT_BINARY_DIR@/doc"
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -161,7 +161,7 @@ STRIP_FROM_PATH        =
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-STRIP_FROM_INC_PATH    = "@CMAKE_SOURCE_DIR@/include"
+STRIP_FROM_INC_PATH    = "@PROJECT_SOURCE_DIR@/include"
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter (but
 # less readable) file names. This can be useful is your file systems doesn't
@@ -765,11 +765,11 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = "@CMAKE_SOURCE_DIR@/include/clara" \
-                         "@CMAKE_SOURCE_DIR@/include/clara/stdlib/" \
-                         "@CMAKE_SOURCE_DIR@/src/" \
-                         "@CMAKE_SOURCE_DIR@/src/stdlib" \
-                         "@CMAKE_SOURCE_DIR@/doc"
+INPUT                  = "@PROJECT_SOURCE_DIR@/include/clara" \
+                         "@PROJECT_SOURCE_DIR@/include/clara/stdlib/" \
+                         "@PROJECT_SOURCE_DIR@/src/" \
+                         "@PROJECT_SOURCE_DIR@/src/stdlib" \
+                         "@PROJECT_SOURCE_DIR@/doc"
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

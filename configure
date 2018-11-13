@@ -177,6 +177,8 @@ check:
 	then \$(MAKE) -C \$(BUILDDIR) test CTEST_OUTPUT_ON_FAILURE=1; \\
 	else echo "No tests found!"; fi
 
+test: check
+
 clean:
 	+@\$(MAKE) -C \$(BUILDDIR) clean
 
@@ -185,5 +187,5 @@ distclean:
 	rm -f ${config_status}
 	rm -f Makefile
 
-.PHONY : install check clean distclean
+.PHONY : install check test clean distclean
 EOF

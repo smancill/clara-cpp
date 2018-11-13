@@ -1,24 +1,26 @@
-include_directories(${CMAKE_SOURCE_DIR}/src)
+#----------------------------------------------------------------------
+# Unit tests
+#
+set(CLARA_UNIT_TESTS
+  composition_compiler
+  data_utils
+  engine_data
+  engine_data_type
+  utils
+)
 
-add_executable(test_engine_data_type engine_data_type_test.cpp)
-add_test(test_engine_data_type test_engine_data_type)
-target_link_libraries(test_engine_data_type clara gmock)
+foreach(name IN LISTS CLARA_UNIT_TESTS)
+  add_executable(test_${name} ${name}_test.cpp)
+  add_test(NAME test_${name} COMMAND test_${name} CONFIGURATIONS $<CONFIG> "")
+  set_tests_properties(test_${name} PROPERTIES LABELS "unit")
+  target_include_directories(test_${name} PRIVATE "${PROJECT_SOURCE_DIR}/src")
+  target_link_libraries(test_${name} PRIVATE Clara::clara GTest::GMock)
+endforeach()
 
-add_executable(test_engine_data engine_data_test.cpp)
-add_test(test_engine_data test_engine_data)
-target_link_libraries(test_engine_data clara gmock)
 
-add_executable(test_data_utils data_utils_test.cpp)
-add_test(test_data_utils test_data_utils)
-target_link_libraries(test_data_utils clara gmock)
-
-add_executable(test_utils utils_test.cpp)
-add_test(test_utils test_utils)
-target_link_libraries(test_utils clara gmock)
-
-add_executable(test_composition_compiler composition_compiler_test.cpp)
-add_test(test_composition_compiler test_composition_compiler)
-target_link_libraries(test_composition_compiler clara gmock)
-
+#----------------------------------------------------------------------
+# Standalone executable tests
+#
 add_executable(test_service_loader service_loader_test.cpp)
-target_link_libraries(test_service_loader clara ${CMAKE_DL_LIBS} gmock)
+target_link_libraries(test_service_loader PRIVATE Clara::clara ${CMAKE_DL_LIBS} GTest::GMock)
+target_include_directories(test_service_loader PRIVATE "${PROJECT_SOURCE_DIR}/src")

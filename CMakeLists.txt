@@ -55,6 +55,9 @@ endif()
 
 find_package(xMsg CONFIG REQUIRED)
 
+string(CONCAT PKGCONF_REQ_PUB "xmsg")
+
+
 option(CLARA_BUILD_TESTS "Build tests" ON)
 
 
@@ -87,6 +90,19 @@ install(FILES
     ${PROJECT_BINARY_DIR}/clara-config.cmake
   DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
   COMPONENT Devel)
+
+
+# pkg-config
+configure_file(
+    ${PROJECT_SOURCE_DIR}/cmake/clara.pc.in
+    ${PROJECT_BINARY_DIR}/clara.pc
+  @ONLY
+)
+
+install(FILES ${PROJECT_BINARY_DIR}/clara.pc
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+  COMPONENT Devel)
+
 
 
 # uninstall target

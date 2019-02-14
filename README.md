@@ -37,8 +37,8 @@ This will install CLARA C++ into the location of your CLARA distribution.
 
 ## Authors
 
-For assistance contact authors:
+* Vardan Gyurjyan
+* Sebastián Mancilla
+* Ricardo Oyarzún
 
-* Vardan Gyurjyan    (<gurjyan@jlab.org>)
-* Sebastián Mancilla (<smancill@jlab.org>)
-* Ricardo Oyarzún    (<oyarzun@jlab.org>)
+For assistance send email to [clara@jlab.org](mailto:clara@jlab.org).

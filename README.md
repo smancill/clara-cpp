@@ -7,6 +7,11 @@ Big Data processing.
 [![Javadoc](https://img.shields.io/badge/doxygen-master-blue.svg?style=flat)](https://claraweb.jlab.org/clara/api/cpp/)
 
 
+## Documentation
+
+The reference documentation is available at <https://claraweb.jlab.org>.
+
+
 ## Build notes
 
 #### Dependencies

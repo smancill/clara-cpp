@@ -14,19 +14,25 @@ The reference documentation is available at <https://claraweb.jlab.org>.
 
 ## Build notes
 
-#### Dependencies
+### Dependencies
 
 CLARA requires a C++14 compiler and the [xMsg](https://github.com/JeffersonLab/xmsg-cpp)
-pub-sub messaging system. Follow the project instructions to install the build
+pub-sub messaging system. Follow the xMsg project instructions to install the build
 toolchain, the required dependencies and the xMsg library.
+
+The main [CLARA Java](https://github.com/JeffersonLab/clara-java) implementation
+should also be installed in `$CLARA_HOME`
+to run C++ services with the standard orchestrator and the CLARA shell.
 
 ### Installation
 
 To build with CMake a configure wrapper script is provided:
 
-    ./configure --prefix=<INSTALL_DIR>
+    ./configure --prefix="$CLARA_HOME"
     make
     make install
+
+This will install CLARA C++ into the location of your CLARA distribution.
 
 
 ## Authors

@@ -3,10 +3,10 @@
 include(CMakeFindDependencyMacro)
 find_dependency(xMsg CONFIG)
 
-set(CLARA_CONFIG ${CMAKE_CURRENT_LIST_FILE})
-find_package_handle_standard_args(CLARA CONFIG_MODE)
-mark_as_advanced(CLARA_DIR)
+set(Clara_CONFIG ${CMAKE_CURRENT_LIST_FILE})
+find_package_handle_standard_args(Clara CONFIG_MODE)
+mark_as_advanced(Clara_DIR)
 
-if(NOT TARGET CLARA::CLARA)
+if(NOT TARGET Clara::clara)
   include(${CMAKE_CURRENT_LIST_DIR}/clara-targets.cmake)
 endif()

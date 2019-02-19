@@ -10,10 +10,10 @@ endif()
 
 option(CLARA_BUILD_TESTS "Build tests" ON)
 option(CLARA_BUILD_DOCS "Build docs" ON)
-option(CLARA_BUILD_SHARED_LIBS "Build shared libs" ON)
 
-mark_as_advanced(CLARA_BUILD_SHARED_LIBS)
-set(BUILD_SHARED_LIBS ${CLARA_BUILD_SHARED_LIBS})
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  set(BUILD_SHARED_LIBS ON)
+endif()
 
 include(GNUInstallDirs)
 

@@ -51,11 +51,11 @@ string(CONCAT PKGCONF_REQ_PUB "xmsg")
 add_subdirectory(src)
 add_subdirectory(doc)
 
-if (CLARA_BUILD_TESTS)
+if(CLARA_BUILD_TESTS)
   enable_testing()
   include(cmake/External/GTest.cmake)
   add_subdirectory(test)
-endif (CLARA_BUILD_TESTS)
+endif()
 
 
 # package configuration
@@ -74,11 +74,11 @@ install(FILES
   DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
   COMPONENT Devel)
 
+
 # export targets
 export(EXPORT ClaraTargets
   FILE ${CMAKE_CURRENT_BINARY_DIR}/clara-targets.cmake
-  NAMESPACE Clara::
-)
+  NAMESPACE Clara::)
 
 install(EXPORT ClaraTargets
   FILE clara-targets.cmake
@@ -91,19 +91,17 @@ install(EXPORT ClaraTargets
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/clara.pc.in
     ${CMAKE_CURRENT_BINARY_DIR}/clara.pc
-  @ONLY
-)
+  @ONLY)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/clara.pc
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   COMPONENT Devel)
 
 
-
 # uninstall target
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
   @ONLY)
 
 add_custom_target(uninstall

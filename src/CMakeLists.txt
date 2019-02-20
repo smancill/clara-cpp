@@ -54,9 +54,12 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/clara
 add_executable(c_dpe run_dpe.cpp)
 target_link_libraries(c_dpe clara)
 
-install(TARGETS c_dpe DESTINATION ${CMAKE_INSTALL_LIBDIR}/clara)
+install(TARGETS c_dpe
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/clara
+)
 install(FILES ${PROJECT_SOURCE_DIR}/scripts/unix/c_dpe
   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
               GROUP_READ GROUP_EXECUTE
               WORLD_READ WORLD_EXECUTE
-  DESTINATION ${CMAKE_INSTALL_BINDIR})
+  DESTINATION ${CMAKE_INSTALL_BINDIR}
+)

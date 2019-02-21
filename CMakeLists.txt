@@ -11,6 +11,7 @@ endif()
 include(GNUInstallDirs)
 
 option(CLARA_BUILD_TESTS "Build tests" ON)
+option(CLARA_BUILD_DOCS "Build docs" ON)
 option(CLARA_BUILD_SHARED_LIBS "Build shared libs" ON)
 
 mark_as_advanced(CLARA_BUILD_SHARED_LIBS)
@@ -49,8 +50,10 @@ string(CONCAT PKGCONF_REQ_PUB "xmsg")
 
 
 add_subdirectory(src)
-add_subdirectory(doc)
 
+if(CLARA_BUILD_DOCS)
+  add_subdirectory(doc)
+endif()
 if(CLARA_BUILD_TESTS)
   enable_testing()
   include(cmake/External/GTest.cmake)

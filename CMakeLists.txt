@@ -89,7 +89,7 @@ configure_package_config_file(
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/clara-config.cmake
   DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
-  COMPONENT Devel)
+  COMPONENT Clara_Devel)
 
 
 # export targets
@@ -101,7 +101,7 @@ install(EXPORT ClaraTargets
   FILE clara-targets.cmake
   NAMESPACE Clara::
   DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
-  COMPONENT Devel)
+  COMPONENT Clara_Devel)
 
 
 # pkg-config
@@ -112,7 +112,7 @@ configure_file(
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/clara.pc
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-  COMPONENT Devel)
+  COMPONENT Clara_Devel)
 
 
 # uninstall target

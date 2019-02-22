@@ -66,7 +66,6 @@ else()
 endif()
 
 find_package(xMsg CONFIG REQUIRED)
-include(cmake/External/rapidjson.cmake)
 add_subdirectory(src/third_party)
 
 string(CONCAT PKGCONF_REQ_PUB "xmsg")

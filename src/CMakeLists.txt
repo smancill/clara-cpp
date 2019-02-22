@@ -22,9 +22,7 @@ set(CLARA_STD_SRC
   stdlib/json_utils.cpp
 )
 
-add_definitions(-DRAPIDJSON_HAS_STDSTRING)
 add_library(clara ${CLARA_SRC} ${CLARA_STD_SRC} $<TARGET_OBJECTS:json11>)
-add_dependencies(clara miloyip-rapidjson)
 target_link_libraries(clara
   PRIVATE rapidjson concurrentqueue thread_pool ${CMAKE_DL_LIBS}
   PUBLIC xMsg::xmsg

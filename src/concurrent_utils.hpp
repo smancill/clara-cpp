@@ -31,8 +31,8 @@
 #include <mutex>
 #include <vector>
 
-#include "concurrent_queue/blockingconcurrentqueue.h"
-#include "thread_pool/thread_pool.hpp"
+#include <blockingconcurrentqueue.h>
+#include <thread_pool.hpp>
 
 namespace clara {
 namespace util {

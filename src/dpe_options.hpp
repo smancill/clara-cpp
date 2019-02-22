@@ -27,7 +27,7 @@
 
 #include "dpe_config.hpp"
 
-#include "optionparser.h"
+#include <optionparser.h>
 
 #include <xmsg/address.h>
 

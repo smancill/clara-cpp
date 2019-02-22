@@ -59,6 +59,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 find_package(xMsg CONFIG REQUIRED)
 include(cmake/External/rapidjson.cmake)
+add_subdirectory(src/third_party)
 
 string(CONCAT PKGCONF_REQ_PUB "xmsg")
 

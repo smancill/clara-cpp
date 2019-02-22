@@ -13,7 +13,6 @@ set(CLARA_SRC
   service.cpp
   service_engine.cpp
   service_report.cpp
-  third_party/dropbox/json11.cpp
   utils.cpp
 )
 
@@ -24,14 +23,20 @@ set(CLARA_STD_SRC
 )
 
 add_definitions(-DRAPIDJSON_HAS_STDSTRING)
-add_library(clara ${CLARA_SRC} ${CLARA_STD_SRC})
+add_library(clara ${CLARA_SRC} ${CLARA_STD_SRC} $<TARGET_OBJECTS:json11>)
 add_dependencies(clara miloyip-rapidjson)
-target_link_libraries(clara PUBLIC xMsg::xmsg PRIVATE ${CMAKE_DL_LIBS} rapidjson)
+target_link_libraries(clara
+  PRIVATE rapidjson concurrentqueue thread_pool ${CMAKE_DL_LIBS}
+  PUBLIC xMsg::xmsg
+)
 
+get_target_property(JSON11_INCLUDEDIR json11 INTERFACE_INCLUDE_DIRECTORIES)
 target_include_directories(clara PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/third_party>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+target_include_directories(clara SYSTEM PUBLIC
+  $<BUILD_INTERFACE:${JSON11_INCLUDEDIR}>
 )
 
 add_library(Clara::clara ALIAS clara)
@@ -42,10 +47,6 @@ install(TARGETS clara EXPORT ClaraTargets
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   COMPONENT Clara_Runtime
 )
-install(FILES ${PROJECT_SOURCE_DIR}/src/third_party/dropbox/json11.hpp
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/clara/third_party/dropbox
-  COMPONENT Clara_Devel
-)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/clara
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   COMPONENT Clara_Devel
@@ -53,7 +54,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/clara
 
 
 add_executable(c_dpe run_dpe.cpp)
-target_link_libraries(c_dpe clara)
+target_link_libraries(c_dpe optionparser clara)
 
 install(TARGETS c_dpe
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/clara

@@ -1,7 +1,11 @@
 #----------------------------------------------------------------------
 # Global settings
 #
+unset(CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+unset(CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
 unset(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+
+add_subdirectory(third_party)
 
 
 #----------------------------------------------------------------------

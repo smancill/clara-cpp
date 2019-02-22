@@ -79,7 +79,6 @@ if(CLARA_BUILD_DOCS)
 endif()
 if(CLARA_BUILD_TESTS)
   enable_testing()
-  include(cmake/External/GTest.cmake)
   add_subdirectory(test)
 endif()
 

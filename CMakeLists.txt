@@ -66,6 +66,10 @@ else()
   include(FetchContent)
 endif()
 
+if(CLARA_BUILD_TESTS)
+  enable_testing()
+endif()
+
 if(CLARA_USE_SYSTEM_XMSG)
   find_package(xMsg CONFIG REQUIRED)
 else()
@@ -83,7 +87,6 @@ if(CLARA_BUILD_DOCS)
   add_subdirectory(doc)
 endif()
 if(CLARA_BUILD_TESTS)
-  enable_testing()
   add_subdirectory(test)
 endif()
 

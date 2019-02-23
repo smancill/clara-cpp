@@ -8,19 +8,35 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     Debug Release MinSizeRel RelWithDebInfo)
 endif()
 
+option(CLARA_BUILD_TESTS "Build tests" ON)
+option(CLARA_BUILD_DOCS "Build docs" ON)
+
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  set(BUILD_SHARED_LIBS ON)
+endif()
+
 include(GNUInstallDirs)
 
-option(CLARA_BUILD_TESTS "Build tests" ON)
-option(CLARA_BUILD_SHARED_LIBS "Build shared libs" ON)
-
-mark_as_advanced(CLARA_BUILD_SHARED_LIBS)
-set(BUILD_SHARED_LIBS ${CLARA_BUILD_SHARED_LIBS})
+if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+endif()
+if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+endif()
+if(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+endif()
 
 
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
-  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+  set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}" CACHE PATH "")
 endif()
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -30,13 +46,12 @@ add_compile_options(-Wall -Wextra)
 
 if(APPLE)
   set(CMAKE_MACOSX_RPATH ON)
-  set(CMAKE_SKIP_BUILD_RPATH FALSE)
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-  list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" isSystemDir)
-  if("${isSystemDir}" STREQUAL "-1")
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-  endif()
+  file(RELATIVE_PATH relDir
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+  )
+  set(CMAKE_INSTALL_RPATH @loader_path @loader_path/${relDir})
 endif()
 
 
@@ -44,18 +59,21 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 find_package(xMsg CONFIG REQUIRED)
 include(cmake/External/rapidjson.cmake)
+add_subdirectory(src/third_party)
 
 string(CONCAT PKGCONF_REQ_PUB "xmsg")
 
 
 add_subdirectory(src)
-add_subdirectory(doc)
 
-if (CLARA_BUILD_TESTS)
+if(CLARA_BUILD_DOCS)
+  add_subdirectory(doc)
+endif()
+if(CLARA_BUILD_TESTS)
   enable_testing()
   include(cmake/External/GTest.cmake)
   add_subdirectory(test)
-endif (CLARA_BUILD_TESTS)
+endif()
 
 
 # package configuration
@@ -72,38 +90,36 @@ configure_package_config_file(
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/clara-config.cmake
   DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
-  COMPONENT Devel)
+  COMPONENT Clara_Devel)
+
 
 # export targets
 export(EXPORT ClaraTargets
   FILE ${CMAKE_CURRENT_BINARY_DIR}/clara-targets.cmake
-  NAMESPACE Clara::
-)
+  NAMESPACE Clara::)
 
 install(EXPORT ClaraTargets
   FILE clara-targets.cmake
   NAMESPACE Clara::
   DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
-  COMPONENT Devel)
+  COMPONENT Clara_Devel)
 
 
 # pkg-config
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/clara.pc.in
     ${CMAKE_CURRENT_BINARY_DIR}/clara.pc
-  @ONLY
-)
+  @ONLY)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/clara.pc
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-  COMPONENT Devel)
-
+  COMPONENT Clara_Devel)
 
 
 # uninstall target
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
   @ONLY)
 
 add_custom_target(uninstall

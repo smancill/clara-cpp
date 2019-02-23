@@ -37,16 +37,16 @@ matrix:
             - g++-8
           sources:
             - ubuntu-toolchain-r-test
+      before_install:
+        - eval "${MATRIX_EVAL}"
+        - CCACHE_DISABLE=1 pip install --user cget
       install:
         - mkdir -p "${CGET_PREFIX}"/cget/pkg # pfultz2/cget#68
         - CCACHE_DISABLE=1 cget install --cmake autotools
           protobuf,https://github.com/protocolbuffers/protobuf/releases/download/v${PROTO_VERSION}/protobuf-cpp-${PROTO_VERSION}.tar.gz
         - CCACHE_DISABLE=1 cget install --cmake autotools
           zeromq,https://github.com/zeromq/libzmq/releases/download/v${ZMQ_VERSION}/zeromq-${ZMQ_VERSION}.tar.gz
-        - cget install -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} -DXMSG_BUILD_TESTS:BOOL=OFF
-          xmsg,JeffersonLab/xmsg-cpp
       before_cache:
-        - cget remove -y xmsg
         - mv ${CGET_PREFIX}/cget/pkg/* ${CGET_PREFIX}/cget/unlink # pfultz2/cget#67
 
     - os: osx
@@ -56,15 +56,6 @@ matrix:
             - ccache
             - zeromq
             - protobuf
-
-before_install:
-  - eval "${MATRIX_EVAL}"
-  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then export PATH=${PATH}:${HOME}/Library/Python/2.7/bin; fi
-  - CCACHE_DISABLE=1 pip install --user cget
-
-install:
-  - cget install -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} -DXMSG_BUILD_TESTS:BOOL=OFF
-    xmsg,JeffersonLab/xmsg-cpp
 
 script:
   - ./configure --prefix=${INSTALL_DIR} --build-type=${BUILD_TYPE} &&

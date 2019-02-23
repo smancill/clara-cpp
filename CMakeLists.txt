@@ -10,6 +10,7 @@ endif()
 
 option(CLARA_BUILD_TESTS "Build tests" ON)
 option(CLARA_BUILD_DOCS "Build docs" ON)
+option(CLARA_USE_SYSTEM_XMSG "Use the version of xMsg installed in the system" OFF)
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   set(BUILD_SHARED_LIBS ON)
@@ -57,8 +58,24 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
-find_package(xMsg CONFIG REQUIRED)
-include(cmake/External/rapidjson.cmake)
+set(FETCHCONTENT_BASE_DIR "${CMAKE_BINARY_DIR}/ThirdParty" CACHE PATH
+  "Directory under which to collect all populated content")
+if(${CMAKE_VERSION} VERSION_LESS 3.11)
+  include(cmake/External/FetchContent.cmake)
+else()
+  include(FetchContent)
+endif()
+
+if(CLARA_BUILD_TESTS)
+  enable_testing()
+endif()
+
+if(CLARA_USE_SYSTEM_XMSG)
+  find_package(xMsg CONFIG REQUIRED)
+else()
+  add_subdirectory(src/third_party/xmsg)
+endif()
+
 add_subdirectory(src/third_party)
 
 string(CONCAT PKGCONF_REQ_PUB "xmsg")
@@ -70,8 +87,6 @@ if(CLARA_BUILD_DOCS)
   add_subdirectory(doc)
 endif()
 if(CLARA_BUILD_TESTS)
-  enable_testing()
-  include(cmake/External/GTest.cmake)
   add_subdirectory(test)
 endif()
 

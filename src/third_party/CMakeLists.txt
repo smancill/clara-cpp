@@ -1,5 +1,6 @@
 set(CMAKE_CXX_CLANG_TIDY "")
 
+add_subdirectory(rapidjson)
 add_subdirectory(json11)
 
 add_library(concurrentqueue INTERFACE IMPORTED GLOBAL)

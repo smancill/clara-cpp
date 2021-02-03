@@ -3,6 +3,7 @@
 A service-oriented framework to provide a computing environment for efficient
 Big Data processing.
 
+![Build Status](https://github.com/JeffersonLab/clara-cpp/workflows/Clara%20CI/badge.svg)
 [![Javadoc](https://img.shields.io/badge/doxygen-master-blue.svg?style=flat)](https://claraweb.jlab.org/clara/api/cpp/)
 
 

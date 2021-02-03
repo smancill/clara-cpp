@@ -16,7 +16,7 @@ The reference documentation is available at <https://claraweb.jlab.org>.
 
 CLARA requires a C++14 compiler and CMake 3.5+
 
-#### Ubuntu 16.04 and 18.04
+#### Ubuntu 18.04 and 20.04
 
 Install GCC and CMake from the repositories:
 
@@ -41,11 +41,11 @@ and [ZeroMQ](http://zeromq.org/intro:get-the-software).
 
 xMsg is bundled with CLARA and it will be built automatically.
 
-#### Ubuntu 16.04 and 18.04
+#### Ubuntu 18.04 and 20.04
 
 Install from the repositories:
 
-    $ sudo apt install libzmq3-dev libprotobuf-dev protobuf-compiler
+    $ sudo apt install libzmq5-dev libprotobuf-dev protobuf-compiler
 
 #### macOS
 

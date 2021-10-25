@@ -3,14 +3,6 @@
 A service-oriented framework to provide a computing environment for efficient
 Big Data processing.
 
-![Build Status](https://github.com/JeffersonLab/clara-cpp/workflows/Clara%20CI/badge.svg)
-[![Javadoc](https://img.shields.io/badge/doxygen-master-blue.svg?style=flat)](https://claraweb.jlab.org/clara/api/cpp/)
-
-
-## Documentation
-
-The reference documentation is available at <https://claraweb.jlab.org>.
-
 
 ## Build notes
 
@@ -63,7 +55,7 @@ To build with CMake a configure wrapper script is provided:
 
 This will install CLARA C++ into the location of your CLARA distribution.
 
-The main [CLARA Java](https://github.com/JeffersonLab/clara-java) implementation
+The main [CLARA Java](https://github.com/smancill/clara-java) implementation
 should also be already installed in `$CLARA_HOME`
 to run C++ services with the standard orchestrator and the CLARA shell.
 
@@ -73,5 +65,3 @@ to run C++ services with the standard orchestrator and the CLARA shell.
 * Vardan Gyurjyan
 * Sebastián Mancilla
 * Ricardo Oyarzún
-
-For assistance send email to [clara@jlab.org](mailto:clara@jlab.org).

@@ -19,7 +19,6 @@ set(CLARA_SRC
 set(CLARA_STD_SRC
   stdlib/event_reader_service.cpp
   stdlib/event_writer_service.cpp
-  stdlib/streaming_service.cpp
   stdlib/json_utils.cpp
 )
 

@@ -44,8 +44,8 @@ const std::string CONF_EVENTS_MAX = "max";
 
 const std::string REQUEST_NEXT = "next";
 const std::string REQUEST_NEXT_REC = "next-rec";
-const std::string REQUEST_FRAME_ORDER = "order";
-const std::string REQUEST_FRAME_NUMBER = "count";
+const std::string REQUEST_ORDER = "order";
+const std::string REQUEST_COUNT = "count";
 
 const std::string NO_NAME = "";
 const std::string NO_FILE = "No open file";
@@ -260,9 +260,9 @@ EngineData EventReaderService::execute(EngineData& input)
         const auto& request = data_cast<std::string>(input);
         if (request == REQUEST_NEXT || request == REQUEST_NEXT_REC) {
             impl_->get_next_event(input, output);
-        } else if (request == REQUEST_FRAME_ORDER) {
+        } else if (request == REQUEST_ORDER) {
             impl_->get_file_byte_order(output);
-        } else if (request == REQUEST_FRAME_NUMBER) {
+        } else if (request == REQUEST_COUNT) {
             impl_->get_event_count(output);
         } else {
             util::set_error(output, "Wrong input data: " + request);

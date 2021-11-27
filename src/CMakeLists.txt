@@ -1,3 +1,5 @@
+add_subdirectory(xmsg)
+
 set(CLARA_SRC
   base.cpp
   component.cpp

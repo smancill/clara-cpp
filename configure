@@ -179,6 +179,11 @@ check:
 
 test: check
 
+integration_test:
+	+@if \$(MAKE) -sn -C \$(BUILDDIR) integration_test > /dev/null 2>&1; \\
+	then \$(MAKE) -C \$(BUILDDIR) integration_test CTEST_OUTPUT_ON_FAILURE=1; \\
+	else echo "No integration tests found!"; fi
+
 clean:
 	+@\$(MAKE) -C \$(BUILDDIR) clean
 
@@ -187,5 +192,5 @@ distclean:
 	rm -f ${config_status}
 	rm -f Makefile
 
-.PHONY : install check test clean distclean
+.PHONY : install check test integration_test clean distclean
 EOF

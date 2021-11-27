@@ -10,7 +10,6 @@ endif()
 
 option(CLARA_BUILD_TESTS "Build tests" ON)
 option(CLARA_BUILD_DOCS "Build docs" ON)
-option(CLARA_USE_SYSTEM_XMSG "Use the version of xMsg installed in the system" OFF)
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   set(BUILD_SHARED_LIBS ON)
@@ -64,12 +63,6 @@ include(FetchContent)
 
 if(CLARA_BUILD_TESTS)
   enable_testing()
-endif()
-
-if(CLARA_USE_SYSTEM_XMSG)
-  find_package(xMsg CONFIG REQUIRED)
-else()
-  add_subdirectory(src/third_party/xmsg)
 endif()
 
 add_subdirectory(src/third_party)

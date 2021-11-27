@@ -1,12 +1,18 @@
 #----------------------------------------------------------------------
-# Global settings
+# Dependencies
 #
-unset(CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-unset(CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
-unset(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-
 add_subdirectory(third_party)
 
+#----------------------------------------------------------------------
+# xMsg tests
+#
+add_subdirectory(xmsg)
+add_subdirectory(xmsg/perf)
+
+#----------------------------------------------------------------------
+# Settings
+#
+unset(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 
 #----------------------------------------------------------------------
 # Unit tests
@@ -26,7 +32,6 @@ foreach(name IN LISTS CLARA_UNIT_TESTS)
   target_include_directories(test_${name} PRIVATE "${PROJECT_SOURCE_DIR}/src")
   target_link_libraries(test_${name} PRIVATE Clara::clara GTest::GMock)
 endforeach()
-
 
 #----------------------------------------------------------------------
 # Standalone executable tests

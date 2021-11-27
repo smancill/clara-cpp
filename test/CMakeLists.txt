@@ -4,10 +4,10 @@
 add_subdirectory(third_party)
 
 #----------------------------------------------------------------------
-# xMsg tests
+# Messaging tests
 #
-add_subdirectory(xmsg)
-add_subdirectory(xmsg/perf)
+add_subdirectory(msg)
+add_subdirectory(msg/perf)
 
 #----------------------------------------------------------------------
 # Settings

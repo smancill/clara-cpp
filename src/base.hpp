@@ -25,7 +25,7 @@
 
 #include "component.hpp"
 
-#include <xmsg/xmsg.h>
+#include <clara/msg/actor.hpp>
 
 namespace clara {
 

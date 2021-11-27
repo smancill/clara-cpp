@@ -1,6 +1,6 @@
 #include <clara/engine_data_type.hpp>
 
-#include <xmsg/proto/data.h>
+#include <clara/msg/proto/data.hpp>
 
 #include <gmock/gmock.h>
 

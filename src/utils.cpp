@@ -24,8 +24,8 @@
 
 #include "constants.hpp"
 
-#include <xmsg/constants.h>
-#include <xmsg/topic.h>
+#include <clara/msg/constants.hpp>
+#include <clara/msg/topic.hpp>
 
 #include <ctime>
 #include <iomanip>

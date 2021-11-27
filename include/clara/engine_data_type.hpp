@@ -206,7 +206,7 @@ extern const EngineDataType ARRAY_STRING;
 extern const EngineDataType JSON;
 
 /**
- * An xMsg native data object.
+ * A CLARA native data object.
  */
 extern const EngineDataType NATIVE;
 

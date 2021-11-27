@@ -23,7 +23,7 @@
 #include <clara/engine_data.hpp>
 #include <clara/engine_data_type.hpp>
 
-#include <xmsg/proto/meta.h>
+#include <clara/msg/proto/meta.hpp>
 
 namespace clara {
 

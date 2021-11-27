@@ -1,4 +1,4 @@
-add_subdirectory(xmsg)
+add_subdirectory(msg)
 
 set(CLARA_SRC
   base.cpp
@@ -27,7 +27,7 @@ set(CLARA_STD_SRC
 add_library(clara ${CLARA_SRC} ${CLARA_STD_SRC} $<TARGET_OBJECTS:json11>)
 target_link_libraries(clara
   PRIVATE rapidjson concurrentqueue thread_pool ${CMAKE_DL_LIBS}
-  PUBLIC xMsg::xmsg
+  PUBLIC clara-msg
 )
 
 get_target_property(JSON11_INCLUDEDIR json11 INTERFACE_INCLUDE_DIRECTORIES)
@@ -50,6 +50,7 @@ install(TARGETS clara EXPORT ClaraTargets
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/clara
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   COMPONENT Clara_Devel
+  PATTERN msg EXCLUDE
 )
 
 

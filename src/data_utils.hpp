@@ -25,7 +25,7 @@
 
 #include "constants.hpp"
 
-#include <xmsg/message.h>
+#include <clara/msg/message.hpp>
 
 #include <sstream>
 #include <stdexcept>

@@ -32,8 +32,8 @@
 #include "logging.hpp"
 #include "utils.hpp"
 
-#include <xmsg/proxy.h>
-#include <xmsg/xmsg.h>
+#include <clara/msg/actor.hpp>
+#include <clara/msg/proxy.hpp>
 
 #include <condition_variable>
 #include <mutex>

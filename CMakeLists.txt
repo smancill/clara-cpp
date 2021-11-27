@@ -38,6 +38,12 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+option(ENABLE_THREAD_SANITIZER "Enable thread-sanitizer support" OFF)
+
+if(ENABLE_THREAD_SANITIZER)
+  set(THREAD_SANITIZER -fsanitize=thread -fno-omit-frame-pointer)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -65,10 +71,17 @@ if(CLARA_BUILD_TESTS)
   enable_testing()
 endif()
 
+
+set(CLARA_MSG_ZEROMQ_MIN_VERSION 4.0)
+set(CLARA_MSG_PROTOBUF_MIN_VERSION 2.5)
+
+find_package(ZeroMQ ${CLARA_MSG_ZEROMQ_MIN_VERSION} REQUIRED)
+find_package(Protobuf ${CLARA_MSG_PROTOBUF_MIN_VERSION} REQUIRED)
+
+include(EnsureProtobufTarget)
+
+
 add_subdirectory(src/third_party)
-
-string(CONCAT PKGCONF_REQ_PUB "xmsg")
-
 
 add_subdirectory(src)
 
@@ -85,14 +98,16 @@ set(CMAKE_INSTALL_CONFIGDIR "${CMAKE_INSTALL_LIBDIR}/cmake/clara")
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/clara-config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/clara-config.cmake
+  ${PROJECT_SOURCE_DIR}/cmake/clara-config.cmake.in
+  ${PROJECT_BINARY_DIR}/clara-config.cmake
   INSTALL_DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/clara-config.cmake
+    ${PROJECT_BINARY_DIR}/clara-config.cmake
+    ${PROJECT_SOURCE_DIR}/cmake/Modules/FindZeroMQ.cmake
+    ${PROJECT_SOURCE_DIR}/cmake/Modules/EnsureProtobufTarget.cmake
   DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
   COMPONENT Clara_Devel)
 
@@ -110,6 +125,10 @@ install(EXPORT ClaraTargets
 
 
 # pkg-config
+string(CONCAT PKGCONF_REQ_PUB
+  "libzmq >= ${CLARA_MSG_ZEROMQ_MIN_VERSION}, "
+  "protobuf >= ${CLARA_MSG_PROTOBUF_MIN_VERSION}")
+
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/clara.pc.in
     ${CMAKE_CURRENT_BINARY_DIR}/clara.pc

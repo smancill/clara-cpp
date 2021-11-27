@@ -23,7 +23,7 @@
 #include "dpe.hpp"
 #include "dpe_options.hpp"
 
-#include <xmsg/context.h>
+#include <clara/msg/context.hpp>
 
 #include <csignal>
 #include <iostream>

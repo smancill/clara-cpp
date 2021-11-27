@@ -22,14 +22,14 @@
 
 #include <clara/engine_data_type.hpp>
 
-#include <xmsg/constants.h>
-#include <xmsg/proto/data.h>
+#include <clara/msg/constants.hpp>
+#include <clara/msg/proto/data.hpp>
 
 #include <memory>
 
 namespace {
 
-namespace vl { // variable lenght integers (not provided by xmsg helpers)
+namespace vl { // variable lenght integers (not provided by clara-msg helpers)
 
 using xmsg::proto::Data;
 using xmsg::proto::detail::set_repeated;

@@ -6,7 +6,7 @@ includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
 Name: @PROJECT_NAME@
 Description: Reactive data-stream processing framework
 Version: @PROJECT_VERSION@
-Libs: -L${libdir} -lclara
+Libs: -L${libdir} -lclara-msg -lclara
 Cflags: -I${includedir}
 Requires: @PKGCONF_REQ_PUB@
 Requires.private: @PKGCONF_REQ_PRIV@

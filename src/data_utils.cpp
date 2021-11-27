@@ -24,7 +24,7 @@
 
 #include <clara/engine_data_type.hpp>
 
-#include <xmsg/message.h>
+#include <clara/msg/message.hpp>
 
 #include <sstream>
 #include <stdexcept>

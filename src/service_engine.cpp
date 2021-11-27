@@ -27,7 +27,7 @@
 #include "service_config.hpp"
 #include "service_report.hpp"
 
-#include <xmsg/util.h>
+#include <clara/msg/utils.hpp>
 
 #include <chrono>
 

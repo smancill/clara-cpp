@@ -2,7 +2,7 @@
 #include <clara/engine_data_type.hpp>
 
 #include <engine_data_helper.hpp>
-#include <xmsg/message.h>
+#include <clara/msg/message.hpp>
 
 #include <gmock/gmock.h>
 

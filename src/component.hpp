@@ -25,7 +25,7 @@
 
 #include "constants.hpp"
 
-#include <xmsg/xmsg.h>
+#include <clara/msg/actor.hpp>
 
 #include <memory>
 #include <string>

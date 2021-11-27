@@ -26,12 +26,9 @@ Install CMake using [Homebrew](https://brew.sh/):
 
 ### Dependencies
 
-CLARA is built on top of the [xMsg](https://github.com/JeffersonLab/xmsg-cpp)
-pub-sub messaging system, which requires
+CLARA uses an internal pub-sub messaging library, which requires
 [Protocol Buffers](https://developers.google.com/protocol-buffers/docs/downloads)
 and [ZeroMQ](http://zeromq.org/intro:get-the-software).
-
-xMsg is bundled with CLARA and it will be built automatically.
 
 #### Ubuntu 20.04
 

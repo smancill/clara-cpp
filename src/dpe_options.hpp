@@ -27,7 +27,7 @@
 
 #include <optionparser.h>
 
-#include <xmsg/address.h>
+#include <clara/msg/address.hpp>
 
 #include <chrono>
 #include <iostream>

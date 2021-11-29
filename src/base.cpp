@@ -43,7 +43,7 @@ namespace {
 namespace clara {
 
 Base::Base(const Component& self, const Component& frontend)
-  : msg::xMsg{self.name(), self.addr(), get_fe_address(frontend)}
+  : msg::Actor{self.name(), self.addr(), get_fe_address(frontend)}
   , self_{self}
   , frontend_{frontend}
 {

@@ -95,7 +95,7 @@ class ConnectionSetup;
  * \see Message
  * \see Topic
  */
-class xMsg
+class Actor
 {
 public:
     /**
@@ -105,7 +105,7 @@ public:
      *
      * \param name the name of this actor
      */
-    explicit xMsg(const std::string& name);
+    explicit Actor(const std::string& name);
 
     /**
      * Creates an actor specifying the default registrar to be used.
@@ -114,8 +114,8 @@ public:
      * \param name the name of this actor
      * \param default_registrar the address to the default registrar
      */
-    explicit xMsg(const std::string& name,
-                  const RegAddress& default_registrar);
+    explicit Actor(const std::string& name,
+                   const RegAddress& default_registrar);
 
     /**
      * Creates an actor specifying the default proxy and registrar to be used.
@@ -124,17 +124,17 @@ public:
      * \param default_proxy the address to the default proxy
      * \param default_registrar the address to the default registrar
      */
-    explicit xMsg(const std::string& name,
-                  const ProxyAddress& default_proxy,
-                  const RegAddress& default_registrar);
+    explicit Actor(const std::string& name,
+                   const ProxyAddress& default_proxy,
+                   const RegAddress& default_registrar);
 
-    xMsg(const xMsg& rhs) = delete;
-    xMsg& operator=(const xMsg& rhs) = delete;
+    Actor(const Actor& rhs) = delete;
+    Actor& operator=(const Actor& rhs) = delete;
 
-    xMsg(xMsg&& rhs) noexcept;
-    xMsg& operator=(xMsg&& rhs) noexcept;
+    Actor(Actor&& rhs) noexcept;
+    Actor& operator=(Actor&& rhs) noexcept;
 
-    virtual ~xMsg();
+    virtual ~Actor();
 
 public:
     /**
@@ -353,7 +353,7 @@ public:
 
 private:
     struct Impl;
-    std::unique_ptr<Impl> xmsg_;
+    std::unique_ptr<Impl> actor_;
 };
 
 } // end namespace clara::msg

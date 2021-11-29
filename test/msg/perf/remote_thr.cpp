@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     const auto message_count = std::stol(argv[3]);
 
     try {
-        auto publisher = cm::xMsg("thr_publisher");
+        auto publisher = cm::Actor("thr_publisher");
         auto connection = publisher.connect(cm::ProxyAddress{bind_to});
 
         auto topic = cm::Topic::raw("thr_topic");

@@ -48,7 +48,7 @@ auto main_pool = std::shared_ptr<ConPool>{tls::getThreadInstance()};
 namespace clara::msg {
 
 /// \cond HIDDEN_SYMBOLS
-struct xMsg::Impl
+struct Actor::Impl
 {
 
     Impl(const std::string& name,
@@ -110,59 +110,59 @@ private:
 /// \endcond
 
 
-xMsg::xMsg(const std::string& name)
-  : xMsg{name, {}, {}}
+Actor::Actor(const std::string& name)
+  : Actor{name, {}, {}}
 { }
 
 
-xMsg::xMsg(const std::string& name,
-           const RegAddress& default_registrar)
-  : xMsg{name, {}, default_registrar}
+Actor::Actor(const std::string& name,
+             const RegAddress& default_registrar)
+  : Actor{name, {}, default_registrar}
 { }
 
 
-xMsg::xMsg(const std::string& name,
-           const ProxyAddress& default_proxy,
-           const RegAddress& default_registrar)
-  : xmsg_{new Impl{name, default_proxy, default_registrar}}
+Actor::Actor(const std::string& name,
+             const ProxyAddress& default_proxy,
+             const RegAddress& default_registrar)
+  : actor_{new Impl{name, default_proxy, default_registrar}}
 { }
 
 
-xMsg::xMsg(xMsg &&) noexcept = default;
-xMsg& xMsg::operator=(xMsg &&) noexcept = default;
+Actor::Actor(Actor &&) noexcept = default;
+Actor& Actor::operator=(Actor &&) noexcept = default;
 
-xMsg::~xMsg() = default;
+Actor::~Actor() = default;
 
 
-ProxyConnection xMsg::connect()
+ProxyConnection Actor::connect()
 {
-    return xmsg_->con_pool()->get_connection(xmsg_->default_proxy_addr);
+    return actor_->con_pool()->get_connection(actor_->default_proxy_addr);
 }
 
 
-ProxyConnection xMsg::connect(const ProxyAddress& addr)
+ProxyConnection Actor::connect(const ProxyAddress& addr)
 {
-    return xmsg_->con_pool()->get_connection(addr);
+    return actor_->con_pool()->get_connection(addr);
 }
 
 
-void xMsg::set_connection_setup(std::unique_ptr<ConnectionSetup> setup)
+void Actor::set_connection_setup(std::unique_ptr<ConnectionSetup> setup)
 {
-    return xmsg_->con_pool()->set_default_setup(std::move(setup));
+    return actor_->con_pool()->set_default_setup(std::move(setup));
 }
 
 
-void xMsg::publish(ProxyConnection& connection, Message& msg)
+void Actor::publish(ProxyConnection& connection, Message& msg)
 {
     connection->send(msg);
 }
 
 
-Message xMsg::sync_publish(ProxyConnection& connection,
-                           Message& msg,
-                           int timeout)
+Message Actor::sync_publish(ProxyConnection& connection,
+                            Message& msg,
+                            int timeout)
 {
-    auto return_addr = detail::get_unique_replyto(xmsg_->id);
+    auto return_addr = detail::get_unique_replyto(actor_->id);
     msg.meta_->set_replyto(return_addr);
 
     ScopedSubscription sub{*connection, Topic::raw(return_addr)};
@@ -186,9 +186,9 @@ Message xMsg::sync_publish(ProxyConnection& connection,
 
 
 std::unique_ptr<Subscription>
-xMsg::subscribe(const Topic& topic,
-                ProxyConnection&& connection,
-                std::function<void(Message&)> callback)
+Actor::subscribe(const Topic& topic,
+                 ProxyConnection&& connection,
+                 std::function<void(Message&)> callback)
 {
     return std::unique_ptr<Subscription>{
             new Subscription{topic, connection.release(), std::move(callback)}
@@ -196,26 +196,26 @@ xMsg::subscribe(const Topic& topic,
 }
 
 
-void xMsg::unsubscribe(std::unique_ptr<Subscription> handler)
+void Actor::unsubscribe(std::unique_ptr<Subscription> handler)
 {
     handler->stop();
 }
 
 
-void xMsg::register_as_publisher(const Topic& topic,
-                                 const std::string& description)
+void Actor::register_as_publisher(const Topic& topic,
+                                  const std::string& description)
 {
-    register_as_publisher(xmsg_->default_reg_addr, topic, description);
+    register_as_publisher(actor_->default_reg_addr, topic, description);
 }
 
 
-void xMsg::register_as_publisher(const RegAddress& addr,
-                                 const Topic& topic,
-                                 const std::string& description)
+void Actor::register_as_publisher(const RegAddress& addr,
+                                  const Topic& topic,
+                                  const std::string& description)
 {
-    auto driver = xmsg_->con_pool()->get_connection(addr);
-    auto proxy = xmsg_->default_proxy_addr;
-    auto data = registration::create(xmsg_->name, description,
+    auto driver = actor_->con_pool()->get_connection(addr);
+    auto proxy = actor_->default_proxy_addr;
+    auto data = registration::create(actor_->name, description,
                                      proxy.host(), proxy.pub_port(),
                                      topic, true);
     data.set_description(description);
@@ -224,20 +224,20 @@ void xMsg::register_as_publisher(const RegAddress& addr,
 }
 
 
-void xMsg::register_as_subscriber(const Topic& topic,
-                                  const std::string& description)
+void Actor::register_as_subscriber(const Topic& topic,
+                                   const std::string& description)
 {
-    register_as_subscriber(xmsg_->default_reg_addr, topic, description);
+    register_as_subscriber(actor_->default_reg_addr, topic, description);
 }
 
 
-void xMsg::register_as_subscriber(const RegAddress& addr,
-                                  const Topic& topic,
-                                  const std::string& description)
+void Actor::register_as_subscriber(const RegAddress& addr,
+                                   const Topic& topic,
+                                   const std::string& description)
 {
-    auto driver = xmsg_->con_pool()->get_connection(addr);
-    auto proxy = xmsg_->default_proxy_addr;
-    auto data = registration::create(xmsg_->name, description,
+    auto driver = actor_->con_pool()->get_connection(addr);
+    auto proxy = actor_->default_proxy_addr;
+    auto data = registration::create(actor_->name, description,
                                      proxy.host(), proxy.sub_port(),
                                      topic, false);
     data.set_description(description);
@@ -246,17 +246,17 @@ void xMsg::register_as_subscriber(const RegAddress& addr,
 }
 
 
-void xMsg::deregister_as_publisher(const Topic& topic)
+void Actor::deregister_as_publisher(const Topic& topic)
 {
-    deregister_as_publisher(xmsg_->default_reg_addr, topic);
+    deregister_as_publisher(actor_->default_reg_addr, topic);
 }
 
 
-void xMsg::deregister_as_publisher(const RegAddress& addr, const Topic& topic)
+void Actor::deregister_as_publisher(const RegAddress& addr, const Topic& topic)
 {
-    auto driver = xmsg_->con_pool()->get_connection(addr);
-    auto proxy = xmsg_->default_proxy_addr;
-    auto data = registration::create(xmsg_->name, "",
+    auto driver = actor_->con_pool()->get_connection(addr);
+    auto proxy = actor_->default_proxy_addr;
+    auto data = registration::create(actor_->name, "",
                                      proxy.host(), proxy.pub_port(),
                                      topic, true);
     driver->remove(data, true);
@@ -264,72 +264,72 @@ void xMsg::deregister_as_publisher(const RegAddress& addr, const Topic& topic)
 
 
 
-void xMsg::deregister_as_subscriber(const Topic& topic)
+void Actor::deregister_as_subscriber(const Topic& topic)
 {
-    deregister_as_subscriber(xmsg_->default_reg_addr, topic);
+    deregister_as_subscriber(actor_->default_reg_addr, topic);
 }
 
 
-void xMsg::deregister_as_subscriber(const RegAddress& addr, const Topic& topic)
+void Actor::deregister_as_subscriber(const RegAddress& addr, const Topic& topic)
 {
-    auto driver = xmsg_->con_pool()->get_connection(addr);
-    auto proxy = xmsg_->default_proxy_addr;
-    auto data = registration::create(xmsg_->name, "",
+    auto driver = actor_->con_pool()->get_connection(addr);
+    auto proxy = actor_->default_proxy_addr;
+    auto data = registration::create(actor_->name, "",
                                      proxy.host(), proxy.sub_port(),
                                      topic, false);
     driver->remove(data, false);
 }
 
 
-RegDataSet xMsg::find_publishers(const Topic& topic)
+RegDataSet Actor::find_publishers(const Topic& topic)
 {
-    return find_publishers(xmsg_->default_reg_addr, topic);
+    return find_publishers(actor_->default_reg_addr, topic);
 }
 
 
-RegDataSet xMsg::find_publishers(const RegAddress& addr, const Topic& topic)
+RegDataSet Actor::find_publishers(const RegAddress& addr, const Topic& topic)
 {
-    auto driver = xmsg_->con_pool()->get_connection(addr);
-    auto proxy = xmsg_->default_proxy_addr;
-    auto data = registration::create(xmsg_->name, "",
+    auto driver = actor_->con_pool()->get_connection(addr);
+    auto proxy = actor_->default_proxy_addr;
+    auto data = registration::create(actor_->name, "",
                                      proxy.host(), proxy.pub_port(),
                                      topic, true);
     return driver->find(data, true);
 }
 
 
-RegDataSet xMsg::find_subscribers(const Topic& topic)
+RegDataSet Actor::find_subscribers(const Topic& topic)
 {
-    return find_subscribers(xmsg_->default_reg_addr, topic);
+    return find_subscribers(actor_->default_reg_addr, topic);
 }
 
 
-RegDataSet xMsg::find_subscribers(const RegAddress& addr, const Topic& topic)
+RegDataSet Actor::find_subscribers(const RegAddress& addr, const Topic& topic)
 {
-    auto driver = xmsg_->con_pool()->get_connection(addr);
-    auto proxy = xmsg_->default_proxy_addr;
-    auto data = registration::create(xmsg_->name, "",
+    auto driver = actor_->con_pool()->get_connection(addr);
+    auto proxy = actor_->default_proxy_addr;
+    auto data = registration::create(actor_->name, "",
                                      proxy.host(), proxy.sub_port(),
                                      topic, false);
     return driver->find(data, false);
 }
 
 
-const std::string& xMsg::name() const
+const std::string& Actor::name() const
 {
-    return xmsg_->name;
+    return actor_->name;
 }
 
 
-const RegAddress& xMsg::default_registrar() const
+const RegAddress& Actor::default_registrar() const
 {
-    return xmsg_->default_reg_addr;
+    return actor_->default_reg_addr;
 }
 
 
-const ProxyAddress& xMsg::default_proxy() const
+const ProxyAddress& Actor::default_proxy() const
 {
-    return xmsg_->default_proxy_addr;
+    return actor_->default_proxy_addr;
 }
 
 } // end namespace clara::msg

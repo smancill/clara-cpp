@@ -37,7 +37,7 @@ class ProxyDriver;
 }
 
 class Message;
-class xMsg;
+class Actor;
 
 /**
  * The handler for an active subscription.
@@ -63,7 +63,7 @@ private:
     void stop();
 
 private:
-    friend xMsg;
+    friend Actor;
 
     Topic topic_;
     ConnectionWrapperPtr connection_;

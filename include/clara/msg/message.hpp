@@ -34,7 +34,7 @@
 
 namespace clara::msg {
 
-class xMsg;
+class Actor;
 
 /**
  * The standard message for CLARA pub/sub communications.
@@ -63,7 +63,7 @@ class xMsg;
  * See proto::Meta for all available fields.
  *
  * When an actor publishes a message and expects a response
- * (using xMsg::sync_publish), the message will have the metadata field
+ * (using Actor::sync_publish), the message will have the metadata field
  * `replyto` set to the topic where the response should be published.
  * To reuse the message for the response, construct it with \ref make_response.
  * Otherwise, create a new message using the \ref Message::replyto "replyto"
@@ -173,7 +173,7 @@ public:
     friend Message make_response(const Message& msg);
 
 private:
-    friend xMsg;
+    friend Actor;
     Topic topic_;
     std::unique_ptr<proto::Meta> meta_;
     std::vector<std::uint8_t> data_;

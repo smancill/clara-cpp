@@ -29,7 +29,7 @@
 
 namespace clara {
 
-class Base : public msg::xMsg
+class Base : public msg::Actor
 {
 public:
     Base(const Component& self, const Component& frontend);

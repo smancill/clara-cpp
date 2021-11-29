@@ -120,7 +120,7 @@ private:
 
 private:
     friend ConnectionPool;
-    friend xMsg;
+    friend Actor;
 
     A addr_;
     U con_;

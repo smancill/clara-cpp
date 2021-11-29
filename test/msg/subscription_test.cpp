@@ -17,7 +17,7 @@ TEST(Subscription, UnsubscribeStopsThread)
 {
     cm::test::ProxyThread proxy_thread{};
 
-    auto actor = cm::xMsg{"test"};
+    auto actor = cm::Actor{"test"};
     auto con = actor.connect();
 
     auto cb = [](cm::Message&) {};
@@ -46,7 +46,7 @@ TEST(Subscription, SuscribeReceivesAllMessages)
 
     auto sub_thread = std::thread{[&]() {
         try {
-            auto actor = cm::xMsg{"test_subscriber"};
+            auto actor = cm::Actor{"test_subscriber"};
             auto connection = actor.connect();
 
             auto topic = cm::Topic::raw("test_topic");
@@ -72,7 +72,7 @@ TEST(Subscription, SuscribeReceivesAllMessages)
     auto pub_thread = std::thread{[&]() {
         try {
             sub_ready.wait_for(1000);
-            auto actor = cm::xMsg{"test_publisher"};
+            auto actor = cm::Actor{"test_publisher"};
             auto connection = actor.connect();
             auto topic = cm::Topic::raw("test_topic");
             for (int i = 0; i < check.N; i++) {
@@ -110,7 +110,7 @@ TEST(Subscription, SyncPublishReceivesAllResponses)
 
     auto sub_thread = std::thread{[&]() {
         try {
-            auto sub_actor = cm::xMsg{"test_subscriber"};
+            auto sub_actor = cm::Actor{"test_subscriber"};
             auto sub_con = sub_actor.connect();
             auto rep_con = sub_actor.connect();
 
@@ -135,7 +135,7 @@ TEST(Subscription, SyncPublishReceivesAllResponses)
     auto pub_thread = std::thread{[&]() {
         try {
             sub_ready.wait_for(1000);
-            auto pub_actor = cm::xMsg{"test_publisher"};
+            auto pub_actor = cm::Actor{"test_publisher"};
             auto pub_con = pub_actor.connect();
             auto pub_topic = cm::Topic::raw("test_topic");
             for (int i = 0; i < check.N; i++) {
@@ -178,7 +178,7 @@ TEST(MultiThreadPublisher, SuscribeReceivesAllMessages)
 
     auto sub_thread = std::thread{[&]() {
         try {
-            auto actor = cm::xMsg{"test_subscriber"};
+            auto actor = cm::Actor{"test_subscriber"};
             auto connection = actor.connect();
 
             auto topic = cm::Topic::raw("test_topic");
@@ -201,7 +201,7 @@ TEST(MultiThreadPublisher, SuscribeReceivesAllMessages)
         }
     }};
 
-    auto pub_actor = cm::xMsg{"test_publisher"};
+    auto pub_actor = cm::Actor{"test_publisher"};
     auto pub_threads = std::vector<std::thread>{};
     for (int i = 0; i < check.THREADS; ++i) {
         pub_threads.emplace_back([&,i]() {
@@ -250,7 +250,7 @@ TEST(MultiThreadPublisher, SyncPublishReceivesAllResponses)
 
     auto sub_thread = std::thread{[&]() {
         try {
-            auto sub_actor = cm::xMsg{"test_subscriber"};
+            auto sub_actor = cm::Actor{"test_subscriber"};
             auto sub_con = sub_actor.connect();
             auto rep_con = sub_actor.connect();
 
@@ -272,7 +272,7 @@ TEST(MultiThreadPublisher, SyncPublishReceivesAllResponses)
         }
     }};
 
-    auto pub_actor = cm::xMsg{"test_publisher"};
+    auto pub_actor = cm::Actor{"test_publisher"};
     auto pub_threads = std::vector<std::thread>{};
     for (int i = 0; i < check.THREADS; ++i) {
         pub_threads.emplace_back([&,i]() {

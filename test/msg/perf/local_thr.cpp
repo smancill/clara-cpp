@@ -53,7 +53,7 @@ int main(int argc, char** argv)
     message_count = std::stol(argv[3]);
 
     try {
-        auto subscriber = cm::xMsg("thr_subscriber");
+        auto subscriber = cm::Actor("thr_subscriber");
         auto connection = subscriber.connect(cm::ProxyAddress{bind_to});
         auto topic = cm::Topic::raw("thr_topic");
         auto cb = LocalCallback{};

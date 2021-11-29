@@ -6,7 +6,7 @@ Big Data processing.
 
 ## Build notes
 
-CLARA requires a C++14 compiler and CMake 3.16+
+CLARA requires a C++17 compiler and CMake 3.16+
 
 #### Ubuntu 20.04
 

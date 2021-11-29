@@ -6,9 +6,9 @@ Big Data processing.
 
 ## Build notes
 
-CLARA requires a C++14 compiler and CMake 3.5+
+CLARA requires a C++14 compiler and CMake 3.16+
 
-#### Ubuntu 18.04 and 20.04
+#### Ubuntu 20.04
 
 Install GCC and CMake from the repositories:
 
@@ -33,7 +33,7 @@ and [ZeroMQ](http://zeromq.org/intro:get-the-software).
 
 xMsg is bundled with CLARA and it will be built automatically.
 
-#### Ubuntu 18.04 and 20.04
+#### Ubuntu 20.04
 
 Install from the repositories:
 

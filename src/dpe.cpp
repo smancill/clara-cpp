@@ -56,8 +56,8 @@ public:
 class Dpe::DpeImpl : public Base
 {
 public:
-    DpeImpl(const xmsg::ProxyAddress& local,
-            const xmsg::ProxyAddress& frontend,
+    DpeImpl(const msg::ProxyAddress& local,
+            const msg::ProxyAddress& frontend,
             const DpeConfig& config);
 
     ~DpeImpl() override;
@@ -88,17 +88,17 @@ public:
 
     void stop_service(util::RequestParser& parser);
 
-    void callback(xmsg::Message& msg);
+    void callback(msg::Message& msg);
 
 public:
-    xmsg::Topic topic();
+    msg::Topic topic();
 
 private:
     std::mutex dpe_mutex_;
     std::mutex cb_mutex_;
 
-    std::unique_ptr<xmsg::sys::Proxy> proxy_;
-    std::unique_ptr<xmsg::Subscription> sub_;
+    std::unique_ptr<msg::sys::Proxy> proxy_;
+    std::unique_ptr<msg::Subscription> sub_;
     util::ConcurrentMap<std::string, Container> containers_;
 
     DpeConfig config_;
@@ -127,18 +127,18 @@ public:
 private:
     void run();
 
-    xmsg::Message alive_message()
+    msg::Message alive_message()
     {
         return build_message(constants::dpe_alive, alive_report());
     }
 
-    xmsg::Message report_message()
+    msg::Message report_message()
     {
         return build_message(constants::dpe_report, json_report());
     }
 
-    xmsg::Message build_message(const std::string& topic_prefix,
-                                const std::string& json);
+    msg::Message build_message(const std::string& topic_prefix,
+                               const std::string& json);
 
 private:
     bool wait(int time_out)
@@ -171,8 +171,8 @@ private:
 
 
 Dpe::Dpe(bool is_frontend,
-         const xmsg::ProxyAddress& local,
-         const xmsg::ProxyAddress& frontend,
+         const msg::ProxyAddress& local,
+         const msg::ProxyAddress& frontend,
          const DpeConfig& config)
   : dpe_{std::make_unique<DpeImpl>(local, frontend, config)}
 {
@@ -205,12 +205,12 @@ void Dpe::stop()
 }
 
 
-Dpe::DpeImpl::DpeImpl(const xmsg::ProxyAddress& local,
-                 const xmsg::ProxyAddress& frontend,
+Dpe::DpeImpl::DpeImpl(const msg::ProxyAddress& local,
+                 const msg::ProxyAddress& frontend,
                  const DpeConfig& config)
   : Base{Component::dpe(local),
          Component::dpe(frontend, constants::java_lang)}
-  , proxy_{std::make_unique<xmsg::sys::Proxy>(local)}
+  , proxy_{std::make_unique<msg::sys::Proxy>(local)}
   , config_(config)
   , report_{*this, config_}
   , report_service_{std::make_unique<ReportService>(*this, config_, report_)}
@@ -384,7 +384,7 @@ void Dpe::DpeImpl::stop_container(util::RequestParser& parser)
     auto name = parser.next_string();
     auto container = containers_.remove(name);
     if (!container) {
-        auto container_name = xmsg::Topic::build(DpeImpl::name(), name).str();
+        auto container_name = msg::Topic::build(DpeImpl::name(), name).str();
         throw util::InvalidRequest{"could not stop container = " + container_name +
                                    ": container doesn't exist"};
     }
@@ -393,13 +393,13 @@ void Dpe::DpeImpl::stop_container(util::RequestParser& parser)
 }
 
 
-xmsg::Topic Dpe::DpeImpl::topic()
+msg::Topic Dpe::DpeImpl::topic()
 {
-    return xmsg::Topic::build("dpe", name());
+    return msg::Topic::build("dpe", name());
 }
 
 
-void Dpe::DpeImpl::callback(xmsg::Message& msg)
+void Dpe::DpeImpl::callback(msg::Message& msg)
 {
     std::unique_lock<std::mutex> lock{cb_mutex_};
     try {
@@ -422,12 +422,12 @@ void Dpe::DpeImpl::callback(xmsg::Message& msg)
             LOGGER->info("Received data %s", util::parse_message(msg));
         }
         if (msg.has_replyto()) {
-            send_response(msg, response, xmsg::proto::Meta::INFO);
+            send_response(msg, response, msg::proto::Meta::INFO);
         }
     } catch (std::exception& e) {
         LOGGER->error(e.what());
         if (msg.has_replyto()) {
-            send_response(msg, e.what(), xmsg::proto::Meta::ERROR);
+            send_response(msg, e.what(), msg::proto::Meta::ERROR);
         }
     } catch (...) {
         LOGGER->error("%s callback: unexpected exception", name());
@@ -490,14 +490,14 @@ void ReportService::run()
 };
 
 
-xmsg::Message ReportService::build_message(const std::string& topic_prefix,
-                                           const std::string& data)
+msg::Message ReportService::build_message(const std::string& topic_prefix,
+                                          const std::string& data)
 {
-    auto topic = xmsg::Topic::build(topic_prefix,
+    auto topic = msg::Topic::build(topic_prefix,
                                     config_.session,
                                     base_.name());
-    return xmsg::Message{std::move(topic), type::JSON.mime_type(),
-                         std::vector<std::uint8_t>{data.begin(), data.end()}};
+    return msg::Message{std::move(topic), type::JSON.mime_type(),
+                        std::vector<std::uint8_t>{data.begin(), data.end()}};
 }
 
 } // end namespace clara

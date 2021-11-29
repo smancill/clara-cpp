@@ -34,8 +34,7 @@ std::mutex mtx;
 }
 
 
-namespace xmsg {
-namespace sys {
+namespace clara::msg::sys {
 
 Proxy::Proxy(std::unique_ptr<Context> ctx, const ProxyAddress& addr)
   : ctx_{std::move(ctx)}
@@ -156,5 +155,4 @@ void Proxy::stop()
     ctrl_.join();
 }
 
-} // end namespace sys
-} // end namespace xmsg
+} // end namespace clara::msg::sys

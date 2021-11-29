@@ -8,19 +8,21 @@
 
 #include <atomic>
 
+namespace cm = clara::msg;
+
 using namespace testing;
 
 
 TEST(Subscription, UnsubscribeStopsThread)
 {
-    xmsg::test::ProxyThread proxy_thread{};
+    cm::test::ProxyThread proxy_thread{};
 
-    auto actor = xmsg::xMsg{"test"};
+    auto actor = cm::xMsg{"test"};
     auto con = actor.connect();
 
-    auto cb = [](xmsg::Message&) {};
-    auto sub = actor.subscribe(xmsg::Topic::build("test"), std::move(con), cb);
-    xmsg::util::sleep(1000);
+    auto cb = [](cm::Message&) {};
+    auto sub = actor.subscribe(cm::Topic::build("test"), std::move(con), cb);
+    cm::util::sleep(1000);
 
     actor.unsubscribe(std::move(sub));
 }
@@ -37,19 +39,19 @@ TEST(Subscription, SuscribeReceivesAllMessages)
         const long SUM_N = 49995000L;
     } check;
 
-    xmsg::test::ProxyThread proxy_thread;
+    cm::test::ProxyThread proxy_thread;
 
     SimpleCondition sub_ready;
     SimpleCondition all_msg;
 
     auto sub_thread = std::thread{[&]() {
         try {
-            auto actor = xmsg::xMsg{"test_subscriber"};
+            auto actor = cm::xMsg{"test_subscriber"};
             auto connection = actor.connect();
 
-            auto topic = xmsg::Topic::raw("test_topic");
-            auto cb = [&](xmsg::Message& msg) {
-                auto i = xmsg::parse_message<int>(msg);
+            auto topic = cm::Topic::raw("test_topic");
+            auto cb = [&](cm::Message& msg) {
+                auto i = cm::parse_message<int>(msg);
                 auto n = ++check.counter;
                 check.sum += i;
                 if (n == check.N) {
@@ -70,11 +72,11 @@ TEST(Subscription, SuscribeReceivesAllMessages)
     auto pub_thread = std::thread{[&]() {
         try {
             sub_ready.wait_for(1000);
-            auto actor = xmsg::xMsg{"test_publisher"};
+            auto actor = cm::xMsg{"test_publisher"};
             auto connection = actor.connect();
-            auto topic = xmsg::Topic::raw("test_topic");
+            auto topic = cm::Topic::raw("test_topic");
             for (int i = 0; i < check.N; i++) {
-                auto msg = xmsg::make_message(topic, i);
+                auto msg = cm::make_message(topic, i);
                 actor.publish(connection, msg);
             }
         } catch (std::exception& e) {
@@ -101,22 +103,22 @@ TEST(Subscription, SyncPublishReceivesAllResponses)
         const long SUM_N = 4950L;
     } check;
 
-    xmsg::test::ProxyThread proxy_thread;
+    cm::test::ProxyThread proxy_thread;
 
     SimpleCondition sub_ready;
     SimpleCondition all_msg;
 
     auto sub_thread = std::thread{[&]() {
         try {
-            auto sub_actor = xmsg::xMsg{"test_subscriber"};
+            auto sub_actor = cm::xMsg{"test_subscriber"};
             auto sub_con = sub_actor.connect();
             auto rep_con = sub_actor.connect();
 
-            auto sub_topic = xmsg::Topic::raw("test_topic");
-            auto sub_cb = [&](xmsg::Message& m) {
+            auto sub_topic = cm::Topic::raw("test_topic");
+            auto sub_cb = [&](cm::Message& m) {
                 auto r_topic = m.meta()->replyto();
-                auto r_data = xmsg::parse_message<int>(m);
-                auto r_msg = xmsg::make_message(xmsg::Topic::raw(r_topic), r_data);
+                auto r_data = cm::parse_message<int>(m);
+                auto r_msg = cm::make_message(cm::Topic::raw(r_topic), r_data);
                 sub_actor.publish(rep_con, r_msg);
             };
 
@@ -133,13 +135,13 @@ TEST(Subscription, SyncPublishReceivesAllResponses)
     auto pub_thread = std::thread{[&]() {
         try {
             sub_ready.wait_for(1000);
-            auto pub_actor = xmsg::xMsg{"test_publisher"};
+            auto pub_actor = cm::xMsg{"test_publisher"};
             auto pub_con = pub_actor.connect();
-            auto pub_topic = xmsg::Topic::raw("test_topic");
+            auto pub_topic = cm::Topic::raw("test_topic");
             for (int i = 0; i < check.N; i++) {
-                auto msg = xmsg::make_message(pub_topic, i);
+                auto msg = cm::make_message(pub_topic, i);
                 auto r_msg = pub_actor.sync_publish(pub_con, msg, 1000);
-                auto r_data = xmsg::parse_message<int>(r_msg);
+                auto r_data = cm::parse_message<int>(r_msg);
                 ++check.counter;
                 check.sum += r_data;
             }
@@ -169,19 +171,19 @@ TEST(MultiThreadPublisher, SuscribeReceivesAllMessages)
         const long SUM_N = 49995000L;
     } check;
 
-    xmsg::test::ProxyThread proxy_thread;
+    cm::test::ProxyThread proxy_thread;
 
     SimpleCondition sub_ready;
     SimpleCondition all_msg;
 
     auto sub_thread = std::thread{[&]() {
         try {
-            auto actor = xmsg::xMsg{"test_subscriber"};
+            auto actor = cm::xMsg{"test_subscriber"};
             auto connection = actor.connect();
 
-            auto topic = xmsg::Topic::raw("test_topic");
-            auto cb = [&](xmsg::Message& msg) {
-                auto i = xmsg::parse_message<int>(msg);
+            auto topic = cm::Topic::raw("test_topic");
+            auto cb = [&](cm::Message& msg) {
+                auto i = cm::parse_message<int>(msg);
                 auto n = ++check.counter;
                 check.sum += i;
                 if (n == check.N) {
@@ -199,17 +201,17 @@ TEST(MultiThreadPublisher, SuscribeReceivesAllMessages)
         }
     }};
 
-    auto pub_actor = xmsg::xMsg{"test_publisher"};
+    auto pub_actor = cm::xMsg{"test_publisher"};
     auto pub_threads = std::vector<std::thread>{};
     for (int i = 0; i < check.THREADS; ++i) {
         pub_threads.emplace_back([&,i]() {
             try {
                 sub_ready.wait_for(1000);
                 auto n = check.N / check.THREADS;
-                auto topic = xmsg::Topic::raw("test_topic");
+                auto topic = cm::Topic::raw("test_topic");
                 for (int j = n * i; j < n * (i + 1); j++) {
                     auto connection = pub_actor.connect();
-                    auto msg = xmsg::make_message(topic, j);
+                    auto msg = cm::make_message(topic, j);
                     pub_actor.publish(connection, msg);
                 }
             } catch (std::exception& e) {
@@ -241,22 +243,22 @@ TEST(MultiThreadPublisher, SyncPublishReceivesAllResponses)
         const long SUM_N = 4950L;
     } check;
 
-    xmsg::test::ProxyThread proxy_thread{};
+    cm::test::ProxyThread proxy_thread{};
 
     SimpleCondition sub_ready;
     SimpleCondition all_msg;
 
     auto sub_thread = std::thread{[&]() {
         try {
-            auto sub_actor = xmsg::xMsg{"test_subscriber"};
+            auto sub_actor = cm::xMsg{"test_subscriber"};
             auto sub_con = sub_actor.connect();
             auto rep_con = sub_actor.connect();
 
-            auto topic = xmsg::Topic::raw("test_topic");
-            auto cb = [&](xmsg::Message& msg) {
+            auto topic = cm::Topic::raw("test_topic");
+            auto cb = [&](cm::Message& msg) {
                 auto r_topic = msg.meta()->replyto();
-                auto r_data = xmsg::parse_message<int>(msg);
-                auto r_msg = xmsg::make_message(xmsg::Topic::raw(r_topic), r_data);
+                auto r_data = cm::parse_message<int>(msg);
+                auto r_msg = cm::make_message(cm::Topic::raw(r_topic), r_data);
                 sub_actor.publish(rep_con, r_msg);
             };
 
@@ -270,19 +272,19 @@ TEST(MultiThreadPublisher, SyncPublishReceivesAllResponses)
         }
     }};
 
-    auto pub_actor = xmsg::xMsg{"test_publisher"};
+    auto pub_actor = cm::xMsg{"test_publisher"};
     auto pub_threads = std::vector<std::thread>{};
     for (int i = 0; i < check.THREADS; ++i) {
         pub_threads.emplace_back([&,i]() {
             try {
                 sub_ready.wait_for(1000);
-                auto topic = xmsg::Topic::raw("test_topic");
+                auto topic = cm::Topic::raw("test_topic");
                 auto n = check.N / check.THREADS;
                 for (int j = n * i; j < n * (i + 1); j++) {
                     auto con = pub_actor.connect();
-                    auto msg = xmsg::make_message(topic, j);
+                    auto msg = cm::make_message(topic, j);
                     auto r_msg = pub_actor.sync_publish(con, msg, 1000);
-                    auto r_data = xmsg::parse_message<int>(r_msg);
+                    auto r_data = cm::parse_message<int>(r_msg);
                     ++check.counter;
                     check.sum += r_data;
                 }

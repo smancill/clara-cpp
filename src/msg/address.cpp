@@ -45,7 +45,7 @@ inline int default_sub_port(int pub_port)
 } // end empty namespace
 
 
-namespace xmsg {
+namespace clara::msg {
 
 ProxyAddress::ProxyAddress()
   : ProxyAddress{util::localhost()}
@@ -101,4 +101,4 @@ std::ostream& operator<<(std::ostream& os, const RegAddress& a)
     return os << a.host() << ":" << a.port();
 }
 
-} // end namespace xmsg
+} // end namespace clara::msg

@@ -37,39 +37,39 @@ namespace clara {
 class EngineDataAccessor final
 {
 public:
-    EngineData create(any&& data, std::unique_ptr<xmsg::proto::Meta>&& meta)
+    EngineData create(any&& data, std::unique_ptr<msg::proto::Meta>&& meta)
     {
         return EngineData{std::move(data), std::move(meta)};
     }
 
-    const xmsg::proto::Meta* view_meta(const EngineData& data)
+    const msg::proto::Meta* view_meta(const EngineData& data)
     {
         return data.meta_.get();
     }
 
 
-    xmsg::proto::Meta* view_meta(EngineData& data)
+    msg::proto::Meta* view_meta(EngineData& data)
     {
         return data.meta_.get();
     }
 
-    std::unique_ptr<xmsg::proto::Meta>& move_meta(EngineData& data)
+    std::unique_ptr<msg::proto::Meta>& move_meta(EngineData& data)
     {
         return data.meta_;
     }
 
-    xmsg::Message serialize(const EngineData& data,
-                            const xmsg::Topic& topic,
-                            const std::vector<EngineDataType>& data_types)
+    msg::Message serialize(const EngineData& data,
+                           const msg::Topic& topic,
+                           const std::vector<EngineDataType>& data_types)
     {
-        using Msg = xmsg::Message;
+        using Msg = msg::Message;
 
         auto& mime_type = data.meta_->datatype();
         for (auto&& dt : data_types) {
             if (dt.mime_type() == mime_type) {
                 try {
                     auto bb = dt.serializer()->write(data.data_);
-                    auto mm = xmsg::proto::copy_meta(*data.meta_);
+                    auto mm = msg::proto::copy_meta(*data.meta_);
                     return Msg{topic, std::move(mm), std::move(bb)};
                 } catch (const std::exception& e) {
                     throw std::runtime_error{"could not serialize " + mime_type + ": " + e.what()};
@@ -78,14 +78,14 @@ public:
         }
         if (mime_type == type::STRING.mime_type()) {
             auto bb = type::STRING.serializer()->write(data.data_);
-            auto mm = xmsg::proto::copy_meta(*data.meta_);
+            auto mm = msg::proto::copy_meta(*data.meta_);
             return Msg{topic, std::move(mm), std::move(bb)};
         }
         throw std::runtime_error{"unsupported output mime-type = " + mime_type};
     }
 
 
-    EngineData deserialize(const xmsg::Message& msg,
+    EngineData deserialize(const msg::Message& msg,
                            const std::vector<EngineDataType>& data_types)
     {
         auto* metadata = msg.meta();
@@ -94,7 +94,7 @@ public:
             if (dt.mime_type() == mime_type) {
                 try {
                     auto user_data = dt.serializer()->read(msg.data());
-                    auto user_meta = xmsg::proto::copy_meta(*metadata);
+                    auto user_meta = msg::proto::copy_meta(*metadata);
                     return create(std::move(user_data), std::move(user_meta));
                 } catch (const std::exception& e) {
                     throw std::runtime_error{"could not deserialize " + mime_type + ": " + e.what()};

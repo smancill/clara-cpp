@@ -37,7 +37,7 @@
 /**
  * Core CLARA classes and functions.
  */
-namespace xmsg {
+namespace clara::msg {
 
 class ConnectionSetup;
 
@@ -356,6 +356,6 @@ private:
     std::unique_ptr<Impl> xmsg_;
 };
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_ACTOR_H_

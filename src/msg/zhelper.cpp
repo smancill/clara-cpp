@@ -63,8 +63,7 @@ std::atomic_uint_fast32_t rt_seq{[]{
 }
 
 
-namespace xmsg {
-namespace detail {
+namespace clara::msg::detail {
 
 // Read up to 3-part messages. Any message with more parts is unexpected and
 // invalid.
@@ -134,6 +133,4 @@ std::string get_random_id()
     return std::to_string(id_prefix + rng(id_dist));
 }
 
-} // end namespace util
-
-} // end namespace xmsg
+} // end namespace clara::msg::detail

@@ -27,8 +27,7 @@
 #include <array>
 #include <string>
 
-namespace xmsg {
-namespace detail {
+namespace clara::msg::detail {
 
 class Context
 {
@@ -146,7 +145,6 @@ std::string encode_identity(const std::string& address, const std::string& name)
 
 std::string get_random_id();
 
-} // end namespace detail
-} // end namespace xmsg
+} // end namespace clara::msg::detail
 
 #endif // CLARA_MSG_ZHELPER_H

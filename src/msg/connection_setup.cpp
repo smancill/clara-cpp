@@ -25,7 +25,7 @@
 
 #include <stdexcept>
 
-namespace xmsg {
+namespace clara::msg {
 
 void SocketSetup::set_option(int opt, const void* val, size_t val_len)
 {
@@ -50,4 +50,4 @@ int SocketSetup::type() const
     return get_option<int>(ZMQ_TYPE);
 }
 
-} // end namespace xmsg
+} // end namespace clara::msg

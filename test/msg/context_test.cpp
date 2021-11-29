@@ -4,13 +4,15 @@
 
 #include <future>
 
+namespace cm = clara::msg;
+
 using namespace testing;
 
 
 TEST(Context, SingletonSingleThreadInstances)
 {
-    auto ctx1 = xmsg::Context::instance();
-    auto ctx2 = xmsg::Context::instance();
+    auto ctx1 = cm::Context::instance();
+    auto ctx2 = cm::Context::instance();
 
     ASSERT_THAT(ctx1, Eq(ctx2));
 }
@@ -18,7 +20,7 @@ TEST(Context, SingletonSingleThreadInstances)
 
 TEST(Context, SingletonMultiThreadInstances)
 {
-    auto l = []() { return xmsg::Context::instance(); };
+    auto l = []() { return cm::Context::instance(); };
 
     auto f1 = std::async(std::launch::async, l);
     auto f2 = std::async(std::launch::async, l);
@@ -32,8 +34,8 @@ TEST(Context, SingletonMultiThreadInstances)
 
 TEST(Context, CreateNewContexts)
 {
-    auto ctx1 = xmsg::Context::create();
-    auto ctx2 = xmsg::Context::create();
+    auto ctx1 = cm::Context::create();
+    auto ctx2 = cm::Context::create();
 
     ASSERT_THAT(ctx1.get(), Ne(ctx2.get()));
 }
@@ -41,7 +43,7 @@ TEST(Context, CreateNewContexts)
 
 TEST(Context, SetIOThreads)
 {
-    auto ctx = xmsg::Context::create();
+    auto ctx = cm::Context::create();
 
     ctx->set_io_threads(4);
 
@@ -51,7 +53,7 @@ TEST(Context, SetIOThreads)
 
 TEST(Context, SetMaxSockets)
 {
-    auto ctx = xmsg::Context::create();
+    auto ctx = cm::Context::create();
 
     ctx->set_max_sockets(2048);
 

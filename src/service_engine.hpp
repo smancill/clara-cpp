@@ -52,11 +52,11 @@ public:
     ~ServiceEngine() override;
 
 public:
-    void setup(xmsg::Message& msg);
+    void setup(msg::Message& msg);
 
-    void configure(xmsg::Message& msg);
+    void configure(msg::Message& msg);
 
-    void execute(xmsg::Message& msg);
+    void execute(msg::Message& msg);
 
 private:
     EngineData configure_engine(EngineData& input);
@@ -64,10 +64,10 @@ private:
     EngineData execute_engine(EngineData& input);
 
 private:
-    EngineData get_engine_data(xmsg::Message& msg);
+    EngineData get_engine_data(msg::Message& msg);
 
-    xmsg::Message put_engine_data(const EngineData& output, const xmsg::Topic& topic);
-    xmsg::Message put_engine_data(const EngineData& output, const std::string& receiver);
+    msg::Message put_engine_data(const EngineData& output, const msg::Topic& topic);
+    msg::Message put_engine_data(const EngineData& output, const std::string& receiver);
 
     void update_metadata(const EngineData& input, EngineData& output);
 
@@ -77,7 +77,7 @@ private:
     std::set<std::string> get_links(const EngineData& input, const EngineData& output);
 
 private:
-    void send_response(EngineData& output, const xmsg::Topic& topic);
+    void send_response(EngineData& output, const msg::Topic& topic);
     void send_result(EngineData& output, const std::set<std::string>& links);
 
     void report_problem(EngineData& output);

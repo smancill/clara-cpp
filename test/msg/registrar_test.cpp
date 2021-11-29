@@ -6,32 +6,31 @@
 #include <cstdlib>
 #include <string>
 
-using namespace xmsg;
-using namespace xmsg::detail;
-using namespace xmsg::proto;
+namespace cm = clara::msg;
+namespace t = clara::msg::test;
 
-detail::Context ctx;
-RegDriver driver{ctx, {}};
+cm::detail::Context ctx;
+cm::detail::RegDriver driver{ctx, {}};
 
-RegDataSet reg_data;
+cm::RegDataSet reg_data;
 std::string name = "registrat_test";
 
 
-bool check_publisher(const Registration& reg)
+bool check_publisher(const cm::proto::Registration& reg)
 {
-    return reg.ownertype() == Registration::PUBLISHER;
+    return reg.ownertype() == cm::proto::Registration::PUBLISHER;
 }
 
 
-RegDataSet find(const std::string& topic, bool is_publisher)
+cm::RegDataSet find(const std::string& topic, bool is_publisher)
 {
-    RegDataSet data;
-    Topic search_topic = Topic::raw(topic);
+    auto data = cm::RegDataSet{};
+    auto search_topic = cm::Topic::raw(topic);
     for (auto& reg : reg_data) {
         if (is_publisher != check_publisher(reg)) {
             continue;
         }
-        auto reg_topic = Topic::build(reg.domain(), reg.subject(), reg.type());
+        auto reg_topic = cm::Topic::build(reg.domain(), reg.subject(), reg.type());
         if (is_publisher) {
             if (search_topic.is_parent(reg_topic)) {
                 data.insert(reg);
@@ -50,7 +49,7 @@ void add_random(int size)
 {
     printf("INFO: Registering %d random actors...\n", size);
     for (int i = 0; i < size; i++) {
-        auto reg = test::random_registration();
+        auto reg = t::random_registration();
         driver.add(reg, check_publisher(reg));
         reg_data.insert(reg);
     }
@@ -62,7 +61,7 @@ void remove_random(int size)
     printf("INFO: Removing %d random actors...\n", size);
 
     std::uniform_int_distribution<int> gen(0, reg_data.size() - size);
-    auto first = gen(test::rng);
+    auto first = gen(t::rng);
     auto end = first + size;
     auto i = 0;
     for (auto reg_it = reg_data.begin(); reg_it != reg_data.end(); ) {
@@ -96,29 +95,30 @@ void remove_host(const std::string& host)
 
 void remove_random_host()
 {
-    remove_host(test::random(test::hosts));
+    remove_host(t::random(t::hosts));
 }
 
 
 void remove_all()
 {
     printf("INFO: Removing all actors\n");
-    for (auto& host : test::hosts) {
+    for (auto& host : t::hosts) {
         driver.remove_all("test", host);
     }
     reg_data.clear();
 }
 
 
-Registration discovery_request(const std::string& topic, bool is_publisher)
+cm::proto::Registration discovery_request(const std::string& topic,
+                                          bool is_publisher)
 {
-    return test::new_registration(name, "localhost", topic, is_publisher);
+    return t::new_registration(name, "localhost", topic, is_publisher);
 }
 
 
 void check(bool is_publisher)
 {
-    for (auto& topic : test::topics) {
+    for (auto& topic : t::topics) {
         auto data = discovery_request(topic, is_publisher);
 
         auto result = driver.find(data, is_publisher);

@@ -27,8 +27,7 @@
 #include <array>
 #include <iostream>
 
-namespace xmsg {
-namespace detail {
+namespace clara::msg::detail {
 
 ProxyDriver::ProxyDriver(Context& ctx,
                          const ProxyAddress& addr,
@@ -169,5 +168,4 @@ Message parse_message(RawMessage& multi_msg)
     return {Topic::raw(topic), std::move(meta), std::move(data)};
 }
 
-} // end namespace detail
-} // end namespace xmsg
+} // end namespace clara::msg::detail

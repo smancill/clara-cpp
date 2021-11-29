@@ -30,8 +30,7 @@
 #include <memory>
 #include <vector>
 
-namespace xmsg {
-namespace proto {
+namespace clara::msg::proto {
 
 /**
  * \class Data
@@ -230,7 +229,6 @@ inline bool operator!=(const Data& lhs, const Data& rhs)
     return !(lhs == rhs);
 }
 
-} // end namespace proto
-} // end namespace xmsg
+} // end namespace clara::msg::proto
 
 #endif // CLARA_MSG_PROTO_DATA_H_

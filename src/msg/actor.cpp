@@ -35,16 +35,17 @@
 #include <random>
 
 #ifdef __APPLE__
-using tls = xmsg::detail::ThreadLocal<xmsg::ConnectionPool>;
+using ConPool = clara::msg::ConnectionPool;
+using tls = clara::msg::detail::ThreadLocal<ConPool>;
 #endif
 
 namespace {
 #ifdef __APPLE__
-auto main_pool = std::shared_ptr<xmsg::ConnectionPool>{tls::getThreadInstance()};
+auto main_pool = std::shared_ptr<ConPool>{tls::getThreadInstance()};
 #endif
 }
 
-namespace xmsg {
+namespace clara::msg {
 
 /// \cond HIDDEN_SYMBOLS
 struct xMsg::Impl
@@ -331,4 +332,4 @@ const ProxyAddress& xMsg::default_proxy() const
     return xmsg_->default_proxy_addr;
 }
 
-} // end namespace xmsg
+} // end namespace clara::msg

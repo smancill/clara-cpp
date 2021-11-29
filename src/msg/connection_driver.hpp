@@ -30,9 +30,7 @@
 
 #include <memory>
 
-namespace xmsg {
-
-namespace detail {
+namespace clara::msg::detail {
 
 /**
  * The standard pub/sub connection to a proxy.
@@ -88,7 +86,6 @@ private:
 
 Message parse_message(RawMessage& msg);
 
-} // end namespace detail
-} // end namespace xmsg
+} // end namespace clara::msg::detail
 
 #endif // CLARA_MSG_CONNECTION_DRIVER_H_

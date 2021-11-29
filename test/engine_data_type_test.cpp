@@ -132,7 +132,7 @@ TEST(NativeSerializer, NativeSerialization)
 {
     const auto* s = clara::type::NATIVE.serializer();
 
-    auto xd = xmsg::proto::Data{};
+    auto xd = clara::msg::proto::Data{};
     xd.set_flsint32(56);
     xd.set_double_(5.6);
     xd.add_stringa("Ride the Lightning");

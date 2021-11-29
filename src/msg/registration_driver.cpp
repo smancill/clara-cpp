@@ -30,7 +30,7 @@
 
 namespace {
 
-auto make_tie(const xmsg::proto::Registration& reg, int& port, int& owner)
+auto make_tie(const clara::msg::proto::Registration& reg, int& port, int& owner)
 {
     port = reg.port();
     owner = int{reg.ownertype()};
@@ -41,7 +41,7 @@ auto make_tie(const xmsg::proto::Registration& reg, int& port, int& owner)
 }
 
 
-namespace xmsg {
+namespace clara::msg {
 
 namespace proto {
 
@@ -302,4 +302,4 @@ proto::Registration create(const std::string& name,
 
 } // end namespace registration
 
-} // end namespace xmsg
+} // end namespace clara::msg

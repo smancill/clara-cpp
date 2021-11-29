@@ -9,9 +9,7 @@
 #include <string>
 #include <thread>
 
-namespace xmsg {
-
-namespace test {
+namespace clara::msg::test {
 
 class ProxyThread
 {
@@ -23,7 +21,7 @@ public:
         } catch (std::exception& e) {
             std::cerr << e.what() << std::endl;
         }
-        xmsg::util::sleep(100);
+        util::sleep(100);
     }
 
     ~ProxyThread()
@@ -32,10 +30,9 @@ public:
     }
 
 private:
-    xmsg::sys::Proxy proxy_{{}};
+    sys::Proxy proxy_{{}};
 };
 
-} // end namespace test
-} // end namespace xmsg
+} // end namespace clara::msg::test
 
 #endif

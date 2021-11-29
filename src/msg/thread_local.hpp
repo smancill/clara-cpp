@@ -13,8 +13,7 @@
 #include <pthread.h>
 #include <cstdio>
 
-namespace xmsg {
-namespace detail {
+namespace clara::msg::detail {
 
 template <class T>
 class ThreadLocal
@@ -57,7 +56,6 @@ pthread_key_t ThreadLocal<T>::key;
 template <class T>
 pthread_once_t ThreadLocal<T>::once_control = PTHREAD_ONCE_INIT;
 
-} // end namespace detail
-} // end namespace xmsg
+} // end namespace clara::msg::detail
 
 #endif // CLARA_MSG_THREAD_LOCAL_H

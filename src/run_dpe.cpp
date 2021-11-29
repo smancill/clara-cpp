@@ -53,7 +53,7 @@ int main(int argc, char** argv)
         return EXIT_SUCCESS;
     }
 
-    auto ctx = xmsg::Context::instance();
+    auto ctx = clara::msg::Context::instance();
     ctx->set_io_threads(options.io_threads());
     ctx->set_max_sockets(options.max_sockets());
 

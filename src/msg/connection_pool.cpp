@@ -30,7 +30,7 @@
 #include <unordered_map>
 
 
-namespace xmsg {
+namespace clara::msg {
 
 namespace detail {
 
@@ -147,4 +147,4 @@ detail::RegDriverPtr ConnectionPool::create_connection(const RegAddress& addr)
     return detail::RegDriverPtr{new detail::RegDriver(*ctx_->impl_, addr)};
 }
 
-} // end namespace xmsg
+} // end namespace clara::msg

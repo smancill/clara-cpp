@@ -30,7 +30,7 @@
 #include <string>
 #include <thread>
 
-namespace xmsg {
+namespace clara::msg {
 
 namespace detail {
 class ProxyDriver;
@@ -73,6 +73,6 @@ private:
     std::atomic_bool is_alive_;
 };
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_SUBSCRIPTION_H_

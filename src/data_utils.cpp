@@ -33,14 +33,14 @@
 namespace clara {
 namespace util {
 
-xmsg::Message build_request(const xmsg::Topic& topic, const std::string& data)
+msg::Message build_request(const msg::Topic& topic, const std::string& data)
 {
-    return xmsg::Message{topic, type::STRING.mime_type(),
-                         std::vector<uint8_t>{data.begin(), data.end()}};
+    return msg::Message{topic, type::STRING.mime_type(),
+                        std::vector<uint8_t>{data.begin(), data.end()}};
 }
 
 
-std::string parse_message(const xmsg::Message& msg)
+std::string parse_message(const msg::Message& msg)
 {
     auto& data = msg.data();
     return std::string{data.begin(), data.end()};

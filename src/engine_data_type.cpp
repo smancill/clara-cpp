@@ -31,8 +31,8 @@ namespace {
 
 namespace vl { // variable lenght integers (not provided by clara-msg helpers)
 
-using xmsg::proto::Data;
-using xmsg::proto::detail::set_repeated;
+using clara::msg::proto::Data;
+using clara::msg::proto::detail::set_repeated;
 
 template <typename T>
 inline void set_value(Data& /*data*/, const T& /*value*/)
@@ -72,14 +72,14 @@ public:
     std::vector<std::uint8_t> write(const clara::any& data) const override
     {
         const T& value = clara::any_cast<const T&>(data);
-        const auto xdata = xmsg::proto::make_data(value);
-        return xmsg::proto::serialize_data(xdata);
+        const auto xdata = clara::msg::proto::make_data(value);
+        return clara::msg::proto::serialize_data(xdata);
     }
 
     clara::any read(const std::vector<std::uint8_t>& buffer) const override
     {
-        const auto xdata = xmsg::proto::parse_data(buffer);
-        return { xmsg::proto::parse_data<T>(xdata) };
+        const auto xdata = clara::msg::proto::parse_data(buffer);
+        return { clara::msg::proto::parse_data<T>(xdata) };
     }
 };
 
@@ -91,14 +91,14 @@ public:
     std::vector<std::uint8_t> write(const clara::any& data) const override
     {
         const T& value = clara::any_cast<const T&>(data);
-        auto xdata = xmsg::proto::Data{};
+        auto xdata = clara::msg::proto::Data{};
         vl::set_value(xdata, value);
-        return xmsg::proto::serialize_data(xdata);
+        return clara::msg::proto::serialize_data(xdata);
     }
 
     clara::any read(const std::vector<std::uint8_t>& buffer) const override
     {
-        const auto xdata = xmsg::proto::parse_data(buffer);
+        const auto xdata = clara::msg::proto::parse_data(buffer);
         return { vl::get_value<T>(xdata) };
     }
 };
@@ -134,13 +134,13 @@ class NativeSerializer : public clara::Serializer
 public:
     std::vector<std::uint8_t> write(const clara::any& data) const override
     {
-        const auto& value = clara::any_cast<const xmsg::proto::Data&>(data);
-        return xmsg::proto::serialize_data(value);
+        const auto& value = clara::any_cast<const clara::msg::proto::Data&>(data);
+        return clara::msg::proto::serialize_data(value);
     }
 
     clara::any read(const std::vector<std::uint8_t>& buffer) const override
     {
-        return { xmsg::proto::parse_data(buffer) };
+        return { clara::msg::proto::parse_data(buffer) };
     }
 };
 
@@ -190,7 +190,7 @@ namespace clara {
 
 namespace type {
 
-namespace mt = xmsg::mimetype;
+namespace mt = msg::mimetype;
 
 const EngineDataType SINT32 { mt::single_sint32, vl_primitive<std::int32_t>() };
 const EngineDataType SINT64 { mt::single_sint64, vl_primitive<std::int64_t>() };

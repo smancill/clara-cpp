@@ -24,7 +24,7 @@
 
 #include <string>
 
-namespace xmsg {
+namespace clara::msg {
 
 /**
  * Global constants.
@@ -111,7 +111,7 @@ const std::string array_double = "binary/array-double";     ///< Repeated double
 const std::string array_string = "binary/array-string";     ///< Repeated UTF-8 encoded or 7-bit ASCII texts.
 const std::string array_bytes = "binary/array-bytes";       ///< Repeated arbitrary sequences of bytes.
 
-const std::string plain_data = "binary/native";             ///< A serialized \ref xmsg::proto::Data "Data" object
+const std::string plain_data = "binary/native";             ///< A serialized \ref clara::msg::proto::Data "Data" object
 const std::string java_object = "binary/java";              ///< A serialized Java object
 const std::string cpp_object = "binary/cpp";                ///< A serialized C++ object
 const std::string python_object = "binary/python";          ///< A serialized Python object
@@ -119,6 +119,6 @@ const std::string python_object = "binary/python";          ///< A serialized Py
 
 } // end namespace mime
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_CONSTANTS_H_

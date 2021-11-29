@@ -30,7 +30,7 @@
 #include <array>
 #include <iostream>
 
-namespace xmsg {
+namespace clara::msg {
 
 /**
  * \class Subscription
@@ -101,4 +101,4 @@ void Subscription::stop()
     connection_->unsubscribe(topic_);
 }
 
-} // end namespace xmsg
+} // end namespace clara::msg

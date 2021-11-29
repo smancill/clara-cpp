@@ -3,8 +3,8 @@
 #include <gmock/gmock.h>
 
 using namespace testing;
-using namespace xmsg;
 
+using clara::msg::Topic;
 using TopicQuery = std::string (Topic::*)() const;
 
 

@@ -26,7 +26,7 @@
 #include <string>
 #include <tuple>
 
-namespace xmsg {
+namespace clara::msg {
 
 /**
  * The network address of a proxy.
@@ -127,15 +127,15 @@ std::ostream& operator<<(std::ostream& os, const ProxyAddress& a);
 
 std::ostream& operator<<(std::ostream& os, const RegAddress& a);
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 
 namespace std {
 
 template <>
-struct hash<xmsg::ProxyAddress>
+struct hash<clara::msg::ProxyAddress>
 {
-    std::size_t operator()(const xmsg::ProxyAddress& k) const
+    std::size_t operator()(const clara::msg::ProxyAddress& k) const
     {
         using std::hash;
         using std::string;
@@ -145,9 +145,9 @@ struct hash<xmsg::ProxyAddress>
 };
 
 template <>
-struct hash<xmsg::RegAddress>
+struct hash<clara::msg::RegAddress>
 {
-    std::size_t operator()(const xmsg::RegAddress& k) const
+    std::size_t operator()(const clara::msg::RegAddress& k) const
     {
         using std::hash;
 

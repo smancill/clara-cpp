@@ -9,8 +9,7 @@
 #include <random>
 #include <string>
 
-namespace xmsg {
-namespace test {
+namespace clara::msg::test {
 
 using DataArray = std::vector<std::string>;
 
@@ -88,7 +87,6 @@ proto::Registration random_registration()
     return new_registration(name, host, topic, is_publisher);
 }
 
-} // end namespace test
-} // end namespace xmsg
+} // end namespace clara::msg::test
 
 #endif

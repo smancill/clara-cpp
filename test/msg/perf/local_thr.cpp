@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+namespace cm = clara::msg;
+
 
 std::string bind_to;
 long message_size;
@@ -24,7 +26,7 @@ std::condition_variable cond;
 class LocalCallback
 {
 public:
-    void operator()(xmsg::Message& msg);
+    void operator()(cm::Message& msg);
 
 private:
     using Time = std::chrono::high_resolution_clock;
@@ -46,14 +48,14 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    bind_to = xmsg::util::to_host_addr(argv[1]);
+    bind_to = cm::util::to_host_addr(argv[1]);
     message_size = std::stoi(argv[2]);
     message_count = std::stol(argv[3]);
 
     try {
-        auto subscriber = xmsg::xMsg("thr_subscriber");
-        auto connection = subscriber.connect(xmsg::ProxyAddress{bind_to});
-        auto topic = xmsg::Topic::raw("thr_topic");
+        auto subscriber = cm::xMsg("thr_subscriber");
+        auto connection = subscriber.connect(cm::ProxyAddress{bind_to});
+        auto topic = cm::Topic::raw("thr_topic");
         auto cb = LocalCallback{};
 
         auto sub = subscriber.subscribe(topic, std::move(connection), cb);
@@ -91,7 +93,7 @@ int main(int argc, char** argv)
 }
 
 
-void LocalCallback::operator()(xmsg::Message& msg)
+void LocalCallback::operator()(cm::Message& msg)
 {
     int size = msg.data().size();
     if (size != message_size) {

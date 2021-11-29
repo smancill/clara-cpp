@@ -84,14 +84,14 @@ char* get_option(char** begin, char** end, const std::string& option)
 }
 
 
-xmsg::ProxyAddress get_address(int argc, char** argv)
+clara::msg::ProxyAddress get_address(int argc, char** argv)
 {
-    std::string host = xmsg::util::localhost();
-    int port = xmsg::constants::default_port;
+    std::string host = clara::msg::util::localhost();
+    int port = clara::msg::constants::default_port;
 
     char* arg;
     if ((arg = get_option(argv, argv + argc, "--host")) != nullptr) {
-        host = xmsg::util::to_host_addr(arg);
+        host = clara::msg::util::to_host_addr(arg);
     }
     if ((arg = get_option(argv, argv + argc, "--port")) != nullptr) {
         port = std::stoi(arg);
@@ -104,8 +104,8 @@ xmsg::ProxyAddress get_address(int argc, char** argv)
 int main(int argc, char** argv)
 {
     try {
-        xmsg::ProxyAddress addr = get_address(argc, argv);
-        xmsg::sys::Proxy proxy{addr};
+        clara::msg::ProxyAddress addr = get_address(argc, argv);
+        clara::msg::sys::Proxy proxy{addr};
         proxy.start();
 
         printf("[%s] CLARA proxy INFO: running on host = %s  port = %d\n",

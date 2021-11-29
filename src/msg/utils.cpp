@@ -119,9 +119,7 @@ LocalAddrs& local_addrs()
 }
 
 
-namespace xmsg {
-
-namespace util {
+namespace clara::msg::util {
 
 std::string localhost()
 {
@@ -172,6 +170,4 @@ void sleep(long millis)
     std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 }
 
-} // end namespace util
-
-} // end namespace xmsg
+} // end namespace clara::msg::util

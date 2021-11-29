@@ -35,7 +35,7 @@
 #include <utility>
 #include <vector>
 
-namespace xmsg {
+namespace clara::msg {
 
 namespace detail {
 
@@ -157,6 +157,6 @@ proto::Registration create(const std::string& name,
 
 } // end namespace registration
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_REG_DRIVER_HPP_

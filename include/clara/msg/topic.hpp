@@ -25,7 +25,7 @@
 #include <string>
 #include <utility>
 
-namespace xmsg {
+namespace clara::msg {
 
 /**
  * The standard identification for CLARA pub/sub communications.
@@ -214,6 +214,6 @@ inline bool operator!=(const Topic& lhs, const Topic& rhs)
     return !(lhs == rhs);
 }
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_TOPIC_H_

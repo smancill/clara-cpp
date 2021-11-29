@@ -27,8 +27,6 @@
 #include <memory>
 #include <stdexcept>
 
-namespace xmsg {
-
 /**
  * Protobuf data classes and helpers.
  * CLARA uses [Protocol Buffers](https://developers.google.com/protocol-buffers)
@@ -37,7 +35,7 @@ namespace xmsg {
  * with some helper functions that simplify creating objects of those classes
  * for common use cases.
  */
-namespace proto {
+namespace clara::msg::proto {
 
 /**
  * \class Meta
@@ -104,7 +102,6 @@ inline bool operator!=(const Meta& lhs, const Meta& rhs)
     return !(lhs == rhs);
 }
 
-} // end namespace proto
-} // end namespace xmsg
+} // end namespace clara::msg::proto
 
 #endif // CLARA_MSG_PROTO_META_H_

@@ -27,7 +27,7 @@
 
 #include <memory>
 
-namespace xmsg {
+namespace clara::msg {
 
 namespace detail {
 
@@ -130,6 +130,6 @@ private:
 using ProxyConnection = ScopedConnection<ProxyAddress, detail::ProxyDriverPtr>;
 using RegConnection = ScopedConnection<RegAddress, detail::RegDriverPtr>;
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_CONNECTION_H_

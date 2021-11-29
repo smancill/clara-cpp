@@ -28,7 +28,7 @@
 
 #include <memory>
 
-namespace xmsg {
+namespace clara::msg {
 
 class ConnectionPool
 {
@@ -70,6 +70,6 @@ private:
     std::unique_ptr<RegDriverCache> reg_cache_;
 };
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_CONNECTION_POOL_H_

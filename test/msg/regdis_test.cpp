@@ -4,16 +4,19 @@
 
 #include <iostream>
 
+namespace cm = clara::msg;
+namespace cc = clara::msg::constants;
+namespace t = clara::msg::test;
+
 using namespace testing;
 
-using namespace xmsg;
-using namespace xmsg::detail;
-using namespace xmsg::test;
+using Request = cm::detail::Request;
+using Response = cm::detail::Response;
 
 
 TEST(Request, CreateDataRequest)
 {
-    auto data = new_registration("asimov", "10.2.9.1", "writer:scifi", true);
+    auto data = t::new_registration("asimov", "10.2.9.1", "writer:scifi", true);
 
     auto send_req = Request{"foo:bar", "foo_service", data};
     auto recv_req = Request{send_req.msg()};
@@ -42,7 +45,7 @@ TEST(Response, CreateSuccessResponse)
 
     EXPECT_THAT(recv_res.topic(), StrEq("foo:bar"));
     EXPECT_THAT(recv_res.sender(), StrEq("registration_fe"));
-    EXPECT_THAT(recv_res.status(), StrEq(constants::success));
+    EXPECT_THAT(recv_res.status(), StrEq(cc::success));
     EXPECT_THAT(recv_res.data(), SizeIs(0));
 }
 
@@ -59,9 +62,9 @@ TEST(Response, CreateErrorResponse)
 
 TEST(Response, CreateDataResponse)
 {
-    auto data = RegDataSet{
-        new_registration("asimov", "10.2.9.1", "writer.scifi:books", true),
-        new_registration("bradbury", "10.2.9.1", "writer.scifi:books", true),
+    auto data = cm::RegDataSet{
+        t::new_registration("asimov", "10.2.9.1", "writer.scifi:books", true),
+        t::new_registration("bradbury", "10.2.9.1", "writer.scifi:books", true),
     };
 
     auto send_res = Response{"foo:bar", "registration_fe", data};
@@ -69,22 +72,22 @@ TEST(Response, CreateDataResponse)
 
     EXPECT_THAT(recv_res.topic(), StrEq("foo:bar"));
     EXPECT_THAT(recv_res.sender(), StrEq("registration_fe"));
-    EXPECT_THAT(recv_res.status(), StrEq(constants::success));
+    EXPECT_THAT(recv_res.status(), StrEq(cc::success));
     EXPECT_THAT(recv_res.data(), ContainerEq(data));
 }
 
 
 
-class MockContext : public Context
+class MockContext : public cm::detail::Context
 {
 };
 
-class MockDriver : public RegDriver
+class MockDriver : public cm::detail::RegDriver
 {
     friend struct DriverTest;
 
     MockDriver(MockContext& ctx)
-      : RegDriver{ctx, {}} {};
+      : cm::detail::RegDriver{ctx, {}} {};
 
     MOCK_METHOD2(request, Response(Request&, int));
 };
@@ -93,10 +96,10 @@ struct DriverTest : public Test
 {
     DriverTest()
       : driver{ctx}
-      , subscriber{new_registration("bradbury_sub", "localhost",
-                                    "writer:scifi:books", false)}
-      , publisher{new_registration("bradbury_pub", "localhost",
-                                   "writer:scifi:books", true)}
+      , subscriber{t::new_registration("bradbury_sub", "localhost",
+                                       "writer:scifi:books", false)}
+      , publisher{t::new_registration("bradbury_pub", "localhost",
+                                      "writer:scifi:books", true)}
     {
         ON_CALL(driver, request(_, _))
             .WillByDefault(Return(Response{"", "", ""}));
@@ -119,8 +122,8 @@ struct DriverTest : public Test
 
     MockContext ctx;
     MockDriver driver;
-    proto::Registration subscriber;
-    proto::Registration publisher;
+    cm::proto::Registration subscriber;
+    cm::proto::Registration publisher;
 };
 
 
@@ -128,8 +131,8 @@ TEST_F(DriverTest, SendPublisherRegistration)
 {
     expect_request("bradbury_pub",
                    publisher,
-                   constants::register_publisher,
-                   constants::register_request_timeout);
+                   cc::register_publisher,
+                   cc::register_request_timeout);
     driver.add(publisher, true);
 }
 
@@ -137,8 +140,8 @@ TEST_F(DriverTest, SendSubscriberRegistration)
 {
     expect_request("bradbury_sub",
                    subscriber,
-                   constants::register_subscriber,
-                   constants::register_request_timeout);
+                   cc::register_subscriber,
+                   cc::register_request_timeout);
     driver.add(subscriber, false);
 }
 
@@ -146,8 +149,8 @@ TEST_F(DriverTest, SendPublisherRemoval)
 {
     expect_request("bradbury_pub",
                    publisher,
-                   constants::remove_publisher,
-                   constants::remove_request_timeout);
+                   cc::remove_publisher,
+                   cc::remove_request_timeout);
     driver.remove(publisher, true);
 }
 
@@ -155,8 +158,8 @@ TEST_F(DriverTest, SendSubscriberRemoval)
 {
     expect_request("bradbury_sub",
                    subscriber,
-                   constants::remove_subscriber,
-                   constants::remove_request_timeout);
+                   cc::remove_subscriber,
+                   cc::remove_request_timeout);
     driver.remove(subscriber, false);
 }
 
@@ -164,41 +167,41 @@ TEST_F(DriverTest, SendHostRemoval)
 {
     expect_request("10.2.9.1_node",
                    "10.2.9.1",
-                   constants::remove_all_registration,
-                   constants::remove_request_timeout);
+                   cc::remove_all_registration,
+                   cc::remove_request_timeout);
     driver.remove_all("10.2.9.1_node", "10.2.9.1");
 }
 
 
 TEST_F(DriverTest, SendPublisherFind)
 {
-    auto data = new_registration("10.2.9.1_node", "10.2.9.1",
-                                 "bradbury:scifi:books", true);
+    auto data = t::new_registration("10.2.9.1_node", "10.2.9.1",
+                                    "bradbury:scifi:books", true);
     expect_request("10.2.9.1_node",
                    data,
-                   constants::find_publisher,
-                   constants::find_request_timeout);
+                   cc::find_publisher,
+                   cc::find_request_timeout);
     driver.find(data, true);
 }
 
 
 TEST_F(DriverTest, SendSubscriberFind)
 {
-    auto data = new_registration("10.2.9.1_node", "10.2.9.1",
-                                 "bradbury:scifi:books", false);
+    auto data = t::new_registration("10.2.9.1_node", "10.2.9.1",
+                                    "bradbury:scifi:books", false);
     expect_request("10.2.9.1_node",
                    data,
-                   constants::find_subscriber,
-                   constants::find_request_timeout);
+                   cc::find_subscriber,
+                   cc::find_request_timeout);
     driver.find(data, false);
 }
 
 
 TEST_F(DriverTest, GetRegistration)
 {
-    auto all_reg = RegDataSet{publisher, subscriber};
-    auto data = new_registration("10.2.9.1_node", "10.2.9.1",
-                                 "bradbury:scifi:books", false);
+    auto all_reg = cm::RegDataSet{publisher, subscriber};
+    auto data = t::new_registration("10.2.9.1_node", "10.2.9.1",
+                                    "bradbury:scifi:books", false);
     set_response({"", "", all_reg}); // NOLINT
 
     auto res = driver.find(data, false);

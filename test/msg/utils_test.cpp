@@ -6,12 +6,11 @@
 #include <thread>
 
 using namespace testing;
-using namespace xmsg;
 
 
 AssertionResult is_ip(const std::string& address)
 {
-    return util::is_ipaddr(address)
+    return clara::msg::util::is_ipaddr(address)
         ? AssertionSuccess() << address << " is a valid IP"
         : AssertionFailure() << address << " is not a valid IP";
 }

@@ -32,7 +32,7 @@
 #include <iostream>
 
 namespace {
-    xmsg::RegAddress get_fe_address(const clara::Component& fe)
+    clara::msg::RegAddress get_fe_address(const clara::Component& fe)
     {
         int reg_port = fe.addr().pub_port() + clara::constants::reg_port_shift;
         return { fe.addr().host(), reg_port };
@@ -43,7 +43,7 @@ namespace {
 namespace clara {
 
 Base::Base(const Component& self, const Component& frontend)
-  : xmsg::xMsg{self.name(), self.addr(), get_fe_address(frontend)}
+  : msg::xMsg{self.name(), self.addr(), get_fe_address(frontend)}
   , self_{self}
   , frontend_{frontend}
 {
@@ -65,23 +65,23 @@ void Base::send(const Component& component, const std::string& data)
 }
 
 
-void Base::send(const Component& component, xmsg::Message& msg)
+void Base::send(const Component& component, msg::Message& msg)
 {
     auto con = connect(component.addr());
     publish(con, msg);
 }
 
 
-void Base::send_response(const xmsg::Message& msg,
+void Base::send_response(const msg::Message& msg,
                          const std::string& data,
-                         xmsg::proto::Meta::Status status)
+                         msg::proto::Meta::Status status)
 {
-    auto meta = std::make_unique<xmsg::proto::Meta>();
-    meta->set_datatype(xmsg::mimetype::single_string);
+    auto meta = std::make_unique<msg::proto::Meta>();
+    meta->set_datatype(msg::mimetype::single_string);
     meta->set_author(name());
     meta->set_status(status);
-    auto res = xmsg::Message{msg.replyto(), std::move(meta),
-                             std::vector<uint8_t>{data.begin(), data.end()}};
+    auto res = msg::Message{msg.replyto(), std::move(meta),
+                            std::vector<uint8_t>{data.begin(), data.end()}};
 
     auto con = connect();
     publish(con, res);

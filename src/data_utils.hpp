@@ -34,9 +34,9 @@
 namespace clara {
 namespace util {
 
-xmsg::Message build_request(const xmsg::Topic& topic, const std::string& data);
+msg::Message build_request(const msg::Topic& topic, const std::string& data);
 
-std::string parse_message(const xmsg::Message& msg);
+std::string parse_message(const msg::Message& msg);
 
 
 class InvalidRequest : public std::logic_error
@@ -51,7 +51,7 @@ public:
 class RequestParser
 {
 public:
-    static RequestParser build(const xmsg::Message& msg)
+    static RequestParser build(const msg::Message& msg)
     {
         const auto& mt = msg.datatype();
         if (mt == "text/string") {
@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    RequestParser(const xmsg::proto::Meta* meta, std::string&& data)
+    RequestParser(const msg::proto::Meta* meta, std::string&& data)
       : meta_{meta}
       , data_{std::move(data)}
       , ss_{data_}
@@ -138,7 +138,7 @@ private:
     }
 
 private:
-    const xmsg::proto::Meta* meta_;
+    const msg::proto::Meta* meta_;
     std::string data_;
     std::stringstream ss_;
 };

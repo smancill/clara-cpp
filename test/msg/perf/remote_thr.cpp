@@ -6,6 +6,9 @@
 #include <string>
 #include <vector>
 
+namespace cm = clara::msg;
+
+
 int main(int argc, char** argv)
 {
     if (argc != 4) {
@@ -13,17 +16,17 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    const auto bind_to = xmsg::util::to_host_addr(argv[1]);
+    const auto bind_to = cm::util::to_host_addr(argv[1]);
     const auto message_size = std::stoi(argv[2]);
     const auto message_count = std::stol(argv[3]);
 
     try {
-        auto publisher = xmsg::xMsg("thr_publisher");
-        auto connection = publisher.connect(xmsg::ProxyAddress{bind_to});
+        auto publisher = cm::xMsg("thr_publisher");
+        auto connection = publisher.connect(cm::ProxyAddress{bind_to});
 
-        auto topic = xmsg::Topic::raw("thr_topic");
+        auto topic = cm::Topic::raw("thr_topic");
         auto data = std::vector<std::uint8_t>(message_size);
-        auto msg = xmsg::Message{topic, "data/binary", data};
+        auto msg = cm::Message{topic, "data/binary", data};
 
         std::cout << "Publishing messages..." << std::endl;
         for (int i = 0; i < message_count; ++i) {

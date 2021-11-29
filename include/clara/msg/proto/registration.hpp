@@ -29,7 +29,7 @@
 
 #include <set>
 
-namespace xmsg {
+namespace clara::msg {
 
 namespace proto {
 
@@ -78,6 +78,6 @@ bool operator!=(const Registration& lhs, const Registration& rhs);
  */
 using RegDataSet = std::set<proto::Registration, proto::CompareRegistration>;
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_PROTO_REG_H_

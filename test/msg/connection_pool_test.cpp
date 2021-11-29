@@ -5,34 +5,36 @@
 
 #include <gmock/gmock.h>
 
+namespace cm = clara::msg;
+namespace cm_ = cm::detail;
 
 using namespace testing;
-using namespace xmsg;
-
-auto ctx = std::make_shared<detail::Context>();
 
 
-class ConnectionPoolMock : public ConnectionPool
+auto ctx = std::make_shared<cm_::Context>();
+
+
+class ConnectionPoolMock : public cm::ConnectionPool
 {
 public:
     ConnectionPoolMock()
-      : ConnectionPool(Context::instance())
+      : ConnectionPool(cm::Context::instance())
     { }
 
 public:
     int new_connections = 0;
 
 private:
-    detail::ProxyDriverPtr create_connection(const ProxyAddress& addr) override
+    cm_::ProxyDriverPtr create_connection(const cm::ProxyAddress& addr) override
     {
         new_connections++;
-        return detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx, addr, {})};
+        return cm_::ProxyDriverPtr{new cm_::ProxyDriver(*ctx, addr, {})};
     }
 
-    detail::RegDriverPtr create_connection(const RegAddress& addr) override
+    cm_::RegDriverPtr create_connection(const cm::RegAddress& addr) override
     {
         new_connections++;
-        return detail::RegDriverPtr{new detail::RegDriver(*ctx, addr)};
+        return cm_::RegDriverPtr{new cm_::RegDriver(*ctx, addr)};
     }
 };
 
@@ -96,8 +98,8 @@ private:
 };
 
 
-using ProxyConnectionTest = ConnectionPoolTest<ProxyAddress, ProxyConnection>;
-using RegConnectionTest = ConnectionPoolTest<RegAddress, RegConnection>;
+using ProxyConnectionTest = ConnectionPoolTest<cm::ProxyAddress, cm::ProxyConnection>;
+using RegConnectionTest = ConnectionPoolTest<cm::RegAddress, cm::RegConnection>;
 
 
 TEST_F(ProxyConnectionTest, GetConnection)

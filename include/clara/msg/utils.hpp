@@ -25,12 +25,10 @@
 #include <string>
 #include <vector>
 
-namespace xmsg {
-
 /**
  * A collection of auxiliary functions.
  */
-namespace util {
+namespace clara::msg::util {
 
 /**
  * Returns the localhost IP.
@@ -97,8 +95,6 @@ void validate_ipaddr(const std::string& address);
  */
 void sleep(long millis);
 
-} // end namespace util
-
-} // end namespace xmsg
+} // end namespace clara::msg::util
 
 #endif // CLARA_MSG_UTIL_H_

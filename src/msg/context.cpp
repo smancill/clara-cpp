@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-namespace xmsg {
+namespace clara::msg {
 
 Context::Context()
   : impl_{std::make_unique<detail::Context>()}
@@ -73,4 +73,4 @@ int Context::max_sockets()
     return impl_->get_option(ZMQ_MAX_SOCKETS);
 }
 
-} // end namespace xmsg
+} // end namespace clara::msg

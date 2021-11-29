@@ -32,7 +32,7 @@
 #include <vector>
 
 
-namespace xmsg {
+namespace clara::msg {
 
 class xMsg;
 
@@ -306,7 +306,6 @@ inline bool operator!=(const Message& lhs, const Message& rhs)
     return !(lhs == rhs);
 }
 
-
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_MESSAGE_H_

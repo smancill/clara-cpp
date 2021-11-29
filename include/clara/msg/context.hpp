@@ -24,7 +24,7 @@
 
 #include <memory>
 
-namespace xmsg {
+namespace clara::msg {
 
 namespace detail {
 class Context;
@@ -91,6 +91,6 @@ private:
     friend class sys::Proxy;
 };
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_CONTEXT_H_

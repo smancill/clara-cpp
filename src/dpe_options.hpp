@@ -161,7 +161,7 @@ private:
         // Get local DPE address
         auto local_host = value_of(HOST, default_host);
         auto local_port = value_of(PORT, default_port);
-        local_addr_ = xmsg::ProxyAddress{local_host, local_port};
+        local_addr_ = msg::ProxyAddress{local_host, local_port};
 
         if (fe) {
             // Get local FE address (use same local DPE address)
@@ -170,7 +170,7 @@ private:
             // Get remote FE address
             auto fe_host = value_of(FE_HOST, default_host);
             auto fe_port = value_of(FE_PORT, default_fe_port);
-            fe_addr_ = xmsg::ProxyAddress{fe_host, fe_port};
+            fe_addr_ = msg::ProxyAddress{fe_host, fe_port};
         }
 
         config_ = {
@@ -213,12 +213,12 @@ private:
     }
 
 public:
-    xmsg::ProxyAddress local_address() const
+    msg::ProxyAddress local_address() const
     {
         return local_addr_;
     }
 
-    xmsg::ProxyAddress frontend_address() const
+    msg::ProxyAddress frontend_address() const
     {
         return fe_addr_;
     }
@@ -244,8 +244,8 @@ private:
 
     Parser parser_;
 
-    xmsg::ProxyAddress local_addr_;
-    xmsg::ProxyAddress fe_addr_;
+    msg::ProxyAddress local_addr_;
+    msg::ProxyAddress fe_addr_;
 
     DpeConfig config_;
 

@@ -35,7 +35,7 @@ const char SEPARATOR = ':';
 }
 
 
-namespace xmsg {
+namespace clara::msg {
 
 const std::string Topic::ANY = constants::any;
 
@@ -116,4 +116,4 @@ bool Topic::is_parent(const Topic& other) const
     return other.topic_.compare(0, topic_.size(), topic_) == 0;
 }
 
-} // end namespace xmsg
+} // end namespace clara::msg

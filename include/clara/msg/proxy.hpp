@@ -28,8 +28,7 @@
 #include <atomic>
 #include <thread>
 
-namespace xmsg {
-namespace sys {
+namespace clara::msg::sys {
 
 class Proxy final
 {
@@ -61,7 +60,6 @@ private:
     std::thread ctrl_;
 };
 
-} // end namespace sys
-} // end namespace xmsg
+} // end namespace clara::msg::sys
 
 #endif // CLARA_MSG_PROXY_H_

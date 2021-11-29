@@ -25,7 +25,7 @@
 #include <cstddef>
 #include <type_traits>
 
-namespace xmsg {
+namespace clara::msg {
 
 /**
  * Sets options on a new ZMQ socket.
@@ -117,6 +117,6 @@ public:
     virtual void post_connection() {};
 };
 
-} // end namespace xmsg
+} // end namespace clara::msg
 
 #endif // CLARA_MSG_CONNECTION_SETUP_H_

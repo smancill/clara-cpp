@@ -101,7 +101,7 @@ private:
      * @param event the event to be written
      * @throws EventWriterError if the file could not be read
      */
-    virtual void write_event(const any& event) = 0;
+    virtual void write_event(const std::any& event) = 0;
 
     /**
      * Gets the CLARA engine data-type for the type of the events.

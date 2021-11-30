@@ -23,9 +23,9 @@
 #ifndef CLARA_ENGINE_DATA_HPP
 #define CLARA_ENGINE_DATA_HPP
 
-#include <clara/any.hpp>
 #include <clara/engine_status.hpp>
 
+#include <any>
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -54,12 +54,12 @@ public:
 public:
     auto mime_type() const -> const std::string&;
 
-    auto data() const -> const any&
+    auto data() const -> const std::any&
     {
         return data_;
     }
 
-    auto data() -> any&
+    auto data() -> std::any&
     {
         return data_;
     }
@@ -121,9 +121,9 @@ private:
     friend class EngineDataAccessor;
     using Meta = msg::proto::Meta;
 
-    EngineData(any&& data, std::unique_ptr<Meta>&& meta);
+    EngineData(std::any&& data, std::unique_ptr<Meta>&& meta);
 
-    any data_;
+    std::any data_;
     std::unique_ptr<Meta> meta_;
 };
 
@@ -132,7 +132,7 @@ template<typename T>
 auto data_cast(EngineData& data) -> T&
 {
     using V = std::add_lvalue_reference_t<T>;
-    return any_cast<V>(data.data());
+    return std::any_cast<V>(data.data());
 }
 
 
@@ -140,7 +140,7 @@ template<typename T>
 auto data_cast(const EngineData& data) -> const T&
 {
     using V = std::add_lvalue_reference_t<std::add_const_t<T>>;
-    return any_cast<V>(data.data());
+    return std::any_cast<V>(data.data());
 }
 
 

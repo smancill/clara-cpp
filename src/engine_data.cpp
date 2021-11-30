@@ -38,7 +38,7 @@ EngineData::EngineData()
 }
 
 
-EngineData::EngineData(any&& data, std::unique_ptr<Meta>&& meta)
+EngineData::EngineData(std::any&& data, std::unique_ptr<Meta>&& meta)
   : data_{std::move(data)}
   , meta_{std::move(meta)}
 {

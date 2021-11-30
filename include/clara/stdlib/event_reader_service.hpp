@@ -99,7 +99,7 @@ private:
      * @return the read event
      * @throws EventReaderError if the file could not be read
      */
-    virtual auto read_event(int event_number) -> clara::any = 0;
+    virtual auto read_event(int event_number) -> std::any = 0;
 
     /**
      * Gets the total number of events that can be read from the input file.

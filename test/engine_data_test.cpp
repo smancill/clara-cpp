@@ -24,7 +24,7 @@ TEST(EngineData, ReadFromMessage)
     m->set_composition("composition string");
     m->set_executiontime(24500);
 
-    auto o = clara::any{std::string{"some text"}};
+    auto o = std::any{std::string{"some text"}};
 
     auto d = e.create(std::move(o), std::move(m));
 

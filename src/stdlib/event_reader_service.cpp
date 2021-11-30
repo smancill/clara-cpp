@@ -141,7 +141,7 @@ auto EventReaderService::configure(EngineData& input) -> EngineData
                 std::cerr << name() << " config: invalid \"" << conf_action
                           << "\" value: \"" << action << "\"" << std::endl;
             }
-        } catch (const bad_any_cast& e) {
+        } catch (const std::bad_any_cast& e) {
             std::cerr << name() << " config: " << "input data is not JSON"
                       << std::endl;
         } catch (const std::exception& e) {

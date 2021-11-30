@@ -37,7 +37,8 @@ namespace clara {
 class EngineDataAccessor final
 {
 public:
-    auto create(any&& data, std::unique_ptr<msg::proto::Meta>&& meta) -> EngineData
+    auto create(std::any&& data, std::unique_ptr<msg::proto::Meta>&& meta)
+        -> EngineData
     {
         return EngineData{std::move(data), std::move(meta)};
     }

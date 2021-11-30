@@ -53,17 +53,17 @@ public:
 
     explicit Request(RequestMsg&& msg);
 
-    RequestMsg& msg() { return msg_; };
+    auto msg() -> RequestMsg& { return msg_; };
 
-    std::string topic() const { return to_string(msg_[0]); };
+    auto topic() const -> std::string { return to_string(msg_[0]); };
 
-    std::string sender() const { return to_string(msg_[1]); };
+    auto sender() const -> std::string { return to_string(msg_[1]); };
 
-    std::string text() const { return to_string(msg_[2]); }
+    auto text() const -> std::string { return to_string(msg_[2]); }
 
-    proto::Registration data() const;
+    auto data() const -> proto::Registration;
 
-    friend bool operator==(const Request& lhs, const Request& rhs);
+    friend auto operator==(const Request& lhs, const Request& rhs) -> bool;
 
 private:
     RequestMsg msg_;
@@ -86,17 +86,17 @@ public:
 
     explicit Response(ResponseMsg&& msg);
 
-    ResponseMsg& msg() { return msg_; };
+    auto msg() -> ResponseMsg& { return msg_; };
 
-    std::string topic() const { return to_string(msg_[0]); };
+    auto topic() const -> std::string { return to_string(msg_[0]); };
 
-    std::string sender() const { return to_string(msg_[1]); };
+    auto sender() const -> std::string { return to_string(msg_[1]); };
 
-    std::string status() const { return to_string(msg_[2]); }
+    auto status() const -> std::string { return to_string(msg_[2]); }
 
-    RegDataSet data() const;
+    auto data() const -> RegDataSet;
 
-    friend bool operator==(const Response& lhs, const Response& rhs);
+    friend auto operator==(const Response& lhs, const Response& rhs) -> bool;
 
 private:
     static constexpr int n_fields = 3;
@@ -111,10 +111,10 @@ public:
     RegDriver(Context& ctx, RegAddress addr);
 
     RegDriver(const RegDriver&) = delete;
-    RegDriver& operator=(const RegDriver&) = delete;
-
     RegDriver(RegDriver&&) noexcept = default;
-    RegDriver& operator=(RegDriver&&) noexcept = default;
+
+    auto operator=(const RegDriver&) -> RegDriver& = delete;
+    auto operator=(RegDriver&&) noexcept -> RegDriver& = default;
 
     virtual ~RegDriver() = default;
 
@@ -124,12 +124,12 @@ public:
     void remove(const proto::Registration& data, bool is_publisher);
     void remove_all(const std::string& sender, const std::string& host);
 
-    RegDataSet find(const proto::Registration& data, bool is_publisher);
+    auto find(const proto::Registration& data, bool is_publisher) -> RegDataSet;
 
-    const RegAddress& address() const { return addr_; }
+    auto address() const -> const RegAddress& { return addr_; }
 
 private:
-    virtual Response request(Request& req, int timeout);
+    virtual auto request(Request& req, int timeout) -> Response;
 
 private:
     RegAddress addr_;
@@ -137,23 +137,23 @@ private:
 };
 
 
-bool operator==(const Request& lhs, const Request& rhs);
-bool operator!=(const Request& lhs, const Request& rhs);
+auto operator==(const Request& lhs, const Request& rhs) -> bool;
+auto operator!=(const Request& lhs, const Request& rhs) -> bool;
 
-bool operator==(const Response& lhs, const Response& rhs);
-bool operator!=(const Response& lhs, const Response& rhs);
+auto operator==(const Response& lhs, const Response& rhs) -> bool;
+auto operator!=(const Response& lhs, const Response& rhs) -> bool;
 
 } // end namespace detail
 
 
 namespace registration {
 
-proto::Registration create(const std::string& name,
-                           const std::string& description,
-                           const std::string& host,
-                           int port,
-                           const Topic& topic,
-                           bool is_publisher);
+auto create(const std::string& name,
+            const std::string& description,
+            const std::string& host,
+            int port,
+            const Topic& topic,
+            bool is_publisher) -> proto::Registration;
 
 } // end namespace registration
 

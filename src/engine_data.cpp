@@ -53,8 +53,10 @@ EngineData::EngineData(const EngineData& rhs)
     // nop
 }
 
+EngineData::EngineData(EngineData&&) noexcept = default;
 
-EngineData& EngineData::operator=(const EngineData& rhs)
+
+auto EngineData::operator=(const EngineData& rhs) -> EngineData&
 {
     if (this != &rhs) {
         data_ = rhs.data_;
@@ -63,14 +65,12 @@ EngineData& EngineData::operator=(const EngineData& rhs)
     return *this;
 }
 
-
-EngineData::EngineData(EngineData&&) noexcept = default;
-EngineData& EngineData::operator=(EngineData&&) noexcept = default;
+auto EngineData::operator=(EngineData&&) noexcept -> EngineData& = default;
 
 EngineData::~EngineData() = default;
 
 
-const std::string& EngineData::mime_type() const
+auto EngineData::mime_type() const -> const std::string&
 {
     return meta_->datatype();
 }
@@ -94,7 +94,7 @@ void EngineData::set_mime_type(const EngineDataType& data_type)
 }
 
 
-const std::string& EngineData::description() const
+auto EngineData::description() const -> const std::string&
 {
     return meta_->description();
 }
@@ -112,7 +112,7 @@ void EngineData::set_description(std::string&& description)
 }
 
 
-EngineStatus EngineData::status() const
+auto EngineData::status() const -> EngineStatus
 {
     auto status = meta_->status();
     switch (status) {
@@ -128,7 +128,7 @@ EngineStatus EngineData::status() const
 }
 
 
-int EngineData::status_severity() const
+auto EngineData::status_severity() const -> int
 {
     return meta_->severityid();
 }
@@ -153,7 +153,7 @@ void EngineData::set_status(EngineStatus status, int severity)
 }
 
 
-const std::string& EngineData::engine_state() const
+auto EngineData::engine_state() const -> const std::string&
 {
     return meta_->senderstate();
 }
@@ -171,19 +171,19 @@ void EngineData::set_engine_state(std::string&& state)
 }
 
 
-const std::string& EngineData::engine_name() const
+auto EngineData::engine_name() const -> const std::string&
 {
     return meta_->author();
 }
 
 
-const std::string& EngineData::engine_version() const
+auto EngineData::engine_version() const -> const std::string&
 {
     return meta_->version();
 }
 
 
-long EngineData::communication_id() const
+auto EngineData::communication_id() const -> long
 {
     return meta_->communicationid();
 }
@@ -195,13 +195,13 @@ void EngineData::set_communication_id(long id)
 }
 
 
-const std::string& EngineData::composition() const
+auto EngineData::composition() const -> const std::string&
 {
     return meta_->composition();
 }
 
 
-long EngineData::execution_time() const
+auto EngineData::execution_time() const -> long
 {
     return meta_->executiontime();
 }

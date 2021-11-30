@@ -34,14 +34,16 @@ namespace clara {
 
 namespace util {
 
-std::string make_name(const std::string& host, int port, const std::string& lang);
+auto make_name(const std::string& host,
+               int port,
+               const std::string& lang) -> std::string;
 
-std::string make_name(const std::string& dpe,
-                      const std::string& container);
+auto make_name(const std::string& dpe,
+               const std::string& container) -> std::string;
 
-std::string make_name(const std::string& dpe,
-                      const std::string& container,
-                      const std::string& engine);
+auto make_name(const std::string& dpe,
+               const std::string& container,
+               const std::string& engine) -> std::string;
 
 } // end namespace util
 
@@ -49,23 +51,24 @@ class Component
 {
 public:
     template<typename A>
-    static Component dpe(A&& addr,
-                         const std::string& lang = constants::cpp_lang)
+    static auto dpe(A&& addr,
+                    const std::string& lang = constants::cpp_lang) -> Component
     {
         auto cname = util::make_name(addr.host(), addr.pub_port(), lang);
         auto topic = msg::Topic::build("dpe", cname);
         return Component{std::move(cname), std::forward<A>(addr), std::move(topic)};
     }
 
-    static Component container(const Component& dpe, const std::string& name)
+    static auto container(const Component& dpe,
+                          const std::string& name) -> Component
     {
         auto cname = util::make_name(dpe.name(), name);
         auto topic = msg::Topic::build("container", cname);
         return Component{std::move(cname), dpe.addr_, std::move(topic)};
     }
 
-    static Component service(const Component& container,
-                             const std::string& name)
+    static auto service(const Component& container,
+                        const std::string& name) -> Component
     {
         auto cname = util::make_name(container.name(), name);
         auto topic = msg::Topic::raw(cname);
@@ -81,11 +84,11 @@ private:
     { }
 
 public:
-    const std::string& name() const { return name_; }
+    auto name() const -> const std::string& { return name_; }
 
-    const msg::ProxyAddress& addr() const { return addr_; }
+    auto addr() const -> const msg::ProxyAddress& { return addr_; }
 
-    const msg::Topic& topic() const { return topic_; }
+    auto topic() const -> const msg::Topic& { return topic_; }
 
 private:
     std::string name_;

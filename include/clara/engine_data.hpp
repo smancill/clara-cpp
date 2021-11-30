@@ -44,22 +44,22 @@ public:
     EngineData();
 
     EngineData(const EngineData& rhs);
-    EngineData& operator=(const EngineData& rhs);
-
     EngineData(EngineData&& rhs) noexcept;
-    EngineData& operator=(EngineData&& rhs) noexcept;
+
+    auto operator=(const EngineData& rhs) -> EngineData&;
+    auto operator=(EngineData&& rhs) noexcept -> EngineData&;
 
     ~EngineData();
 
 public:
-    const std::string& mime_type() const;
+    auto mime_type() const -> const std::string&;
 
-    const any& data() const
+    auto data() const -> const any&
     {
         return data_;
     }
 
-    any& data()
+    auto data() -> any&
     {
         return data_;
     }
@@ -76,7 +76,7 @@ public:
         }
     }
 
-    bool has_data()
+    auto has_data() -> bool
     {
         return data_.has_value();
     }
@@ -87,35 +87,35 @@ private:
     void set_mime_type(const EngineDataType& data_type);
 
 public:
-    const std::string& description() const;
+    auto description() const -> const std::string&;
 
     void set_description(const std::string& description);
     void set_description(std::string&& description);
 
-    EngineStatus status() const;
+    auto status() const -> EngineStatus;
 
-    int status_severity() const;
+    auto status_severity() const -> int;
 
     void set_status(EngineStatus status, int severity = 1);
 
 public:
-    const std::string& engine_state() const;
+    auto engine_state() const -> const std::string&;
 
     void set_engine_state(const std::string& state);
     void set_engine_state(std::string&& state);
 
-    const std::string& engine_name() const;
+    auto engine_name() const -> const std::string&;
 
-    const std::string& engine_version() const;
+    auto engine_version() const -> const std::string&;
 
 public:
-    long communication_id() const;
+    auto communication_id() const -> long;
 
     void set_communication_id(long id);
 
-    const std::string& composition() const;
+    auto composition() const -> const std::string&;
 
-    long execution_time() const;
+    auto execution_time() const -> long;
 
 private:
     friend class EngineDataAccessor;
@@ -129,7 +129,7 @@ private:
 
 
 template<typename T>
-T& data_cast(EngineData& data)
+auto data_cast(EngineData& data) -> T&
 {
     using V = std::add_lvalue_reference_t<T>;
     return any_cast<V>(data.data());
@@ -137,7 +137,7 @@ T& data_cast(EngineData& data)
 
 
 template<typename T>
-const T& data_cast(const EngineData& data)
+auto data_cast(const EngineData& data) -> const T&
 {
     using V = std::add_lvalue_reference_t<std::add_const_t<T>>;
     return any_cast<V>(data.data());

@@ -35,7 +35,7 @@ namespace log {
 class Logger
 {
 public:
-    static Logger* instance()
+    static auto instance() -> Logger*
     {
         static Logger logger;
         return &logger;

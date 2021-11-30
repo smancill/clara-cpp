@@ -43,7 +43,8 @@ public:
               const std::string& description);
 
     Container(const Container&) = delete;
-    Container& operator=(const Container&) = delete;
+
+    auto operator=(const Container&) -> Container& = delete;
 
     ~Container() override;
 
@@ -55,12 +56,12 @@ public:
 public:
     void add_service(const ServiceParameters& params);
 
-    bool remove_service(const std::string& engine_name);
+    auto remove_service(const std::string& engine_name) -> bool;
 
     void remove_services();
 
 public:
-    std::shared_ptr<ContainerReport> report() const;
+    auto report() const -> std::shared_ptr<ContainerReport>;
 
 private:
     std::mutex mutex_;

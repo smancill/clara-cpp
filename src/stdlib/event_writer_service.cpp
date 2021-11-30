@@ -61,7 +61,7 @@ public:
     void open_file(const json11::Json& config_data);
     void close_file(const json11::Json& config_data);
 
-    bool has_file() { return service_->has_file(); }
+    auto has_file() -> bool { return service_->has_file(); }
     void close_file();
     void skip_all();
 
@@ -102,7 +102,7 @@ EventWriterService::Impl::Impl(EventWriterService* service)
 EventWriterService::Impl::~Impl() = default;
 
 
-EngineData EventWriterService::configure(EngineData& input)
+auto EventWriterService::configure(EngineData& input) -> EngineData
 {
     if (input.mime_type() == type::JSON) {
         try {
@@ -197,7 +197,7 @@ void EventWriterService::Impl::skip_all()
 }
 
 
-EngineData EventWriterService::execute(EngineData& input)
+auto EventWriterService::execute(EngineData& input) -> EngineData
 {
     auto output = EngineData();
 
@@ -240,25 +240,28 @@ void EventWriterService::Impl::write_event(const EngineData& input,
 }
 
 
-EngineData EventWriterService::execute_group(const std::vector<EngineData>& /*inputs*/)
+auto EventWriterService::execute_group(const std::vector<EngineData>& /*inputs*/)
+    -> EngineData
 {
     return {};
 }
 
 
-std::vector<EngineDataType> EventWriterService::input_data_types() const
+auto EventWriterService::input_data_types() const
+    -> std::vector<EngineDataType>
 {
     return {get_data_type(), type::JSON};
 }
 
 
-std::vector<EngineDataType> EventWriterService::output_data_types() const
+auto EventWriterService::output_data_types() const
+    -> std::vector<EngineDataType>
 {
     return {type::STRING};
 }
 
 
-std::set<std::string> EventWriterService::states() const
+auto EventWriterService::states() const -> std::set<std::string>
 {
     return {};
 }
@@ -279,8 +282,8 @@ void EventWriterService::Impl::reset()
 }
 
 
-EventWriterService::Endian
-EventWriterService::parse_byte_order(const json11::Json& opts)
+auto EventWriterService::parse_byte_order(const json11::Json& opts)
+    -> EventWriterService::Endian
 {
     if (has_key(opts, conf_order)) {
         auto byte_order = get_string(opts, conf_order);

@@ -45,7 +45,8 @@ public:
             const ServiceParameters& params);
 
     Service(const Service&) = delete;
-    Service& operator=(const Service&) = delete;
+
+    auto operator=(const Service&) -> Service& = delete;
 
     ~Service() override;
 
@@ -63,7 +64,7 @@ public:
     void callback(msg::Message& msg);
 
 public:
-    std::shared_ptr<ServiceReport> report() const;
+    auto report() const -> std::shared_ptr<ServiceReport>;
 
 private:
     std::mutex mutex_;

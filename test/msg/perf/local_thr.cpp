@@ -30,7 +30,7 @@ private:
     using us = std::chrono::microseconds;
 
     void start_clock();
-    long stop_clock();
+    auto stop_clock() -> long;
 
 private:
     const int msg_size;
@@ -108,7 +108,7 @@ void LocalCallback::start_clock()
 }
 
 
-long LocalCallback::stop_clock()
+auto LocalCallback::stop_clock() -> long
 {
     return std::chrono::duration_cast<us>(clock::now() - watch).count();
 }

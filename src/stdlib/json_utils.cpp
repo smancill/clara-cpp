@@ -26,7 +26,8 @@
 
 namespace {
 
-const json11::Json& get_value(const json11::Json& obj, const std::string& key)
+auto get_value(const json11::Json& obj,
+               const std::string& key) -> const json11::Json&
 {
     using clara::stdlib::JsonError;
     if (key.empty()) {
@@ -44,13 +45,13 @@ const json11::Json& get_value(const json11::Json& obj, const std::string& key)
 
 namespace clara::stdlib {
 
-json11::Json parse_json(const EngineData& input)
+auto parse_json(const EngineData& input) -> json11::Json
 {
     return parse_json(data_cast<std::string>(input));
 }
 
 
-json11::Json parse_json(const std::string& str)
+auto parse_json(const std::string& str) -> json11::Json
 {
     auto err = std::string{};
     auto obj = json11::Json::parse(str, err);
@@ -61,13 +62,13 @@ json11::Json parse_json(const std::string& str)
 }
 
 
-bool has_key(const json11::Json& obj, const std::string& key)
+auto has_key(const json11::Json& obj, const std::string& key) -> bool
 {
     return !obj[key].is_null();
 }
 
 
-bool get_bool(const json11::Json& obj, const std::string& key)
+auto get_bool(const json11::Json& obj, const std::string& key) -> bool
 {
     const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::BOOL) {
@@ -77,7 +78,7 @@ bool get_bool(const json11::Json& obj, const std::string& key)
 }
 
 
-int get_int(const json11::Json& obj, const std::string& key)
+auto get_int(const json11::Json& obj, const std::string& key) -> int
 {
     const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::NUMBER) {
@@ -87,7 +88,7 @@ int get_int(const json11::Json& obj, const std::string& key)
 }
 
 
-double get_double(const json11::Json& obj, const std::string& key)
+auto get_double(const json11::Json& obj, const std::string& key) -> double
 {
     const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::NUMBER) {
@@ -97,7 +98,8 @@ double get_double(const json11::Json& obj, const std::string& key)
 }
 
 
-const std::string& get_string(const json11::Json& obj, const std::string& key)
+auto get_string(const json11::Json& obj, const std::string& key)
+    -> const std::string&
 {
     const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::STRING) {
@@ -107,7 +109,8 @@ const std::string& get_string(const json11::Json& obj, const std::string& key)
 }
 
 
-const json11::Json& get_array(const json11::Json& obj, const std::string& key)
+auto get_array(const json11::Json& obj, const std::string& key)
+    -> const json11::Json&
 {
     const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::ARRAY) {
@@ -117,7 +120,8 @@ const json11::Json& get_array(const json11::Json& obj, const std::string& key)
 }
 
 
-const json11::Json& get_object(const json11::Json& obj, const std::string& key)
+auto get_object(const json11::Json& obj, const std::string& key)
+    -> const json11::Json&
 {
     const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::OBJECT) {

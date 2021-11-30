@@ -32,7 +32,7 @@
 #include <vector>
 
 namespace {
-    clara::msg::RegAddress get_fe_address(const clara::Component& fe)
+    auto get_fe_address(const clara::Component& fe) -> clara::msg::RegAddress
     {
         int reg_port = fe.addr().pub_port() + clara::constants::reg_port_shift;
         return {fe.addr().host(), reg_port};

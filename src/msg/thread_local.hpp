@@ -34,7 +34,7 @@ private:
 
 public:
     template <typename... Args>
-    static T* getThreadInstance(Args&&... args)
+    static auto getThreadInstance(Args&&... args) -> T*
     {
         pthread_once(&once_control, ThreadLocal::make_key);
         T* instance = (T*) pthread_getspecific(key);

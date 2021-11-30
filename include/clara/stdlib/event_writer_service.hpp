@@ -42,11 +42,11 @@ public:
      ~EventWriterService() override;
 
 public:
-    EngineData configure(EngineData& input) override;
+    auto configure(EngineData& input) -> EngineData override;
 
-    EngineData execute(EngineData& input) override;
+    auto execute(EngineData& input) -> EngineData override;
 
-    EngineData execute_group(const std::vector<EngineData>& inputs) override;
+    auto execute_group(const std::vector<EngineData>& inputs) -> EngineData override;
 
 protected:
     /**
@@ -70,7 +70,7 @@ protected:
         Big,
     };
 
-    static Endian parse_byte_order(const json11::Json& opts);
+    static auto parse_byte_order(const json11::Json& opts) -> Endian;
 
 private:
     /**
@@ -91,7 +91,7 @@ private:
     /**
      * Returns true if an output file is open.
      */
-    virtual bool has_file() = 0;
+    virtual auto has_file() -> bool = 0;
 
     /**
      * Writes an event to the output file.
@@ -110,14 +110,14 @@ private:
      *
      * @return the data-type of the events
      */
-    virtual const EngineDataType& get_data_type() const = 0;
+    virtual auto get_data_type() const -> const EngineDataType& = 0;
 
 public:
-    std::vector<EngineDataType> input_data_types() const override;
+    auto input_data_types() const -> std::vector<EngineDataType> override;
 
-    std::vector<EngineDataType> output_data_types() const override;
+    auto output_data_types() const -> std::vector<EngineDataType> override;
 
-    std::set<std::string> states() const override;
+    auto states() const -> std::set<std::string> override;
 
 public:
     void reset() override;

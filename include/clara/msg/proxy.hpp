@@ -38,7 +38,8 @@ public:
     explicit Proxy(ProxyAddress addr);
 
     Proxy(const Proxy&) = delete;
-    Proxy& operator=(const Proxy&) = delete;
+
+    auto operator=(const Proxy&) -> Proxy& = delete;
 
     ~Proxy();
 

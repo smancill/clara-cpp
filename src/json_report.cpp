@@ -34,7 +34,7 @@
 
 namespace clara {
 
-std::string JsonReport::generate(const DpeReport& report) const
+auto JsonReport::generate(const DpeReport& report) const -> std::string
 {
     using namespace util;
 

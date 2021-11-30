@@ -100,7 +100,7 @@ public:
     void callback(msg::Message& msg);
 
 public:
-    msg::Topic topic();
+    auto topic() -> msg::Topic;
 
 private:
     std::mutex dpe_mutex_;
@@ -129,28 +129,28 @@ public:
     void stop();
 
 public:
-    std::string alive_report() { return report_.alive_report(); }
+    auto alive_report() -> std::string { return report_.alive_report(); }
 
-    std::string json_report() { return json_report_.generate(report_); }
+    auto json_report() -> std::string { return json_report_.generate(report_); }
 
 private:
     void run();
 
-    msg::Message alive_message()
+    auto alive_message() -> msg::Message
     {
         return build_message(constants::dpe_alive, alive_report());
     }
 
-    msg::Message report_message()
+    auto report_message() -> msg::Message
     {
         return build_message(constants::dpe_report, json_report());
     }
 
-    msg::Message build_message(const std::string& topic_prefix,
-                               const std::string& json);
+    auto build_message(const std::string& topic_prefix,
+                       const std::string& json) -> msg::Message;
 
 private:
-    bool wait(int time_out)
+    auto wait(int time_out) -> bool
     {
         auto duration = std::chrono::milliseconds{time_out};
         std::unique_lock<std::mutex> lock{m_};
@@ -403,7 +403,7 @@ void Dpe::DpeImpl::stop_container(util::RequestParser& parser)
 }
 
 
-msg::Topic Dpe::DpeImpl::topic()
+auto Dpe::DpeImpl::topic() -> msg::Topic
 {
     return msg::Topic::build("dpe", name());
 }
@@ -500,8 +500,8 @@ void ReportService::run()
 };
 
 
-msg::Message ReportService::build_message(const std::string& topic_prefix,
-                                          const std::string& json)
+auto ReportService::build_message(const std::string& topic_prefix,
+                                  const std::string& json) -> msg::Message
 {
     auto topic = msg::Topic::build(topic_prefix,
                                     config_.session,

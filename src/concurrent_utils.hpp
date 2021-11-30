@@ -44,17 +44,17 @@ public:
     }
 
     template <typename U>
-    bool push(U&& data)
+    auto push(U&& data) -> bool
     {
         return queue_.try_enqueue(std::forward<U>(data));
     }
 
-    bool pop(Task& data)
+    auto pop(Task& data) -> bool
     {
         return queue_.try_dequeue(data);
     }
 
-    bool pop(Task& data, std::int64_t timeout_usecs)
+    auto pop(Task& data, std::int64_t timeout_usecs) -> bool
     {
         return queue_.wait_dequeue_timed(data, timeout_usecs);
     }
@@ -80,9 +80,9 @@ public:
         // nop
     }
 
-    const_iterator begin() const { return cont_->begin(); };
+    auto begin() const -> const_iterator { return cont_->begin(); };
 
-    const_iterator end() const { return cont_->end(); };
+    auto end() const -> const_iterator { return cont_->end(); };
 
 private:
     std::shared_ptr<T> cont_;
@@ -128,7 +128,7 @@ public:
 #endif
     }
 
-    range_type view() const
+    auto view() const -> range_type
     {
 #if !defined(__APPLE__) && defined(__GNUC__) && __GNUC__ < 5
         std::lock_guard<std::mutex> lock{m_};

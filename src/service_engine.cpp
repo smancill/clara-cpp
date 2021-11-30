@@ -33,9 +33,9 @@
 
 namespace {
 
-clara::EngineData build_error_data(const char* msg,
-                                   int severity,
-                                   const std::exception& ex)
+auto build_error_data(const char* msg,
+                      int severity,
+                      const std::exception& ex) -> clara::EngineData
 {
     auto data = clara::EngineData{};
     data.set_data(clara::type::STRING.mime_type(), msg);
@@ -45,8 +45,8 @@ clara::EngineData build_error_data(const char* msg,
 }
 
 
-clara::EngineData build_done_data(clara::EngineDataAccessor& accessor,
-                                  clara::EngineData& output)
+auto build_done_data(clara::EngineDataAccessor& accessor,
+                     clara::EngineData& output) -> clara::EngineData
 {
     auto done_output = clara::EngineData{};
     done_output.set_data(clara::type::STRING.mime_type(), "done");
@@ -146,7 +146,7 @@ void ServiceEngine::execute(msg::Message& msg)
 }
 
 
-EngineData ServiceEngine::configure_engine(EngineData& input)
+auto ServiceEngine::configure_engine(EngineData& input) -> EngineData
 {
     try {
         auto output_data = engine_->configure(input);
@@ -160,7 +160,7 @@ EngineData ServiceEngine::configure_engine(EngineData& input)
 }
 
 
-EngineData ServiceEngine::execute_engine(EngineData& input)
+auto ServiceEngine::execute_engine(EngineData& input) -> EngineData
 {
     try {
         auto t0 = std::chrono::high_resolution_clock::now();
@@ -186,15 +186,15 @@ EngineData ServiceEngine::execute_engine(EngineData& input)
 }
 
 
-EngineData ServiceEngine::get_engine_data(msg::Message& msg)
+auto ServiceEngine::get_engine_data(msg::Message& msg) -> EngineData
 {
     report_->add_bytes_recv(static_cast<std::int64_t>(msg.data().size()));
     return accessor_.deserialize(msg, input_types_);
 }
 
 
-msg::Message ServiceEngine::put_engine_data(const EngineData& output,
-                                            const msg::Topic& topic)
+auto ServiceEngine::put_engine_data(const EngineData& output,
+                                    const msg::Topic& topic) -> msg::Message
 {
     auto msg = accessor_.serialize(output, topic, output_types_);
     report_->add_bytes_sent(static_cast<std::int64_t>(msg.data().size()));
@@ -202,8 +202,8 @@ msg::Message ServiceEngine::put_engine_data(const EngineData& output,
 }
 
 
-msg::Message ServiceEngine::put_engine_data(const EngineData& output,
-                                            const std::string& receiver)
+auto ServiceEngine::put_engine_data(const EngineData& output,
+                                    const std::string& receiver) -> msg::Message
 {
     auto topic = msg::Topic::raw(receiver);
     auto msg = accessor_.serialize(output, topic, output_types_);
@@ -238,8 +238,8 @@ void ServiceEngine::parse_composition(const EngineData& input)
 }
 
 
-std::set<std::string> ServiceEngine::get_links(const EngineData& /*input*/,
-                                               const EngineData& /*output*/)
+auto ServiceEngine::get_links(const EngineData& /*input*/,
+                              const EngineData& /*output*/) -> std::set<std::string>
 {
     return compiler_.outputs();
 }

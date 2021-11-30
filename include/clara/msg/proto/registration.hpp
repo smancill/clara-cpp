@@ -47,7 +47,7 @@ namespace proto {
 /// \cond HIDDEN_SYMBOLS
 struct CompareRegistration
 {
-    bool operator()(const Registration& lhs, const Registration& rhs) const;
+    auto operator()(const Registration& lhs, const Registration& rhs) const -> bool;
 };
 /// \endcond
 
@@ -55,7 +55,7 @@ struct CompareRegistration
 /**
  * Gets the topic from the given %Registration data.
  */
-inline Topic parse_topic(const Registration& reg)
+inline auto parse_topic(const Registration& reg) -> Topic
 {
     return Topic::build(reg.domain(), reg.subject(), reg.type());
 }
@@ -63,13 +63,13 @@ inline Topic parse_topic(const Registration& reg)
 /**
  * Gets the address from the given %Registration data.
  */
-inline ProxyAddress parse_address(const Registration& reg)
+inline auto parse_address(const Registration& reg) -> ProxyAddress
 {
     return {reg.host(), reg.port()};
 }
 
-bool operator==(const Registration& lhs, const Registration& rhs);
-bool operator!=(const Registration& lhs, const Registration& rhs);
+auto operator==(const Registration& lhs, const Registration& rhs) -> bool;
+auto operator!=(const Registration& lhs, const Registration& rhs) -> bool;
 
 } // end namespace proto
 

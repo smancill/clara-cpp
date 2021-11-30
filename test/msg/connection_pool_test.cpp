@@ -25,13 +25,15 @@ public:
     int new_connections = 0;
 
 private:
-    cm_::ProxyDriverPtr create_connection(const cm::ProxyAddress& addr) override
+    auto create_connection(const cm::ProxyAddress& addr)
+        -> cm_::ProxyDriverPtr override
     {
         new_connections++;
         return cm_::ProxyDriverPtr{new cm_::ProxyDriver(*ctx, addr, {})};
     }
 
-    cm_::RegDriverPtr create_connection(const cm::RegAddress& addr) override
+    auto create_connection(const cm::RegAddress& addr)
+        -> cm_::RegDriverPtr override
     {
         new_connections++;
         return cm_::RegDriverPtr{new cm_::RegDriver(*ctx, addr)};

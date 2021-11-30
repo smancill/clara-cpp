@@ -30,7 +30,7 @@ namespace {
 
 const char SEPARATOR = ':';
 
-int get_port(const std::string& full_name, int index)
+auto get_port(const std::string& full_name, int index) -> int
 {
     switch (full_name[index]) {
         case 'j':
@@ -51,9 +51,9 @@ int get_port(const std::string& full_name, int index)
 
 namespace clara::msg::detail {
 
-std::string get_domain(const std::string& topic);
-std::string get_subject(const std::string& topic);
-std::string get_type(const std::string& topic);
+auto get_domain(const std::string& topic) -> std::string;
+auto get_subject(const std::string& topic) -> std::string;
+auto get_type(const std::string& topic) -> std::string;
 
 } // end namespace clara::msg::detail
 
@@ -65,19 +65,19 @@ using msg::detail::get_subject;
 using msg::detail::get_type;
 
 
-std::string get_dpe_name(const std::string& canonical_name)
+auto get_dpe_name(const std::string& canonical_name) -> std::string
 {
     return get_domain(canonical_name);
 }
 
 
-std::string get_container_name(const std::string& canonical_name)
+auto get_container_name(const std::string& canonical_name) -> std::string
 {
     return get_subject(canonical_name);
 }
 
 
-std::string get_container_canonical_name(const std::string& canonical_name)
+auto get_container_canonical_name(const std::string& canonical_name) -> std::string
 {
     auto first = canonical_name.find(SEPARATOR);
     if (first == std::string::npos) {
@@ -91,13 +91,13 @@ std::string get_container_canonical_name(const std::string& canonical_name)
 }
 
 
-std::string get_engine_name(const std::string& canonical_name)
+auto get_engine_name(const std::string& canonical_name) -> std::string
 {
     return get_type(canonical_name);
 }
 
 
-std::string get_dpe_host(const std::string& canonical_name)
+auto get_dpe_host(const std::string& canonical_name) -> std::string
 {
     auto port_sep = canonical_name.find(constants::port_sep);
     if (port_sep == std::string::npos) {
@@ -107,7 +107,7 @@ std::string get_dpe_host(const std::string& canonical_name)
     return canonical_name.substr(0, port_sep);
 }
 
-int get_dpe_port(const std::string& canonical_name)
+auto get_dpe_port(const std::string& canonical_name) -> int
 {
     auto port_sep = canonical_name.find(constants::port_sep);
     auto lang_sep = canonical_name.find(constants::lang_sep);
@@ -119,14 +119,14 @@ int get_dpe_port(const std::string& canonical_name)
 }
 
 
-std::string get_dpe_lang(const std::string& canonical_name)
+auto get_dpe_lang(const std::string& canonical_name) -> std::string
 {
     auto dpe_name = get_dpe_name(canonical_name);
     return dpe_name.substr(dpe_name.find(constants::lang_sep) + 1);
 }
 
 
-int get_default_port(const std::string& lang)
+auto get_default_port(const std::string& lang) -> int
 {
     return get_port(lang, 0);
 }

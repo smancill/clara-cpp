@@ -46,7 +46,7 @@ void SocketSetup::get_option(int opt, void* val, std::size_t* val_len) const
 }
 
 
-int SocketSetup::type() const
+auto SocketSetup::type() const -> int
 {
     return get_option<int>(ZMQ_TYPE);
 }

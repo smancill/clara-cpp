@@ -16,13 +16,13 @@ auto reg_data = cm::RegDataSet{};
 auto name = std::string{"registrat_test"};
 
 
-bool check_publisher(const cm::proto::Registration& reg)
+auto check_publisher(const cm::proto::Registration& reg) -> bool
 {
     return reg.ownertype() == cm::proto::Registration::PUBLISHER;
 }
 
 
-cm::RegDataSet find(const std::string& topic, bool is_publisher)
+auto find(const std::string& topic, bool is_publisher) -> cm::RegDataSet
 {
     auto data = cm::RegDataSet{};
     auto search_topic = cm::Topic::raw(topic);
@@ -109,8 +109,8 @@ void remove_all()
 }
 
 
-cm::proto::Registration discovery_request(const std::string& topic,
-                                          bool is_publisher)
+auto discovery_request(const std::string& topic, bool is_publisher)
+    -> cm::proto::Registration
 {
     return t::new_registration(name, "localhost", topic, is_publisher);
 }

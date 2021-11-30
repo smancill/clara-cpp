@@ -49,17 +49,17 @@ inline void set_value(Data& data, const std::vector<std::int64_t>& value)
         { set_repeated(data.mutable_vlsint64a(), value); }
 
 template <typename T>
-inline T get_value(const Data& /*data*/)
+inline auto get_value(const Data& /*data*/) -> T
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return T{}; }
 
-template<> inline std::int32_t get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::int32_t
         { return data.vlsint32(); }
-template<> inline std::int64_t get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::int64_t
         { return data.vlsint64(); }
 
-template<> inline std::vector<std::int32_t> get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::vector<std::int32_t>
         { const auto& a = data.vlsint32a(); return {a.begin(), a.end()}; }
-template<> inline std::vector<std::int64_t> get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::vector<std::int64_t>
         { const auto& a = data.vlsint64a(); return {a.begin(), a.end()}; }
 }
 
@@ -69,14 +69,14 @@ template<typename T>
 class PrimitiveSerializer : public clara::Serializer
 {
 public:
-    std::vector<std::uint8_t> write(const clara::any& data) const override
+    auto write(const clara::any& data) const -> std::vector<std::uint8_t> override
     {
         const T& value = clara::any_cast<const T&>(data);
         const auto xdata = clara::msg::proto::make_data(value);
         return clara::msg::proto::serialize_data(xdata);
     }
 
-    clara::any read(const std::vector<std::uint8_t>& buffer) const override
+    auto read(const std::vector<std::uint8_t>& buffer) const -> clara::any override
     {
         const auto xdata = clara::msg::proto::parse_data(buffer);
         return {clara::msg::proto::parse_data<T>(xdata)};
@@ -88,7 +88,7 @@ template<typename T>
 class VariableLengthSerializer : public clara::Serializer
 {
 public:
-    std::vector<std::uint8_t> write(const clara::any& data) const override
+    auto write(const clara::any& data) const -> std::vector<std::uint8_t> override
     {
         const T& value = clara::any_cast<const T&>(data);
         auto xdata = clara::msg::proto::Data{};
@@ -96,7 +96,7 @@ public:
         return clara::msg::proto::serialize_data(xdata);
     }
 
-    clara::any read(const std::vector<std::uint8_t>& buffer) const override
+    auto read(const std::vector<std::uint8_t>& buffer) const -> clara::any override
     {
         const auto xdata = clara::msg::proto::parse_data(buffer);
         return {vl::get_value<T>(xdata)};
@@ -107,22 +107,22 @@ public:
 class RawBytesSerializer : public clara::Serializer
 {
 public:
-    std::vector<std::uint8_t> write(const clara::any& data) const override
+    auto write(const clara::any& data) const -> std::vector<std::uint8_t> override
     {
         return clara::any_cast<std::vector<std::uint8_t>>(data);
     }
 
-    std::vector<std::uint8_t> write(clara::any&& data) const override
+    auto write(clara::any&& data) const -> std::vector<std::uint8_t> override
     {
         return clara::any_cast<std::vector<std::uint8_t>>(std::move(data));
     }
 
-    clara::any read(const std::vector<std::uint8_t>& buffer) const override
+    auto read(const std::vector<std::uint8_t>& buffer) const -> clara::any override
     {
         return {buffer};
     }
 
-    clara::any read(std::vector<std::uint8_t>&& buffer) const override
+    auto read(std::vector<std::uint8_t>&& buffer) const -> clara::any override
     {
         return {std::move(buffer)};
     }
@@ -132,13 +132,13 @@ public:
 class NativeSerializer : public clara::Serializer
 {
 public:
-    std::vector<std::uint8_t> write(const clara::any& data) const override
+    auto write(const clara::any& data) const -> std::vector<std::uint8_t> override
     {
         const auto& value = clara::any_cast<const clara::msg::proto::Data&>(data);
         return clara::msg::proto::serialize_data(value);
     }
 
-    clara::any read(const std::vector<std::uint8_t>& buffer) const override
+    auto read(const std::vector<std::uint8_t>& buffer) const -> clara::any override
     {
         return {clara::msg::proto::parse_data(buffer)};
     }
@@ -148,13 +148,13 @@ public:
 class StringSerializer : public clara::Serializer
 {
 public:
-    std::vector<std::uint8_t> write(const clara::any& data) const override
+    auto write(const clara::any& data) const -> std::vector<std::uint8_t> override
     {
         const auto& value = clara::any_cast<const std::string&>(data);
         return {std::begin(value), std::end(value)};
     }
 
-    clara::any read(const std::vector<std::uint8_t>& buffer) const override
+    auto read(const std::vector<std::uint8_t>& buffer) const -> clara::any override
     {
         return {std::string{std::begin(buffer), std::end(buffer)}};
     }
@@ -162,22 +162,26 @@ public:
 
 // ---------------------------------------------------------------------------
 
-template<typename T> auto s_primitive()
+template<typename T>
+auto s_primitive() -> std::unique_ptr<clara::Serializer>
 {
     return std::make_unique<PrimitiveSerializer<T>>();
 }
 
-template<typename T> auto s_vector()
+template<typename T>
+auto s_vector() -> std::unique_ptr<clara::Serializer>
 {
     return std::make_unique<PrimitiveSerializer<std::vector<T>>>();
 }
 
-template<typename T> auto vl_primitive()
+template<typename T>
+auto vl_primitive() -> std::unique_ptr<clara::Serializer>
 {
     return std::make_unique<VariableLengthSerializer<T>>();
 }
 
-template<typename T> auto vl_vector()
+template<typename T>
+auto vl_vector() -> std::unique_ptr<clara::Serializer>
 {
     return std::make_unique<VariableLengthSerializer<std::vector<T>>>();
 }

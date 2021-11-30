@@ -99,7 +99,7 @@ RawMessage::RawMessage(zmq::socket_t& socket)
 
 
 // replyTo generation: format is "ret:<id>:2[dddddd]"
-std::string get_unique_replyto(const std::string& subject)
+auto get_unique_replyto(const std::string& subject) -> std::string
 {
     constexpr auto rt_fixed_size = 4 + 1 + rt_seq_size;
 
@@ -119,7 +119,8 @@ void set_unique_replyto(std::uint_fast32_t value)
 
 
 // actor unique ID: format is 8 digits: [dddddddd]
-std::string encode_identity(const std::string& address, const std::string& name)
+auto encode_identity(const std::string& address, const std::string& name)
+    -> std::string
 {
     constexpr auto id_size = 8;
     constexpr auto max_suffix = 99;
@@ -134,7 +135,7 @@ std::string encode_identity(const std::string& address, const std::string& name)
 
 
 // control ID generation: format is 9 digits: 2[ppp][ddddd]
-std::string get_random_id()
+auto get_random_id() -> std::string
 {
     static const auto id_prefix = []{
         auto ip_hash = std::hash<std::string>{}(util::localhost());

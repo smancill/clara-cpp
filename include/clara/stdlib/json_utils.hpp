@@ -50,23 +50,23 @@ public:
 };
 
 
-json11::Json parse_json(const EngineData& input);
+auto parse_json(const EngineData& input) -> json11::Json;
 
-json11::Json parse_json(const std::string& str);
+auto parse_json(const std::string& str) -> json11::Json;
 
-bool has_key(const json11::Json& obj, const std::string& key);
+auto has_key(const json11::Json& obj, const std::string& key) -> bool;
 
-bool get_bool(const json11::Json& obj, const std::string& key);
+auto get_bool(const json11::Json& obj, const std::string& key) -> bool;
 
-int get_int(const json11::Json& obj, const std::string& key);
+auto get_int(const json11::Json& obj, const std::string& key) -> int;
 
-double get_double(const json11::Json& obj, const std::string& key);
+auto get_double(const json11::Json& obj, const std::string& key) -> double;
 
-const std::string& get_string(const json11::Json& obj, const std::string& key);
+auto get_string(const json11::Json& obj, const std::string& key) -> const std::string&;
 
-const json11::Json& get_array(const json11::Json& obj, const std::string& key);
+auto get_array(const json11::Json& obj, const std::string& key) -> const json11::Json&;
 
-const json11::Json& get_object(const json11::Json& obj, const std::string& key);
+auto get_object(const json11::Json& obj, const std::string& key) -> const json11::Json&;
 
 void check_json(const json11::Json& obj, const json11::Json::shape& shape);
 

@@ -45,7 +45,8 @@ class Subscription final
 {
 public:
     Subscription(const Subscription&) = delete;
-    Subscription& operator=(const Subscription&) = delete;
+
+    auto operator=(const Subscription&) -> Subscription& = delete;
 
     ~Subscription();
 

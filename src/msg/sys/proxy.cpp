@@ -34,7 +34,7 @@
 
 namespace clara::msg::util {
 
-std::string get_current_time();
+auto get_current_time() -> std::string;
 
 }
 
@@ -71,7 +71,7 @@ static void wait_signals()
 using namespace clara::msg;
 
 
-ProxyAddress get_address(const cxxopts::ParseResult& result)
+auto get_address(const cxxopts::ParseResult& result) -> ProxyAddress
 {
     auto host = util::localhost();
     auto port = ProxyAddress::default_port;
@@ -88,7 +88,7 @@ ProxyAddress get_address(const cxxopts::ParseResult& result)
 }
 
 
-cxxopts::Options options_parser()
+auto options_parser() -> cxxopts::Options
 {
     using namespace cxxopts;
 

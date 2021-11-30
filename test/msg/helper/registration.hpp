@@ -56,10 +56,10 @@ const DataArray hosts = {
 // clang-format on
 
 
-proto::Registration new_registration(const std::string& name,
-                                     const std::string& host,
-                                     const std::string& topic,
-                                     bool is_publisher)
+auto new_registration(const std::string& name,
+                      const std::string& host,
+                      const std::string& topic,
+                      bool is_publisher) -> proto::Registration
 {
     return registration::create(name, "test data",
                                 host, ProxyAddress::default_port,
@@ -68,7 +68,7 @@ proto::Registration new_registration(const std::string& name,
 
 
 template<typename D>
-typename D::result_type next(D& dist)
+auto next(D& dist) -> typename D::result_type
 {
     static auto rng = std::mt19937{std::random_device{}()};
 
@@ -76,7 +76,7 @@ typename D::result_type next(D& dist)
 }
 
 
-const std::string& random(const DataArray& data)
+auto random(const DataArray& data) -> const std::string&
 {
     static auto udist = std::uniform_int_distribution<std::size_t>{
         0, topics.size() * names.size() * hosts.size()
@@ -87,7 +87,7 @@ const std::string& random(const DataArray& data)
 }
 
 
-proto::Registration random_registration()
+auto random_registration() -> proto::Registration
 {
     static auto bdist = std::bernoulli_distribution{};
 

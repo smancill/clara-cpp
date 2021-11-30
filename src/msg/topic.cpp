@@ -36,7 +36,7 @@ namespace clara::msg {
 
 namespace detail {
 
-std::string get_domain(const std::string& topic)
+auto get_domain(const std::string& topic) -> std::string
 {
     auto firstSep = topic.find(SEPARATOR);
     if (firstSep == std::string::npos) {
@@ -46,7 +46,7 @@ std::string get_domain(const std::string& topic)
 }
 
 
-std::string get_subject(const std::string& topic)
+auto get_subject(const std::string& topic) -> std::string
 {
     auto firstSep = topic.find(SEPARATOR);
     if (firstSep == std::string::npos) {
@@ -60,7 +60,7 @@ std::string get_subject(const std::string& topic)
 }
 
 
-std::string get_type(const std::string& topic)
+auto get_type(const std::string& topic) -> std::string
 {
     auto firstSep = topic.find(SEPARATOR);
     if (firstSep == std::string::npos) {
@@ -74,7 +74,7 @@ std::string get_type(const std::string& topic)
 }
 
 
-bool is_parent(const std::string& topic, const std::string& other)
+auto is_parent(const std::string& topic, const std::string& other) -> bool
 {
     return other.compare(0, topic.size(), topic) == 0;
 }
@@ -82,9 +82,9 @@ bool is_parent(const std::string& topic, const std::string& other)
 } // end namespace detail
 
 
-Topic Topic::build(const std::string& domain,
-                   const std::string& subject,
-                   const std::string& type)
+auto Topic::build(const std::string& domain,
+                  const std::string& subject,
+                  const std::string& type) -> Topic
 {
     if (domain == ANY) {
         throw std::invalid_argument("domain is not defined");

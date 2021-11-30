@@ -28,7 +28,7 @@
 
 namespace clara::msg::util {
 
-std::string get_current_time();
+auto get_current_time() -> std::string;
 
 }
 
@@ -36,21 +36,21 @@ namespace clara::util {
 
 using msg::util::get_current_time;  // NOLINT
 
-std::string get_dpe_name(const std::string& canonical_name);
+auto get_dpe_name(const std::string& canonical_name) -> std::string;
 
-std::string get_container_name(const std::string& canonical_name);
+auto get_container_name(const std::string& canonical_name) -> std::string;
 
-std::string get_container_canonical_name(const std::string& canonical_name);
+auto get_container_canonical_name(const std::string& canonical_name) -> std::string;
 
-std::string get_engine_name(const std::string& canonical_name);
+auto get_engine_name(const std::string& canonical_name) -> std::string;
 
-std::string get_dpe_host(const std::string& canonical_name);
+auto get_dpe_host(const std::string& canonical_name) -> std::string;
 
-int get_dpe_port(const std::string& canonical_name);
+auto get_dpe_port(const std::string& canonical_name) -> int;
 
-std::string get_dpe_lang(const std::string& canonical_name);
+auto get_dpe_lang(const std::string& canonical_name) -> std::string;
 
-int get_default_port(const std::string& lang);
+auto get_default_port(const std::string& lang) -> int;
 
 } // end namespace clara::util
 

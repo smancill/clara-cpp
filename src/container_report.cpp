@@ -48,7 +48,7 @@ void ContainerReport::remove_service(const element_type& service)
 }
 
 
-ContainerReport::range_type ContainerReport::services() const
+auto ContainerReport::services() const -> ContainerReport::range_type
 {
     return services_.view();
 }

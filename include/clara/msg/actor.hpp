@@ -41,6 +41,8 @@ namespace clara::msg {
 
 class ConnectionSetup;
 
+using CallbackFn = std::function<void(Message&)>;
+
 
 /**
  * The main CLARA pub/sub actor.
@@ -129,10 +131,10 @@ public:
                    RegAddress default_registrar);
 
     Actor(const Actor& rhs) = delete;
-    Actor& operator=(const Actor& rhs) = delete;
-
     Actor(Actor&& rhs) noexcept;
-    Actor& operator=(Actor&& rhs) noexcept;
+
+    auto operator=(const Actor& rhs) -> Actor& = delete;
+    auto operator=(Actor&& rhs) noexcept -> Actor&;
 
     virtual ~Actor();
 
@@ -141,7 +143,7 @@ public:
      * Obtains a connection to the default proxy.
      * If there is no available connection, a new one will be created.
      */
-    ProxyConnection connect();
+    auto connect() -> ProxyConnection;
 
     /**
      * Obtains a connection to the specified proxy.
@@ -149,7 +151,7 @@ public:
      *
      * \param addr the address of the proxy
      */
-    ProxyConnection connect(const ProxyAddress& addr);
+    auto connect(const ProxyAddress& addr) -> ProxyConnection;
 
     /**
      * Changes the setup of all created connections.
@@ -183,7 +185,9 @@ public:
      * \param timeout the length of time to wait a response, in milliseconds
      * \return the response message
      */
-    Message sync_publish(ProxyConnection& connection, Message& msg, int timeout);
+    auto sync_publish(ProxyConnection& connection,
+                      Message& msg,
+                      int timeout) -> Message;
 
     /**
      * Subscribes to a topic of interest through the specified proxy
@@ -194,10 +198,9 @@ public:
      * \param connection the connection to the proxy
      * \param callback the user action to run when a message is received
      */
-    std::unique_ptr<Subscription>
-    subscribe(const Topic& topic,
-              ProxyConnection&& connection,
-              std::function<void(Message&)> callback);
+    auto subscribe(const Topic& topic,
+                   ProxyConnection&& connection,
+                   CallbackFn callback) -> std::unique_ptr<Subscription>;
 
     /**
      * Stops the given subscription.
@@ -301,7 +304,7 @@ public:
      * \return a set with the registration data of the matching publishers
      * \see Topic for the rules of matching topics
      */
-    RegDataSet find_publishers(const Topic& topic);
+    auto find_publishers(const Topic& topic) -> RegDataSet;
 
     /**
      * Finds all publishers of the specified topic
@@ -312,7 +315,7 @@ public:
      * \return a set with the registration data of the matching publishers
      * \see Topic for the rules of matching topics
      */
-    RegDataSet find_publishers(const RegAddress& addr, const Topic& topic);
+    auto find_publishers(const RegAddress& addr, const Topic& topic) -> RegDataSet;
 
     /**
      * Finds all subscribers to the specified topic
@@ -322,7 +325,7 @@ public:
      * \return a set with the registration data of the matching subscribers
      * \see Topic for the rules of matching topics
      */
-    RegDataSet find_subscribers(const Topic& topic);
+    auto find_subscribers(const Topic& topic) -> RegDataSet;
 
     /**
      * Finds all subscribers to the specified topic
@@ -333,23 +336,23 @@ public:
      * \return a set with the registration data of the matching subscribers
      * \see Topic for the rules of matching topics
      */
-    RegDataSet find_subscribers(const RegAddress& addr, const Topic& topic);
+    auto find_subscribers(const RegAddress& addr, const Topic& topic) -> RegDataSet;
 
 public:
     /**
      * Returns the name of this actor
      */
-    const std::string& name() const;
+    auto name() const -> const std::string&;
 
     /**
      * Returns the address of the default registrar service used by this actor
      */
-    const RegAddress& default_registrar() const;
+    auto default_registrar() const -> const RegAddress&;
 
     /**
      * Returns the address of the default proxy used by this actor
      */
-    const ProxyAddress& default_proxy() const;
+    auto default_proxy() const -> const ProxyAddress&;
 
 private:
     struct Impl;

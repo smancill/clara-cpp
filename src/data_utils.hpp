@@ -33,9 +33,9 @@
 
 namespace clara::util {
 
-msg::Message build_request(const msg::Topic& topic, const std::string& data);
+auto build_request(const msg::Topic& topic, const std::string& data) -> msg::Message;
 
-std::string parse_message(const msg::Message& msg);
+auto parse_message(const msg::Message& msg) -> std::string;
 
 
 class InvalidRequest : public std::logic_error
@@ -50,7 +50,7 @@ public:
 class RequestParser
 {
 public:
-    static RequestParser build(const msg::Message& msg)
+    static auto build(const msg::Message& msg) -> RequestParser
     {
         const auto& mt = msg.datatype();
         if (mt == "text/string") {
@@ -86,7 +86,7 @@ public:
     }
 
 public:
-    std::string next_string()
+    auto next_string() -> std::string
     {
         auto item = std::string{};
         if (std::getline(ss_, item, constants::data_sep[0])) {
@@ -98,7 +98,7 @@ public:
         throw invalid_request();
     }
 
-    std::string next_string(const std::string& default_value)
+    auto next_string(const std::string& default_value) -> std::string
     {
         auto item = std::string{};
         if (std::getline(ss_, item, constants::data_sep[0])) {
@@ -109,7 +109,7 @@ public:
         return default_value;
     }
 
-    int next_integer()
+    auto next_integer() -> int
     {
         try {
             return std::stoi(next_string());
@@ -120,13 +120,13 @@ public:
         }
     }
 
-    const std::string& request() const
+    auto request() const -> const std::string&
     {
         return data_;
     }
 
 private:
-    InvalidRequest invalid_request()
+    auto invalid_request() -> InvalidRequest
     {
         std::string msg = "invalid request";
         if (meta_->has_author()) {

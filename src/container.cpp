@@ -28,7 +28,7 @@
 #include <exception>
 
 namespace {
-std::string default_author()
+auto default_author() -> std::string
 {
     auto* author = std::getenv("USER");  // NOLINT(concurrency-mt-unsafe): setenv is never used
     return author != nullptr ? author : "clara";
@@ -105,7 +105,7 @@ void Container::add_service(const ServiceParameters& params)
 }
 
 
-bool Container::remove_service(const std::string& engine_name)
+auto Container::remove_service(const std::string& engine_name) -> bool
 {
     auto service = services_.remove(engine_name);
     if (service) {
@@ -124,7 +124,7 @@ void Container::remove_services()
 }
 
 
-std::shared_ptr<ContainerReport> Container::report() const
+auto Container::report() const -> std::shared_ptr<ContainerReport>
 {
     return report_;
 }

@@ -41,11 +41,11 @@ public:
      ~EventReaderService() override;
 
 public:
-    EngineData configure(EngineData& input) override;
+    auto configure(EngineData& input) -> EngineData override;
 
-    EngineData execute(EngineData& input) override;
+    auto execute(EngineData& input) -> EngineData override;
 
-    EngineData execute_group(const std::vector<EngineData>& inputs) override;
+    auto execute_group(const std::vector<EngineData>& inputs) -> EngineData override;
 
 protected:
     enum class Endian
@@ -88,7 +88,7 @@ private:
     /**
      * Returns true if an input file is open.
      */
-    virtual bool has_file() = 0;
+    virtual auto has_file() -> bool = 0;
 
     /**
      * Reads an event from the input file.
@@ -99,7 +99,7 @@ private:
      * @return the read event
      * @throws EventReaderError if the file could not be read
      */
-    virtual clara::any read_event(int event_number) = 0;
+    virtual auto read_event(int event_number) -> clara::any = 0;
 
     /**
      * Gets the total number of events that can be read from the input file.
@@ -107,7 +107,7 @@ private:
      * @return the total number of events in the file
      * @throws EventReaderError if the file could not be read
      */
-    virtual int read_event_count() = 0;
+    virtual auto read_event_count() -> int = 0;
 
     /**
      * Gets the byte order of the events stored in the input file.
@@ -115,7 +115,7 @@ private:
      * @return the byte order of the events in the file
      * @throws EventReaderError if the file could not be read
      */
-    virtual Endian read_byte_order() = 0;
+    virtual auto read_byte_order() -> Endian = 0;
 
     /**
      * Gets the CLARA engine data-type for the type of the events.
@@ -124,14 +124,14 @@ private:
      *
      * @return the data-type of the events
      */
-    virtual const EngineDataType& get_data_type() const = 0;
+    virtual auto get_data_type() const -> const EngineDataType& = 0;
 
 public:
-    std::vector<EngineDataType> input_data_types() const override;
+    auto input_data_types() const -> std::vector<EngineDataType> override;
 
-    std::vector<EngineDataType> output_data_types() const override;
+    auto output_data_types() const -> std::vector<EngineDataType> override;
 
-    std::set<std::string> states() const override;
+    auto states() const -> std::set<std::string> override;
 
 public:
     void reset() override;

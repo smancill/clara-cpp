@@ -43,7 +43,7 @@ const auto ip_regex = std::regex{"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\
 // clang-format on
 
 
-std::vector<std::string> get_addresses()
+auto get_addresses() -> std::vector<std::string>
 {
     struct AddrList {
         AddrList() { getifaddrs(&ifl); }
@@ -74,7 +74,7 @@ std::vector<std::string> get_addresses()
 }
 
 
-std::string get_host_address(const std::string& hostname)
+auto get_host_address(const std::string& hostname) -> std::string
 {
     static auto mtx = std::mutex{};
 
@@ -98,13 +98,13 @@ public:
         std::swap(addr_, updated);
     }
 
-    std::string get_first()
+    auto get_first() -> std::string
     {
         std::shared_lock<std::shared_timed_mutex> lk{mtx_};
         return addr_[0];
     }
 
-    std::vector<std::string> get_addrs()
+    auto get_addrs() -> std::vector<std::string>
     {
         std::shared_lock<std::shared_timed_mutex> lk{mtx_};
         return addr_;
@@ -116,7 +116,7 @@ private:
 };
 
 
-LocalAddrs& local_addrs()
+auto local_addrs() -> LocalAddrs&
 {
     static auto* addrs = new LocalAddrs{};
     return *addrs;
@@ -137,13 +137,13 @@ auto safe_localtime(const std::time_t* time)
 
 namespace clara::msg::util {
 
-std::string localhost()
+auto localhost() -> std::string
 {
     return local_addrs().get_first();
 }
 
 
-std::vector<std::string> get_localhost_addrs()
+auto get_localhost_addrs() -> std::vector<std::string>
 {
     return local_addrs().get_addrs();
 }
@@ -155,7 +155,7 @@ void update_localhost_addrs()
 }
 
 
-std::string to_host_addr(const std::string& hostname)
+auto to_host_addr(const std::string& hostname) -> std::string
 {
     if (hostname == "localhost") {
         return local_addrs().get_first();
@@ -164,7 +164,7 @@ std::string to_host_addr(const std::string& hostname)
 }
 
 
-bool is_ipaddr(const std::string& hostname)
+auto is_ipaddr(const std::string& hostname) -> bool
 {
     return std::regex_match(hostname, ip_regex);
 }
@@ -176,7 +176,7 @@ void sleep(long millis)
 }
 
 
-std::string get_current_time()
+auto get_current_time() -> std::string
 {
     auto now = std::time(nullptr);
     auto buf = std::array<char, sizeof "2001-01-01 00:00:00">{};

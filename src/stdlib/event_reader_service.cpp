@@ -68,13 +68,13 @@ public:
     void open_file(const json11::Json& config_data);
     void close_file(const json11::Json& config_data);
 
-    bool has_file() { return service_->has_file(); }
+    auto has_file() -> bool { return service_->has_file(); }
     void close_file();
 
 private:
     void set_limits(const json11::Json& config_data);
-    int get_value(const json11::Json& config_data, const std::string& key,
-                  int def_val, int min_val, int max_val);
+    auto get_value(const json11::Json& config_data, const std::string& key,
+                   int def_val, int min_val, int max_val) -> int;
 
 public:
     void get_next_event(const EngineData& input, EngineData& output);
@@ -82,9 +82,9 @@ public:
     void get_event_count(EngineData& output);
 
 private:
-    bool is_rec_request(const EngineData& input);
+    auto is_rec_request(const EngineData& input) -> bool;
     void return_next_event(EngineData& output);
-    std::string get_order(Endian endian);
+    auto get_order(Endian endian) -> std::string;
 
 public:
     void reset();
@@ -125,7 +125,7 @@ EventReaderService::Impl::Impl(EventReaderService* service)
 EventReaderService::Impl::~Impl() = default;
 
 
-EngineData EventReaderService::configure(EngineData& input)
+auto EventReaderService::configure(EngineData& input) -> EngineData
 {
     if (input.mime_type() == type::JSON) {
         try {
@@ -202,11 +202,11 @@ void EventReaderService::Impl::set_limits(const json11::Json& config_data)
 }
 
 
-int EventReaderService::Impl::get_value(const json11::Json& config_data,
-                                        const std::string& key,
-                                        int def_val,
-                                        int min_val,
-                                        int max_val)
+auto EventReaderService::Impl::get_value(const json11::Json& config_data,
+                                         const std::string& key,
+                                         int def_val,
+                                         int min_val,
+                                         int max_val) -> int
 {
     auto json_val = config_data[key];
     if (!json_val.is_null()) {
@@ -249,7 +249,7 @@ void EventReaderService::Impl::close_file()
 }
 
 
-EngineData EventReaderService::execute(EngineData& input)
+auto EventReaderService::execute(EngineData& input) -> EngineData
 {
     auto output = EngineData();
 
@@ -273,7 +273,7 @@ EngineData EventReaderService::execute(EngineData& input)
 }
 
 
-inline bool EventReaderService::Impl::is_rec_request(const EngineData& input)
+inline auto EventReaderService::Impl::is_rec_request(const EngineData& input) -> bool
 {
     return data_cast<std::string>(input) == request_next_rec;
 }
@@ -351,7 +351,7 @@ void EventReaderService::Impl::get_file_byte_order(EngineData& output)
 }
 
 
-std::string EventReaderService::Impl::get_order(Endian endian)
+auto EventReaderService::Impl::get_order(Endian endian) -> std::string
 {
     switch (endian) {
         case Endian::Little:
@@ -376,25 +376,26 @@ void EventReaderService::Impl::get_event_count(EngineData& output)
 }
 
 
-EngineData EventReaderService::execute_group(const std::vector<EngineData>&)
+auto EventReaderService::execute_group(const std::vector<EngineData>& /*inputs*/)
+    -> EngineData
 {
     return {};
 }
 
 
-std::vector<EngineDataType> EventReaderService::input_data_types() const
+auto EventReaderService::input_data_types() const -> std::vector<EngineDataType>
 {
     return {type::JSON, type::STRING};
 }
 
 
-std::vector<EngineDataType> EventReaderService::output_data_types() const
+auto EventReaderService::output_data_types() const -> std::vector<EngineDataType>
 {
     return {get_data_type(), type::STRING, type::SFIXED32};
 }
 
 
-std::set<std::string> EventReaderService::states() const
+auto EventReaderService::states() const -> std::set<std::string>
 {
     return {};
 }

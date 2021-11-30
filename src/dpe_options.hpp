@@ -87,7 +87,7 @@ public:
         options_.set_width(88);
     }
 
-    bool parse(int argc, char* argv[])  // NOLINT
+    auto parse(int argc, char* argv[]) -> bool  // NOLINT
     try {
         using namespace std::literals::string_literals;
 
@@ -131,7 +131,7 @@ public:
         return false;
     }
 
-    bool has_help()
+    auto has_help() -> bool
     {
         return result_.count("help") > 0;
     }
@@ -143,7 +143,7 @@ public:
     }
 
 private:
-    bool has_frontend()
+    auto has_frontend() -> bool
     {
         if (result_.count(opt::fe_host) == 0) {
             if (result_.count(opt::fe_port) == 0) {
@@ -157,12 +157,12 @@ private:
     }
 
     template<typename T>
-    T get(const std::string& opt, const T& default_value)
+    auto get(const std::string& opt, const T& default_value) -> T
     {
         return (result_.count(opt) > 0) ? result_[opt].as<T>() : default_value;
     }
 
-    int parse_report_period()
+    auto parse_report_period() -> int
     {
         using namespace std::chrono;
         auto ms = milliseconds{DpeConfig::default_report_period};
@@ -171,27 +171,27 @@ private:
     }
 
 public:
-    msg::ProxyAddress local_address() const
+    auto local_address() const -> msg::ProxyAddress
     {
         return local_addr_;
     }
 
-    msg::ProxyAddress frontend_address() const
+    auto frontend_address() const -> msg::ProxyAddress
     {
         return fe_addr_;
     }
 
-    DpeConfig config() const
+    auto config() const -> DpeConfig
     {
         return config_;
     }
 
-    int max_sockets() const
+    auto max_sockets() const -> int
     {
         return max_sockets_;
     }
 
-    int io_threads() const
+    auto io_threads() const -> int
     {
         return io_threads_;
     }

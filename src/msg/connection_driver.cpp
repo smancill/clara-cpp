@@ -113,7 +113,7 @@ void ProxyDriver::send(Message& msg)
 }
 
 
-RawMessage ProxyDriver::recv()
+auto ProxyDriver::recv() -> RawMessage
 {
     return detail::RawMessage{sub_};
 
@@ -162,13 +162,13 @@ void ProxyDriver::unsubscribe(const Topic& topic)
 }
 
 
-const ProxyAddress& ProxyDriver::address()
+auto ProxyDriver::address() -> const ProxyAddress&
 {
     return addr_;
 }
 
 
-Message parse_message(RawMessage& multi_msg)
+auto parse_message(RawMessage& multi_msg) -> Message
 {
     auto topic = detail::to_string(multi_msg[0]);
     auto meta = proto::make_meta();

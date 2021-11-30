@@ -24,7 +24,9 @@
 
 namespace clara::util {
 
-std::string make_name(const std::string& host, int port, const std::string& lang)
+auto make_name(const std::string& host,
+               int port,
+               const std::string& lang) -> std::string
 {
     auto name = host;
     if (port != constants::cpp_port) {
@@ -35,16 +37,16 @@ std::string make_name(const std::string& host, int port, const std::string& lang
 }
 
 
-std::string make_name(const std::string& dpe,
-                      const std::string& container)
+auto make_name(const std::string& dpe,
+               const std::string& container) -> std::string
 {
     return dpe + ":" + container;
 }
 
 
-std::string make_name(const std::string& dpe,
-                      const std::string& container,
-                      const std::string& engine)
+auto make_name(const std::string& dpe,
+               const std::string& container,
+               const std::string& engine) -> std::string
 {
     return dpe + ":" + container + ":" + engine;
 }

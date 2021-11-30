@@ -40,10 +40,10 @@ public:
     { }
 
     SocketSetup(const SocketSetup& rhs) = delete;
-    SocketSetup& operator=(const SocketSetup& rhs) = delete;
+    auto operator=(const SocketSetup& rhs) -> SocketSetup& = delete;
 
     SocketSetup(SocketSetup&&) noexcept = default;
-    SocketSetup& operator=(SocketSetup&&) noexcept = default;
+    auto operator=(SocketSetup&&) noexcept -> SocketSetup& = default;
 
     ~SocketSetup() = default;
 
@@ -65,7 +65,7 @@ public:
     /// Gets the value of a ØMQ socket option
     template <typename Integer,
               typename = std::enable_if_t<std::is_integral<Integer>::value>>
-    Integer get_option(int opt) const
+    auto get_option(int opt) const -> Integer
     {
         Integer val;
         auto val_len = sizeof(Integer);
@@ -74,7 +74,7 @@ public:
     }
 
     /// Gets the type of the 0MQ socket
-    int type() const;
+    auto type() const -> int;
 
 private:
     void* socket_;
@@ -93,7 +93,8 @@ public:
     ConnectionSetup() = default;
 
     ConnectionSetup(const ConnectionSetup&) = delete;
-    ConnectionSetup& operator=(const ConnectionSetup&) = delete;
+
+    auto operator=(const ConnectionSetup&) -> ConnectionSetup& = delete;
 
     virtual ~ConnectionSetup() = default;
 

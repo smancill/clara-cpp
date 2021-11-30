@@ -50,12 +50,12 @@ public:
         }
     }
 
-    Engine* get() const
+    auto get() const -> Engine*
     {
         return service_engine_.get();
     }
 
-    Engine* operator->() const
+    auto operator->() const -> Engine*
     {
         return get();
     }
@@ -65,7 +65,7 @@ private:
 
 private:
     template<typename Fn>
-    Fn get_function(const std::string& fn_name)
+    auto get_function(const std::string& fn_name) -> Fn
     {
         dlerror();
         void* fn_addr = dlsym(handle_, fn_name.c_str());

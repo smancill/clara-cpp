@@ -58,7 +58,7 @@ public:
     /**
      * Returns the name of this data type.
      */
-    const std::string& mime_type() const
+    auto mime_type() const -> const std::string&
     {
         return mime_type_;
     }
@@ -66,7 +66,7 @@ public:
     /**
      * Returns the serializer of this data type.
      */
-    const Serializer* serializer() const
+    auto serializer() const -> const Serializer*
     {
         return serializer_.get();
     }
@@ -77,27 +77,27 @@ private:
 };
 
 
-inline
-bool operator==(const EngineDataType& data_type, const std::string& mime_type)
+inline auto operator==(const EngineDataType& data_type,
+                       const std::string& mime_type) -> bool
 {
     return data_type.mime_type() == mime_type;
 }
 
-inline
-bool operator==(const std::string& mime_type, const EngineDataType& data_type)
+inline auto operator==(const std::string& mime_type,
+                       const EngineDataType& data_type) -> bool
 {
     return data_type == mime_type;
 }
 
 
-inline
-bool operator!=(const EngineDataType& data_type, const char* mime_type)
+inline auto operator!=(const EngineDataType& data_type,
+                       const char* mime_type) -> bool
 {
     return !(data_type == mime_type);
 }
 
-inline
-bool operator!=(const std::string& mime_type, const EngineDataType& data_type)
+inline auto operator!=(const std::string& mime_type,
+                       const EngineDataType& data_type) -> bool
 {
     return !(data_type == mime_type);
 }

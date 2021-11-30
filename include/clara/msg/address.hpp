@@ -59,13 +59,13 @@ public:
 
 public:
     /// The host IP of the proxy
-    const std::string& host() const { return host_; }
+    auto host() const -> const std::string& { return host_; }
 
     /// The publication port of the proxy
-    int pub_port() const { return pub_port_; }
+    auto pub_port() const -> int { return pub_port_; }
 
     /// The subscription port of the proxy
-    int sub_port() const { return sub_port_; }
+    auto sub_port() const -> int { return sub_port_; }
 
 private:
     std::string host_;
@@ -103,10 +103,10 @@ public:
 
 public:
     /// The host IP of the registrar service
-    const std::string& host() const { return host_; }
+    auto host() const -> const std::string& { return host_; }
 
     /// The listening port of the registrar service
-    int port() const { return port_; }
+    auto port() const -> int { return port_; }
 
 private:
     std::string host_;
@@ -114,33 +114,33 @@ private:
 };
 
 
-inline bool operator==(const ProxyAddress& lhs, const ProxyAddress& rhs)
+inline auto operator==(const ProxyAddress& lhs, const ProxyAddress& rhs) -> bool
 {
     return lhs.host() == rhs.host() &&
            lhs.pub_port() == rhs.pub_port() &&
            lhs.sub_port() == rhs.sub_port();
 }
 
-inline bool operator!=(const ProxyAddress& lhs, const ProxyAddress& rhs)
+inline auto operator!=(const ProxyAddress& lhs, const ProxyAddress& rhs) -> bool
 {
     return !(lhs == rhs);
 }
 
 
-inline bool operator==(const RegAddress& lhs, const RegAddress& rhs)
+inline auto operator==(const RegAddress& lhs, const RegAddress& rhs) -> bool
 {
     return lhs.host() == rhs.host() && lhs.port() == rhs.port();
 }
 
-inline bool operator!=(const RegAddress& lhs, const RegAddress& rhs)
+inline auto operator!=(const RegAddress& lhs, const RegAddress& rhs) -> bool
 {
     return !(lhs == rhs);
 }
 
 
-std::ostream& operator<<(std::ostream& os, const ProxyAddress& a);
+auto operator<<(std::ostream& os, const ProxyAddress& a) -> std::ostream&;
 
-std::ostream& operator<<(std::ostream& os, const RegAddress& a);
+auto operator<<(std::ostream& os, const RegAddress& a) -> std::ostream&;
 
 } // end namespace clara::msg
 
@@ -150,7 +150,7 @@ namespace std {
 template <>
 struct hash<clara::msg::ProxyAddress>
 {
-    std::size_t operator()(const clara::msg::ProxyAddress& k) const
+    auto operator()(const clara::msg::ProxyAddress& k) const -> std::size_t
     {
         using std::hash;
 
@@ -161,7 +161,7 @@ struct hash<clara::msg::ProxyAddress>
 template <>
 struct hash<clara::msg::RegAddress>
 {
-    std::size_t operator()(const clara::msg::RegAddress& k) const
+    auto operator()(const clara::msg::RegAddress& k) const -> std::size_t
     {
         using std::hash;
 

@@ -46,7 +46,7 @@ public:
     ~ConcurrentMap() = default;
 
     template <typename... Args>
-    mapped_type insert(const key_type& name, Args&&... args)
+    auto insert(const key_type& name, Args&&... args) -> mapped_type
     {
         std::unique_lock<std::mutex> lock{mutex_};
 
@@ -58,7 +58,7 @@ public:
         return nullptr;
     }
 
-    mapped_type find(const key_type& name)
+    auto find(const key_type& name) -> mapped_type
     {
         std::unique_lock<std::mutex> lock{mutex_};
 
@@ -69,7 +69,7 @@ public:
         return nullptr;
     }
 
-    mapped_type remove(const key_type& name)
+    auto remove(const key_type& name) -> mapped_type
     {
         std::unique_lock<std::mutex> lock{mutex_};
 

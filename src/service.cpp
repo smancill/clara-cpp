@@ -28,7 +28,8 @@
 static constexpr auto default_queue_size = 1024;
 
 
-static tp::ThreadPoolOptions thread_pool_options(int pool_size, int queue_size)
+static auto thread_pool_options(int pool_size, int queue_size)
+    -> tp::ThreadPoolOptions
 {
     auto opts = tp::ThreadPoolOptions{};
     opts.setThreadCount(pool_size);
@@ -152,7 +153,7 @@ void Service::callback(msg::Message& msg)
 }
 
 
-std::shared_ptr<ServiceReport> Service::report() const
+auto Service::report() const -> std::shared_ptr<ServiceReport>
 {
     return report_;
 }

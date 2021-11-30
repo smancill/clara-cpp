@@ -45,16 +45,16 @@ public:
                 std::shared_ptr<ConnectionSetup> setup);
 
     ProxyDriver(const ProxyDriver&) = delete;
-    ProxyDriver& operator=(const ProxyDriver&) = delete;
-
     ProxyDriver(ProxyDriver&&) = default;
-    ProxyDriver& operator=(ProxyDriver&&) = default;
+
+    auto operator=(const ProxyDriver&) -> ProxyDriver& = delete;
+    auto operator=(ProxyDriver&&) -> ProxyDriver& = default;
 
     ~ProxyDriver() = default;
 
 public:
     /// Returns the address of the connected proxy
-    const ProxyAddress& address();
+    auto address() -> const ProxyAddress&;
 
     /// Connects the internal sockets to the proxy
     void connect();
@@ -62,7 +62,7 @@ public:
     /// Sends the message through the proxy
     void send(Message& msg);
     /// Receives a message through the proxy
-    RawMessage recv();
+    auto recv() -> RawMessage;
 
     /// Subscribes to messages of the given topic through the proxy
     void subscribe(const Topic& topic);
@@ -70,9 +70,9 @@ public:
     void unsubscribe(const Topic& topic);
 
 public:
-    zmq::socket_t& pub_socket() { return pub_; }
+    auto pub_socket() -> zmq::socket_t& { return pub_; }
 
-    zmq::socket_t& sub_socket() { return sub_; }
+    auto sub_socket() -> zmq::socket_t& { return sub_; }
 
 private:
     ProxyAddress addr_;
@@ -84,7 +84,7 @@ private:
 };
 
 
-Message parse_message(RawMessage& msg);
+auto parse_message(RawMessage& msg) -> Message;
 
 } // end namespace clara::msg::detail
 

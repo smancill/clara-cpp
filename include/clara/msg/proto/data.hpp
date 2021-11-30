@@ -89,57 +89,57 @@ inline void set_value(Data& data, const std::vector<std::string>& value)
         { set_repeated(data.mutable_stringa(), value); }
 
 template <typename T>
-inline T get_value(const Data& /*data*/)
+inline auto get_value(const Data& /*data*/) -> T
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return T{}; }
 
-template<> inline std::int32_t get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::int32_t
         { return data.flsint32(); }
-template<> inline std::int64_t get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::int64_t
         { return data.flsint64(); }
-template<> inline float get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> float
         { return data.float_(); }
-template<> inline double get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> double
         { return data.double_(); }
-template<> inline std::string get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::string
         { return data.string(); }
 
-template<> inline std::vector<std::int32_t> get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::vector<std::int32_t>
         { const auto& a = data.flsint32a(); return {a.begin(), a.end()}; }
-template<> inline std::vector<std::int64_t> get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::vector<std::int64_t>
         { const auto& a = data.flsint64a(); return {a.begin(), a.end()}; }
-template<> inline std::vector<float> get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::vector<float>
         { const auto& a = data.floata(); return {a.begin(), a.end()}; }
-template<> inline std::vector<double> get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::vector<double>
         { const auto& a = data.doublea(); return {a.begin(), a.end()}; }
-template<> inline std::vector<std::string> get_value(const Data& data)
+template<> inline auto get_value(const Data& data) -> std::vector<std::string>
         { const auto& a = data.stringa(); return {a.begin(), a.end()}; }
 
 template <typename T>
-inline std::string get_mimetype()
+inline auto get_mimetype() -> std::string
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return ""; }
 
-template<> inline std::string get_mimetype<std::int32_t>()
+template<> inline auto get_mimetype<std::int32_t>() -> std::string
         { return mimetype::single_sfixed32; }
-template<> inline std::string get_mimetype<std::int64_t>()
+template<> inline auto get_mimetype<std::int64_t>() -> std::string
         { return mimetype::single_sfixed64; }
-template<> inline std::string get_mimetype<float>()
+template<> inline auto get_mimetype<float>() -> std::string
         { return mimetype::single_float; }
-template<> inline std::string get_mimetype<double>()
+template<> inline auto get_mimetype<double>() -> std::string
         { return mimetype::single_double; }
-template<> inline std::string get_mimetype<std::string>()
+template<> inline auto get_mimetype<std::string>() -> std::string
         { return mimetype::single_string; }
-template<> inline std::string get_mimetype<const char*>()
+template<> inline auto get_mimetype<const char*>() -> std::string
         { return mimetype::single_string; }
 
-template<> inline std::string get_mimetype<std::vector<std::int32_t>>()
+template<> inline auto get_mimetype<std::vector<std::int32_t>>() -> std::string
         { return mimetype::array_sfixed32; }
-template<> inline std::string get_mimetype<std::vector<std::int64_t>>()
+template<> inline auto get_mimetype<std::vector<std::int64_t>>() -> std::string
         { return mimetype::array_sfixed64; }
-template<> inline std::string get_mimetype<std::vector<float>>()
+template<> inline auto get_mimetype<std::vector<float>>() -> std::string
         { return mimetype::array_float; }
-template<> inline std::string get_mimetype<std::vector<double>>()
+template<> inline auto get_mimetype<std::vector<double>>() -> std::string
         { return mimetype::array_double; }
-template<> inline std::string get_mimetype<std::vector<std::string>>()
+template<> inline auto get_mimetype<std::vector<std::string>>() -> std::string
         { return mimetype::array_string; }
 
 } // end namespace detail
@@ -160,7 +160,7 @@ template<> inline std::string get_mimetype<std::vector<std::string>>()
  * \return the created %Data object with only the value of type T set
  */
 template<typename T>
-inline Data make_data(T&& data)
+inline auto make_data(T&& data) -> Data
 {
     auto xdata = Data{};
     detail::set_value(xdata, std::forward<T>(data));
@@ -178,7 +178,7 @@ inline Data make_data(T&& data)
  * \return the value of type T in the data
  */
 template<typename T>
-inline T parse_data(const Data& data)
+inline auto parse_data(const Data& data) -> T
 {
     return detail::get_value<T>(data);
 }
@@ -193,7 +193,7 @@ inline T parse_data(const Data& data)
  * \param data the protobuf object
  * \return the serialized data
  */
-inline std::vector<std::uint8_t> serialize_data(const Data& data)
+inline auto serialize_data(const Data& data) -> std::vector<std::uint8_t>
 {
     auto buffer = std::vector<std::uint8_t>(data.ByteSizeLong());
     data.SerializeToArray(buffer.data(), static_cast<int>(buffer.size()));
@@ -209,7 +209,7 @@ inline std::vector<std::uint8_t> serialize_data(const Data& data)
  * \param buffer the serialized data
  * \return the deserialized %Data object
  */
-inline Data parse_data(const std::vector<std::uint8_t>& buffer)
+inline auto parse_data(const std::vector<std::uint8_t>& buffer) -> Data
 {
     auto xdata = Data{};
     xdata.ParseFromArray(buffer.data(), static_cast<int>(buffer.size()));
@@ -217,12 +217,12 @@ inline Data parse_data(const std::vector<std::uint8_t>& buffer)
 }
 
 
-inline bool operator==(const Data& lhs, const Data& rhs)
+inline auto operator==(const Data& lhs, const Data& rhs) -> bool
 {
     return lhs.SerializeAsString() == rhs.SerializeAsString();
 }
 
-inline bool operator!=(const Data& lhs, const Data& rhs)
+inline auto operator!=(const Data& lhs, const Data& rhs) -> bool
 {
     return !(lhs == rhs);
 }

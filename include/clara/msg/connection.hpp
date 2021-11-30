@@ -72,10 +72,10 @@ private:
 
 public:
     ScopedConnection(const ScopedConnection&) = delete;
-    ScopedConnection& operator=(const ScopedConnection&) = delete;
-
     ScopedConnection(ScopedConnection&&) noexcept(std::is_nothrow_move_constructible_v<deleter>) = default;
-    ScopedConnection& operator=(ScopedConnection&&) noexcept(std::is_nothrow_move_constructible_v<deleter>) = default;
+
+    auto operator=(const ScopedConnection&) -> ScopedConnection& = delete;
+    auto operator=(ScopedConnection&&) noexcept(std::is_nothrow_move_constructible_v<deleter>) -> ScopedConnection& = default;
 
     ~ScopedConnection()
     {
@@ -85,12 +85,12 @@ public:
     };
 
 public:
-    const A& address() const
+    auto address() const -> const A&
     {
         return addr_;
     }
 
-    pointer get() const
+    auto get() const -> pointer
     {
         return con_.get();
     }
@@ -101,18 +101,17 @@ public:
     }
 
 private:
-    typename std::add_lvalue_reference<element_type>::type
-    operator*() const
+    auto operator*() const -> typename std::add_lvalue_reference<element_type>::type
     {
         return *con_;
     }
 
-    pointer operator->() const
+    auto operator->() const -> pointer
     {
         return get();
     }
 
-    U release()
+    auto release() -> U
     {
         auto con = std::move(con_);
         return con;

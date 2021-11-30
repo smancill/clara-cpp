@@ -59,7 +59,7 @@ void SimpleCompiler::compile(const std::string& composition)
     }
 }
 
-std::set<std::string> SimpleCompiler::outputs()
+auto SimpleCompiler::outputs() -> std::set<std::string>
 {
     std::set<std::string> out;
     if (!next_.empty()) {

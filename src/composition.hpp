@@ -36,7 +36,7 @@ public:
 
     void compile(const std::string& composition);
 
-    std::set<std::string> outputs();
+    auto outputs() -> std::set<std::string>;
 
 private:
     std::string service_name_;

@@ -25,15 +25,14 @@
 
 #include <string>
 
-namespace clara {
 
-namespace msg::util {
+namespace clara::msg::util {
 
 std::string get_current_time();
 
 }
 
-namespace util {
+namespace clara::util {
 
 using msg::util::get_current_time;  // NOLINT
 
@@ -53,7 +52,6 @@ std::string get_dpe_lang(const std::string& canonical_name);
 
 int get_default_port(const std::string& lang);
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util
 
 #endif // end of include guard: CLARA_UTILS_HPP

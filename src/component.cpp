@@ -22,8 +22,7 @@
 
 #include "component.hpp"
 
-namespace clara {
-namespace util {
+namespace clara::util {
 
 std::string make_name(const std::string& host, int port, const std::string& lang)
 {
@@ -50,5 +49,4 @@ std::string make_name(const std::string& dpe,
     return dpe + ":" + container + ":" + engine;
 }
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util

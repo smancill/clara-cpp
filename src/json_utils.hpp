@@ -28,8 +28,7 @@
 
 #include <string>
 
-namespace clara {
-namespace util {
+namespace clara::util {
 
 using Buffer = rapidjson::StringBuffer;
 using Writer = rapidjson::Writer<rapidjson::StringBuffer>;
@@ -60,7 +59,6 @@ inline void put(Writer& writer, const char* key, double value)
     writer.Double(value);
 }
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util
 
 #endif // end of include guard: CLARA_JSON_UTILS_HPP

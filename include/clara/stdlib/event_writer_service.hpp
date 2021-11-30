@@ -29,8 +29,7 @@
 #include <memory>
 #include <stdexcept>
 
-namespace clara {
-namespace stdlib {
+namespace clara::stdlib {
 
 /**
  * An abstract writer service that writes all received events into the
@@ -128,7 +127,6 @@ private:
     std::unique_ptr<Impl> impl_;
 };
 
-} // end namespace stdlib
-} // end namespace clara
+} // end namespace clara::stdlib
 
 #endif // end of include guard: CLARA_STD_EVENT_WRITER_HPP

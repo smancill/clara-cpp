@@ -42,8 +42,7 @@ const json11::Json& get_value(const json11::Json& obj, const std::string& key)
 }
 
 
-namespace clara {
-namespace stdlib {
+namespace clara::stdlib {
 
 json11::Json parse_json(const EngineData& input)
 {
@@ -136,5 +135,4 @@ void check_json(const json11::Json& obj, const json11::Json::shape& shape)
     }
 }
 
-} // end namespace stdlib
-} // end namespace clara
+} // end namespace clara::stdlib

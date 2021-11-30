@@ -29,6 +29,7 @@
 #include <mutex>
 
 namespace clara {
+
 namespace log {
 
 class Logger

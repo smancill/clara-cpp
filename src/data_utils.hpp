@@ -31,8 +31,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace clara {
-namespace util {
+namespace clara::util {
 
 msg::Message build_request(const msg::Topic& topic, const std::string& data);
 
@@ -144,7 +143,6 @@ private:
 };
 
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util
 
 #endif // end of include guard: CLARA_DATA_UTILS_HPP

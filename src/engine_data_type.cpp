@@ -186,9 +186,7 @@ template<typename T> auto vl_vector()
 
 // ---------------------------------------------------------------------------
 
-namespace clara {
-
-namespace type {
+namespace clara::type {
 
 namespace mt = msg::mimetype;
 
@@ -213,5 +211,4 @@ const EngineDataType ARRAY_STRING { mt::array_string, s_vector<std::string>() };
 const EngineDataType JSON { "application/json", std::make_unique<StringSerializer>() };
 const EngineDataType NATIVE { "native", std::make_unique<NativeSerializer>() };
 
-} // end namespace type
-} // end namespace clara
+} // end namespace clara::type

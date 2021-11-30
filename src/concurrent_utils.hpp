@@ -32,8 +32,7 @@
 #include <blockingconcurrentqueue.h>
 #include <thread_pool.hpp>
 
-namespace clara {
-namespace util {
+namespace clara::util {
 
 template <typename Task>
 class BlockingQueue
@@ -144,7 +143,6 @@ private:
     std::shared_ptr<container_type> cont_;
 };
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util
 
 #endif // end of include guard: CLARA_CONCURRENT_UTILS_HPP

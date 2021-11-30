@@ -49,18 +49,16 @@ int get_port(const std::string& full_name, int index)
 }
 
 
-namespace clara {
-
-namespace msg::detail {
+namespace clara::msg::detail {
 
 std::string get_domain(const std::string& topic);
 std::string get_subject(const std::string& topic);
 std::string get_type(const std::string& topic);
 
-} // end namespace msg::detail
+} // end namespace clara::msg::detail
 
 
-namespace util {
+namespace clara::util {
 
 using msg::detail::get_domain;
 using msg::detail::get_subject;
@@ -134,5 +132,4 @@ int get_default_port(const std::string& lang)
 }
 
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util

@@ -26,8 +26,8 @@
 
 #include <clara/msg/message.hpp>
 
-namespace clara {
-namespace util {
+
+namespace clara::util {
 
 msg::Message build_request(const msg::Topic& topic, const std::string& data)
 {
@@ -42,5 +42,4 @@ std::string parse_message(const msg::Message& msg)
     return std::string{data.begin(), data.end()};
 }
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util

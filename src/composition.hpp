@@ -27,8 +27,7 @@
 #include <set>
 #include <string>
 
-namespace clara {
-namespace composition {
+namespace clara::composition {
 
 class SimpleCompiler
 {
@@ -45,7 +44,6 @@ private:
     std::list<std::string> next_;
 };
 
-} // end namespace composition
-} // end namespace clara
+} // end namespace clara::composition
 
 #endif // end of include guard: CLARA_COMPOSITION_COMPILER_HPP

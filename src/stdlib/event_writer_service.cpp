@@ -49,9 +49,7 @@ const std::string no_file = "No open file";
 } // namespace
 
 
-namespace clara {
-namespace stdlib {
-
+namespace clara::stdlib {
 
 class EventWriterService::Impl
 {
@@ -293,5 +291,4 @@ EventWriterService::parse_byte_order(const json11::Json& opts)
     return Endian::Little;
 }
 
-} // namespace stdlib
-} // end namespace clara
+} // end namespace clara::stdlib

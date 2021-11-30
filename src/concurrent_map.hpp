@@ -27,8 +27,7 @@
 #include <mutex>
 #include <unordered_map>
 
-namespace clara {
-namespace util {
+namespace clara::util {
 
 template <typename K, typename T>
 class ConcurrentMap
@@ -102,7 +101,6 @@ private:
     std::unordered_map<key_type, mapped_type> cont_;
 };
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util
 
 #endif // end of include guard: CLARA_CONCURRENT_MAP_HPP

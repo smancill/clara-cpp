@@ -56,8 +56,7 @@ constexpr auto eof_waiting_rec = -1;
 } // namespace
 
 
-namespace clara {
-namespace stdlib {
+namespace clara::stdlib {
 
 class EventReaderService::Impl
 {
@@ -415,5 +414,4 @@ void EventReaderService::Impl::reset()
     }
 }
 
-} // namespace stdlib
-} // end namespace clara
+} // end namespace clara::stdlib

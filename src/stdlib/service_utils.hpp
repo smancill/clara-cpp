@@ -25,8 +25,7 @@
 
 #include <clara/engine_data.hpp>
 
-namespace clara {
-namespace util {
+namespace clara::util {
 
 /**
  * Sets the given engine data with an error status.
@@ -43,7 +42,6 @@ void set_error(EngineData& output, S&& msg, int severity = 1)
     output.set_status(clara::EngineStatus::ERROR, severity);
 }
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util
 
 #endif // end of include guard: CLARA_STD_SERVICE_UTILS_HPP

@@ -25,9 +25,7 @@
 
 #include <string>
 
-namespace clara {
-
-namespace constants {
+namespace clara::constants {
 
 // clang-format off
 constexpr auto java_port = 7771;
@@ -93,8 +91,6 @@ inline const std::string data = "data";
 inline const std::string udf = "undefined";
 // clang-format on
 
-} // end namespace constants
-
-} // end namespace clara
+} // end namespace clara::constants
 
 #endif // end of include guard: CLARA_CONSTANTS_HPP

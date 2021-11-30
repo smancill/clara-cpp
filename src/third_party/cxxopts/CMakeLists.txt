@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 FetchContent_Declare(
   cxxopts
   URL https://github.com/jarro2783/cxxopts/archive/v3.0.0.tar.gz

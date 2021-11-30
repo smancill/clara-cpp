@@ -1,0 +1,55 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Clara Framework
+Upstream-Contact: Sebastián Mancilla <smancill@smancill.dev>
+Source: https://github.com/smancill/clara-cpp
+
+# misc
+Files: .dockerignore .gitignore .mailmap README.md */README
+  doc/Doxyfile.in doc/mainpage.dox
+Copyright: © The Clara Framework Authors
+License: MIT-0
+
+# package files
+Files: cmake/clara-config.cmake.in cmake/clara.pc.in
+Copyright: © The Clara Framework Authors
+License: MIT-0
+
+
+# moodycamel::ConcurrentQueue
+# https://github.com/cameron314/concurrentqueue
+Files: src/third_party/concurrent_queue/*
+Copyright:
+License: BSD-2-Clause
+
+Files: src/third_party/concurrent_queue/blockingconcurrentqueue.h
+Copyright: ©2015-2020 Cameron Desrochers
+License: BSD-2-Clause
+
+Files: src/third_party/concurrent_queue/lightweightsemaphore.h
+Copyright:
+License: Zlib
+
+# cppzmq
+# https://github.com/zeromq/cppzmq
+Files: src/third_party/zmq/zmq.hpp
+Copyright:
+License: MIT
+
+# json11
+# https://github.com/dropbox/json11
+Files: src/third_party/json11/dropbox/*
+Copyright:
+License: MIT
+
+# thread-pool-cpp
+# https://github.com/inkooboo/thread-pool-cpp
+Files:
+  src/third_party/thread_pool/fixed_function.hpp
+  src/third_party/thread_pool/thread_pool*
+  src/third_party/thread_pool/worker.hpp
+Copyright: Copyright (c) 2013 Andrey Kubarkov
+License: MIT
+
+Files: src/third_party/thread_pool/mpmc_bounded_queue.hpp
+Copyright:
+License: BSD-2-Clause-Views

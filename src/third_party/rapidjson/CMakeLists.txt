@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 FetchContent_Declare(
   rapidjson
   URL https://github.com/Tencent/rapidjson/archive/v1.1.0.tar.gz

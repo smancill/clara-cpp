@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: © The Clara Framework Authors
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #ifndef CLARA_MSG_TEST_HELPER_REG_H_
 #define CLARA_MSG_TEST_HELPER_REG_H_
 

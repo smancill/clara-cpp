@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: © The Clara Framework Authors
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include "helper/registration.hpp"
 
 #include "constants.hpp"

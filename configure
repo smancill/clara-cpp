@@ -1,5 +1,10 @@
 #!/bin/sh
 # wrapper for using CMake options
+#
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
 # check cmake

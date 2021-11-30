@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 set(CMAKE_CXX_CLANG_TIDY "")
 
 add_subdirectory(rapidjson)

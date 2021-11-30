@@ -62,3 +62,8 @@ to run C++ services with the standard orchestrator and the CLARA shell.
 * Vardan Gyurjyan
 * Sebastián Mancilla
 * Ricardo Oyarzún
+
+
+## License
+
+CLARA is licensed under the [Apache License, Version 2.0](./LICENSES/Apache-2.0.txt).

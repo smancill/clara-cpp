@@ -30,13 +30,11 @@
 #include <string>
 #include <type_traits>
 
-namespace xmsg {
-namespace proto {
-class Meta;
-} // end namespace proto
-} // end namespace xmsg
-
 namespace clara {
+
+namespace msg::proto {
+class Meta;
+}
 
 class EngineDataType;
 
@@ -120,7 +118,7 @@ public:
 
 private:
     friend class EngineDataAccessor;
-    using Meta = xmsg::proto::Meta;
+    using Meta = msg::proto::Meta;
 
     EngineData(any&& data, std::unique_ptr<Meta>&& meta);
 

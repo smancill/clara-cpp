@@ -53,13 +53,13 @@ public:
 
     void stop();
 
-    void setup(xmsg::Message& msg);
+    void setup(msg::Message& msg);
 
-    void configure(xmsg::Message& msg);
+    void configure(msg::Message& msg);
 
-    void execute(xmsg::Message& msg);
+    void execute(msg::Message& msg);
 
-    void callback(xmsg::Message& msg);
+    void callback(msg::Message& msg);
 
 public:
     std::shared_ptr<ServiceReport> report() const;
@@ -75,7 +75,7 @@ private:
     std::shared_ptr<ServiceReport> report_;
     std::unique_ptr<ServiceEngine> service_;
 
-    std::unique_ptr<xmsg::Subscription> sub_;
+    std::unique_ptr<msg::Subscription> sub_;
 };
 
 } // end namespace clara

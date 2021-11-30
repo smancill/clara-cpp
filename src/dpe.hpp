@@ -27,18 +27,19 @@
 
 #include <memory>
 
-namespace xmsg {
-    class ProxyAddress;
-} // end namespace xmsg
-
 namespace clara {
+
+namespace msg {
+    class ProxyAddress;
+} // end namespace msg
+
 
 class Dpe final
 {
 public:
     Dpe(bool is_frontend,
-        const xmsg::ProxyAddress& local,
-        const xmsg::ProxyAddress& frontend,
+        const msg::ProxyAddress& local,
+        const msg::ProxyAddress& frontend,
         const DpeConfig& config);
 
     ~Dpe();

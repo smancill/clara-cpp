@@ -25,7 +25,7 @@
 
 #include "constants.hpp"
 
-#include <xmsg/xmsg.h>
+#include <clara/msg/actor.hpp>
 
 #include <memory>
 #include <string>
@@ -48,23 +48,23 @@ std::string make_name(const std::string& dpe,
 class Component
 {
 public:
-    static Component dpe(const xmsg::ProxyAddress& address)
+    static Component dpe(const msg::ProxyAddress& address)
     {
         return dpe(address, constants::cpp_lang);
     }
 
-    static Component dpe(const xmsg::ProxyAddress& address, const std::string& lang)
+    static Component dpe(const msg::ProxyAddress& address, const std::string& lang)
     {
         auto name = util::make_name(address.host(), address.pub_port(), lang);
         return Component{name, address, [](auto& n) {
-            return xmsg::Topic::build("dpe", n);
+            return msg::Topic::build("dpe", n);
         }};
     }
 
     static Component container(const Component& dpe, const std::string& name)
     {
         return Component{dpe, name, [](auto& n) {
-            return xmsg::Topic::build("container", n);
+            return msg::Topic::build("container", n);
         }};
     }
 
@@ -72,7 +72,7 @@ public:
                              const std::string& name)
     {
         return Component{container, name, [](auto& n) {
-            return xmsg::Topic::raw(n);
+            return msg::Topic::raw(n);
         }};
     }
 
@@ -85,7 +85,7 @@ public:
 private:
     template<typename F>
     Component(const std::string& name,
-              const xmsg::ProxyAddress& addr,
+              const msg::ProxyAddress& addr,
               F topic_gen)
       : name_{name}
       , addr_{addr}
@@ -108,14 +108,14 @@ private:
 public:
     const std::string& name() const { return name_; }
 
-    const xmsg::ProxyAddress& addr() const { return addr_; }
+    const msg::ProxyAddress& addr() const { return addr_; }
 
-    const xmsg::Topic& topic() const { return topic_; }
+    const msg::Topic& topic() const { return topic_; }
 
 private:
     std::string name_;
-    xmsg::ProxyAddress addr_;
-    xmsg::Topic topic_;
+    msg::ProxyAddress addr_;
+    msg::Topic topic_;
 };
 
 } // end namespace clara

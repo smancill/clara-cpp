@@ -27,7 +27,7 @@
 #include "service_config.hpp"
 #include "service_report.hpp"
 
-#include <xmsg/util.h>
+#include <clara/msg/utils.hpp>
 
 #include <chrono>
 
@@ -87,12 +87,12 @@ ServiceEngine::~ServiceEngine()
 }
 
 
-void ServiceEngine::setup(xmsg::Message& msg)
+void ServiceEngine::setup(msg::Message& msg)
 {
     auto parser = util::RequestParser::build(msg);
     auto report = parser.next_string();
     auto value = parser.next_integer();
-    auto status = xmsg::proto::Meta::INFO;
+    auto status = msg::proto::Meta::INFO;
     if (report == constants::service_report_done) {
         config_->set_done_count_threshold(value);
         config_->reset_done_count();
@@ -100,7 +100,7 @@ void ServiceEngine::setup(xmsg::Message& msg)
         config_->set_data_count_threshold(value);
         config_->reset_data_count();
     } else {
-        status = xmsg::proto::Meta::ERROR;
+        status = msg::proto::Meta::ERROR;
         LOGGER->error("Invalid report request = %s", report);
     }
     if (msg.has_replyto()) {
@@ -109,7 +109,7 @@ void ServiceEngine::setup(xmsg::Message& msg)
 }
 
 
-void ServiceEngine::configure(xmsg::Message& msg)
+void ServiceEngine::configure(msg::Message& msg)
 {
     auto input_data = get_engine_data(msg);
     auto output_data = configure_engine(input_data);
@@ -124,7 +124,7 @@ void ServiceEngine::configure(xmsg::Message& msg)
 }
 
 
-void ServiceEngine::execute(xmsg::Message& msg)
+void ServiceEngine::execute(msg::Message& msg)
 {
     report_->add_n_requests();
     config_->add_request();
@@ -190,15 +190,15 @@ EngineData ServiceEngine::execute_engine(EngineData& input)
 }
 
 
-EngineData ServiceEngine::get_engine_data(xmsg::Message& msg)
+EngineData ServiceEngine::get_engine_data(msg::Message& msg)
 {
     report_->add_bytes_recv(msg.data().size());
     return accessor_.deserialize(msg, input_types_);
 }
 
 
-xmsg::Message ServiceEngine::put_engine_data(const EngineData& output,
-                                             const xmsg::Topic& topic)
+msg::Message ServiceEngine::put_engine_data(const EngineData& output,
+                                            const msg::Topic& topic)
 {
     auto msg = accessor_.serialize(output, topic, output_types_);
     report_->add_bytes_sent(msg.data().size());
@@ -206,10 +206,10 @@ xmsg::Message ServiceEngine::put_engine_data(const EngineData& output,
 }
 
 
-xmsg::Message ServiceEngine::put_engine_data(const EngineData& output,
-                                             const std::string& receiver)
+msg::Message ServiceEngine::put_engine_data(const EngineData& output,
+                                            const std::string& receiver)
 {
-    auto topic = xmsg::Topic::raw(receiver);
+    auto topic = msg::Topic::raw(receiver);
     auto msg = accessor_.serialize(output, topic, output_types_);
     report_->add_bytes_sent(msg.data().size());
     return msg;
@@ -249,7 +249,7 @@ std::set<std::string> ServiceEngine::get_links(const EngineData&,
 }
 
 
-void ServiceEngine::send_response(EngineData& output, const xmsg::Topic& topic)
+void ServiceEngine::send_response(EngineData& output, const msg::Topic& topic)
 {
     auto con = connect();
     auto msg = put_engine_data(output, topic);
@@ -263,7 +263,7 @@ void ServiceEngine::send_result(EngineData& output,
     for (auto&& ss : links) {
         auto host = util::get_dpe_host(ss);
         auto port = util::get_dpe_port(ss);
-        auto addr = xmsg::ProxyAddress{host, port};
+        auto addr = msg::ProxyAddress{host, port};
         auto con = connect(addr);
         auto msg = put_engine_data(output, ss);
         publish(con, msg);
@@ -299,7 +299,7 @@ void ServiceEngine::report_result(EngineData& output)
 
 void ServiceEngine::report(const std::string& topic_prefix, EngineData& output)
 {
-    auto topic = xmsg::Topic::raw(topic_prefix + ":" + name());
+    auto topic = msg::Topic::raw(topic_prefix + ":" + name());
     auto msg = accessor_.serialize(output, topic, output_types_);
     auto con = connect(frontend().addr());
     publish(con, msg);

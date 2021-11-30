@@ -25,11 +25,11 @@
 
 #include "component.hpp"
 
-#include <xmsg/xmsg.h>
+#include <clara/msg/actor.hpp>
 
 namespace clara {
 
-class Base : public xmsg::xMsg
+class Base : public msg::Actor
 {
 public:
     Base(const Component& self, const Component& frontend);
@@ -39,11 +39,11 @@ public:
 public:
     void send(const Component& component, const std::string& data);
 
-    void send(const Component& component, xmsg::Message& msg);
+    void send(const Component& component, msg::Message& msg);
 
-    void send_response(const xmsg::Message& msg,
+    void send_response(const msg::Message& msg,
                        const std::string& data,
-                       xmsg::proto::Meta::Status status);
+                       msg::proto::Meta::Status status);
 
 public:
     const Component& self() { return self_; }

@@ -93,16 +93,16 @@ void Service::stop()
 }
 
 
-void Service::setup(xmsg::Message& msg)
+void Service::setup(msg::Message& msg)
 {
-    auto m = std::make_unique<xmsg::Message>(std::move(msg));
+    auto m = std::make_unique<msg::Message>(std::move(msg));
     thread_pool_.post([s=service_.get(), m=std::move(m)]() { s->setup(*m); });
 }
 
 
-void Service::configure(xmsg::Message& msg)
+void Service::configure(msg::Message& msg)
 {
-    auto m = std::make_unique<xmsg::Message>(std::move(msg));
+    auto m = std::make_unique<msg::Message>(std::move(msg));
     thread_pool_.post([s=service_.get(), m=std::move(m)](){
         try {
             s->configure(*m);
@@ -115,9 +115,9 @@ void Service::configure(xmsg::Message& msg)
 }
 
 
-void Service::execute(xmsg::Message& msg)
+void Service::execute(msg::Message& msg)
 {
-    auto m = std::make_unique<xmsg::Message>(std::move(msg));
+    auto m = std::make_unique<msg::Message>(std::move(msg));
     thread_pool_.post([s=service_.get(), m=std::move(m)]() {
         try {
             s->execute(*m);
@@ -130,14 +130,14 @@ void Service::execute(xmsg::Message& msg)
 }
 
 
-void Service::callback(xmsg::Message& msg)
+void Service::callback(msg::Message& msg)
 {
     std::unique_lock<std::mutex> lock{cb_mutex_};
     try {
         auto meta = msg.meta();
         if (!meta->has_action()) {
             setup(msg);
-        } else if (meta->action() == xmsg::proto::Meta::CONFIGURE) {
+        } else if (meta->action() == msg::proto::Meta::CONFIGURE) {
             configure(msg);
         } else {
             execute(msg);

@@ -23,7 +23,7 @@
 #include <clara/engine_data.hpp>
 #include <clara/engine_data_type.hpp>
 
-#include <xmsg/proto/meta.h>
+#include <clara/msg/proto/meta.hpp>
 
 namespace clara {
 
@@ -45,7 +45,7 @@ EngineData::EngineData(any&& data, std::unique_ptr<Meta>&& meta)
 
 EngineData::EngineData(const EngineData& rhs)
   : data_{rhs.data_}
-  , meta_{xmsg::proto::copy_meta(*rhs.meta_)}
+  , meta_{msg::proto::copy_meta(*rhs.meta_)}
 {
     // nop
 }
@@ -54,7 +54,7 @@ EngineData::EngineData(const EngineData& rhs)
 EngineData& EngineData::operator=(const EngineData& rhs)
 {
     data_ = rhs.data_;
-    meta_ = xmsg::proto::copy_meta(*rhs.meta_);
+    meta_ = msg::proto::copy_meta(*rhs.meta_);
     return *this;
 }
 
@@ -93,11 +93,11 @@ EngineStatus EngineData::status() const
 {
     auto status = meta_->status();
     switch (status) {
-        case xmsg::proto::Meta::INFO:
+        case msg::proto::Meta::INFO:
             return EngineStatus::INFO;
-        case xmsg::proto::Meta::WARNING:
+        case msg::proto::Meta::WARNING:
             return EngineStatus::WARNING;
-        case xmsg::proto::Meta::ERROR:
+        case msg::proto::Meta::ERROR:
             return EngineStatus::ERROR;
         default:
             throw std::domain_error{"unexpected meta status"};
@@ -121,13 +121,13 @@ void EngineData::set_status(EngineStatus status, int severity)
 {
     switch (status) {
         case EngineStatus::INFO:
-            meta_->set_status(xmsg::proto::Meta::INFO);
+            meta_->set_status(msg::proto::Meta::INFO);
             break;
         case EngineStatus::WARNING:
-            meta_->set_status(xmsg::proto::Meta::WARNING);
+            meta_->set_status(msg::proto::Meta::WARNING);
             break;
         case EngineStatus::ERROR:
-            meta_->set_status(xmsg::proto::Meta::ERROR);
+            meta_->set_status(msg::proto::Meta::ERROR);
             break;
         default:
             throw std::domain_error{"unexpected engine status"};

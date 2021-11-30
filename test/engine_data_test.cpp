@@ -2,7 +2,7 @@
 #include <clara/engine_data_type.hpp>
 
 #include <engine_data_helper.hpp>
-#include <xmsg/message.h>
+#include <clara/msg/message.hpp>
 
 #include <gmock/gmock.h>
 
@@ -14,9 +14,9 @@ TEST(EngineData, ReadFromMessage)
     auto mt = clara::type::STRING.mime_type();
     auto e = clara::EngineDataAccessor{};
 
-    auto m = xmsg::proto::make_meta();
+    auto m = clara::msg::proto::make_meta();
     m->set_datatype(mt);
-    m->set_status(xmsg::proto::Meta::INFO);
+    m->set_status(clara::msg::proto::Meta::INFO);
     m->set_severityid(2);
     m->set_author("host/cont/service");
     m->set_version("2.0");

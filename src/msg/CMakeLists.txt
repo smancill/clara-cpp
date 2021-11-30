@@ -16,6 +16,7 @@ set(CLARA_MSG_FILES
 
 add_library(clara-msg ${CLARA_MSG_FILES} $<TARGET_OBJECTS:clara-proto-obj>)
 
+target_compile_features(clara-msg PRIVATE cxx_thread_local)
 target_link_libraries(clara-msg clara-proto ZeroMQ::libzmq)
 target_include_directories(clara-msg PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

@@ -25,6 +25,7 @@ set(CLARA_STD_SRC
 )
 
 add_library(clara ${CLARA_SRC} ${CLARA_STD_SRC} $<TARGET_OBJECTS:json11>)
+target_compile_features(clara PRIVATE cxx_thread_local)
 target_link_libraries(clara
   PRIVATE rapidjson concurrentqueue thread_pool ${CMAKE_DL_LIBS}
   PUBLIC clara-msg

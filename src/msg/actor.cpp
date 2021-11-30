@@ -27,20 +27,7 @@
 #include "connection_driver.hpp"
 #include "likely.hpp"
 #include "registration_driver.hpp"
-#ifdef __APPLE__
-#include "thread_local.hpp"
-#endif
 
-#ifdef __APPLE__
-using ConPool = clara::msg::ConnectionPool;
-using tls = clara::msg::detail::ThreadLocal<ConPool>;
-#endif
-
-namespace {
-#ifdef __APPLE__
-auto main_pool = std::shared_ptr<ConPool>{tls::getThreadInstance()};
-#endif
-}
 
 namespace clara::msg {
 
@@ -56,12 +43,8 @@ struct Actor::Impl
 
     auto con_pool() -> ConnectionPool*
     {
-#ifdef __APPLE__
-        return tls::getThreadInstance();
-#else
         static thread_local ConnectionPool pool{};
         return &pool;
-#endif
     }
 
     std::string name;

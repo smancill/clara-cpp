@@ -1,7 +1,5 @@
 #pragma once
 
-#include "thread_local.hpp"
-
 #include <atomic>
 #include <thread>
 
@@ -89,13 +87,8 @@ namespace detail
 {
     inline size_t* thread_id()
     {
-#ifdef __APPLE__
-        using tls = detail::ThreadLocal<size_t>;
-        return tls::getThreadInstance();
-#else
         static thread_local size_t tss_id = -1u;
         return &tss_id;
-#endif
     }
 }
 

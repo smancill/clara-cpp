@@ -24,7 +24,7 @@
 
 #include "constants.hpp"
 
-#include <clara/msg/constants.hpp>
+#include <clara/msg/mimetype.hpp>
 #include <clara/msg/topic.hpp>
 
 #include <ctime>

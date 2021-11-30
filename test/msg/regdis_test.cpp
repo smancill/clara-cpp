@@ -1,5 +1,7 @@
 #include "helper/registration.hpp"
 
+#include "constants.hpp"
+
 #include <gmock/gmock.h>
 
 #include <iostream>

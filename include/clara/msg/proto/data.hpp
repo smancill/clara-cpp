@@ -24,7 +24,7 @@
 
 #include "data.pb.h"
 
-#include <clara/msg/constants.hpp>
+#include <clara/msg/mimetype.hpp>
 
 #include <cstdint>
 #include <memory>

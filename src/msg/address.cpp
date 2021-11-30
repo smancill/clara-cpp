@@ -21,7 +21,6 @@
 
 #include <clara/msg/address.hpp>
 
-#include <clara/msg/constants.hpp>
 #include <clara/msg/utils.hpp>
 
 #include <cstdint>
@@ -53,7 +52,7 @@ ProxyAddress::ProxyAddress()
 
 
 ProxyAddress::ProxyAddress(const std::string& host)
-  : ProxyAddress{host, constants::default_port}
+  : ProxyAddress{host, default_port}
 { }
 
 
@@ -72,12 +71,12 @@ ProxyAddress::ProxyAddress(const std::string& host, int pub_port)
 
 
 RegAddress::RegAddress()
-  : RegAddress{util::localhost(), constants::registrar_port}
+  : RegAddress{util::localhost(), default_port}
 { }
 
 
 RegAddress::RegAddress(const std::string& host)
-  : RegAddress{host, constants::registrar_port}
+  : RegAddress{host, default_port}
 { }
 
 

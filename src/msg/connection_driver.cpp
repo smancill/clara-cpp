@@ -21,7 +21,8 @@
 
 #include "connection_driver.hpp"
 
-#include <clara/msg/constants.hpp>
+#include "constants.hpp"
+
 #include <clara/msg/utils.hpp>
 
 #include <array>

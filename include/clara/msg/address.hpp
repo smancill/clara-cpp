@@ -38,6 +38,9 @@ namespace clara::msg {
 class ProxyAddress final
 {
 public:
+    static const int default_port = 7771;
+
+public:
     /// Creates an address using localhost and default ports
     ProxyAddress();
 
@@ -75,6 +78,9 @@ private:
  */
 class RegAddress final
 {
+public:
+    static const int default_port = 8888;
+
 public:
     /// Creates an address using localhost and default port
     RegAddress();

@@ -136,7 +136,7 @@ public:
     }
 
 
-    static const std::string ANY;
+    static inline const std::string ANY = "*";
 
 public:
     /**

@@ -3,7 +3,7 @@
 
 #include "registration_driver.hpp"
 
-#include <clara/msg/constants.hpp>
+#include <clara/msg/address.hpp>
 #include <clara/msg/topic.hpp>
 
 #include <random>
@@ -66,7 +66,7 @@ proto::Registration new_registration(const std::string& name,
                                      bool is_publisher)
 {
     return registration::create(name, name + "test data",
-                                host, constants::default_port,
+                                host, ProxyAddress::default_port,
                                 Topic::raw(topic), is_publisher);
 }
 

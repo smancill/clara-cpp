@@ -1,7 +1,6 @@
 #ifndef CLARA_MSG_TEST_PROXY_WRAPPER_H_
 #define CLARA_MSG_TEST_PROXY_WRAPPER_H_
 
-#include <clara/msg/constants.hpp>
 #include <clara/msg/proxy.hpp>
 #include <clara/msg/utils.hpp>
 

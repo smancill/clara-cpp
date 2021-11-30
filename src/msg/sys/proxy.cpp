@@ -21,7 +21,6 @@
 
 #include <clara/msg/proxy.hpp>
 
-#include <clara/msg/constants.hpp>
 #include <clara/msg/utils.hpp>
 
 #include <algorithm>
@@ -87,7 +86,7 @@ char* get_option(char** begin, char** end, const std::string& option)
 clara::msg::ProxyAddress get_address(int argc, char** argv)
 {
     std::string host = clara::msg::util::localhost();
-    int port = clara::msg::constants::default_port;
+    int port = clara::msg::ProxyAddress::default_port;
 
     char* arg;
     if ((arg = get_option(argv, argv + argc, "--host")) != nullptr) {

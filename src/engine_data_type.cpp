@@ -22,7 +22,7 @@
 
 #include <clara/engine_data_type.hpp>
 
-#include <clara/msg/constants.hpp>
+#include <clara/msg/mimetype.hpp>
 #include <clara/msg/proto/data.hpp>
 
 #include <memory>

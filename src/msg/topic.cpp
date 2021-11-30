@@ -21,8 +21,6 @@
 
 #include <clara/msg/topic.hpp>
 
-#include <clara/msg/constants.hpp>
-
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -36,9 +34,6 @@ const char SEPARATOR = ':';
 
 
 namespace clara::msg {
-
-const std::string Topic::ANY = constants::any;
-
 
 Topic Topic::build(const std::string& domain,
                    const std::string& subject,

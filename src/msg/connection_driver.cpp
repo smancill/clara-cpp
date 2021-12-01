@@ -59,7 +59,7 @@ void ProxyDriver::connect()
     const auto& request = constants::ctrl_connect;
     const auto& identity = id_;
 
-    control_.setsockopt(ZMQ_IDENTITY, identity.data(), identity.size());
+    control_.set(zmq::sockopt::routing_id, identity);
     detail::connect(control_, addr_.host(), addr_.sub_port() + 1);
 
     auto poller = detail::BasicPoller{control_};
@@ -67,9 +67,11 @@ void ProxyDriver::connect()
     while (retry < 10) {
         retry++;
         try {
-            pub_.send(topic.data(), topic.size(), ZMQ_SNDMORE);
-            pub_.send(request.data(), request.size(), ZMQ_SNDMORE);
-            pub_.send(identity.data(), identity.size(), 0);
+            using zmq::send_flags;
+
+            pub_.send(detail::buffer(topic), send_flags::sndmore);
+            pub_.send(detail::buffer(request), send_flags::sndmore);
+            pub_.send(detail::buffer(identity), send_flags::none);
 
             if (poller.poll(100)) {
                 auto response = detail::RawMessage{control_};
@@ -96,9 +98,11 @@ void ProxyDriver::send(Message& msg)
     const auto& m = msg.meta()->SerializeAsString();
     const auto& d = msg.data();
 
-    pub_.send(t.data(), t.size(), ZMQ_SNDMORE);
-    pub_.send(m.data(), m.size(), ZMQ_SNDMORE);
-    pub_.send(d.data(), d.size(), 0);
+    using zmq::send_flags;
+
+    pub_.send(detail::buffer(t), send_flags::sndmore);
+    pub_.send(detail::buffer(m), send_flags::sndmore);
+    pub_.send(detail::buffer(d), send_flags::none);
 }
 
 
@@ -115,16 +119,18 @@ void ProxyDriver::subscribe(const Topic& topic)
     const auto& request = constants::ctrl_subscribe;
     const auto& identity = topic.str();
 
-    sub_.setsockopt(ZMQ_SUBSCRIBE, identity.data(), identity.size());
+    sub_.set(zmq::sockopt::subscribe, identity);
 
     auto poller = detail::BasicPoller{sub_};
     auto retry = 0;
     while (retry < 10) {
         retry++;
         try {
-            pub_.send(ctrl.data(), ctrl.size(), ZMQ_SNDMORE);
-            pub_.send(request.data(), request.size(), ZMQ_SNDMORE);
-            pub_.send(identity.data(), identity.size(), 0);
+            using zmq::send_flags;
+
+            pub_.send(detail::buffer(ctrl), send_flags::sndmore);
+            pub_.send(detail::buffer(request), send_flags::sndmore);
+            pub_.send(detail::buffer(identity), send_flags::none);
 
             if (poller.poll(100)) {
                 auto response = detail::RawMessage{sub_};
@@ -145,8 +151,7 @@ void ProxyDriver::subscribe(const Topic& topic)
 
 void ProxyDriver::unsubscribe(const Topic& topic)
 {
-    auto& str = topic.str();
-    sub_.setsockopt(ZMQ_UNSUBSCRIBE, str.data(), str.size());
+    sub_.set(zmq::sockopt::unsubscribe, topic.str());
 }
 
 

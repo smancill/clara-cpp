@@ -74,7 +74,7 @@ void Proxy::proxy()
         detail::bind(in, addr_.pub_port());
         detail::bind(out, addr_.sub_port());
 
-        zmq::proxy((void*) in, (void*) out, nullptr);
+        zmq::proxy(in, out);
     } catch (const zmq::error_t& e) {
         if (e.num() != ETERM) {
             std::lock_guard<std::mutex> lock(mtx);
@@ -103,9 +103,8 @@ void Proxy::control()
         return;
     }
 
-    auto ctrl = constants::ctrl_topic;
-    control.setsockopt(ZMQ_SUBSCRIBE, ctrl.data(), ctrl.size());
-    router.setsockopt(ZMQ_ROUTER_HANDOVER, 1);
+    control.set(zmq::sockopt::subscribe, constants::ctrl_topic);
+    router.set(zmq::sockopt::router_handover, 1);
 
     while (is_alive_) {
         try {
@@ -117,18 +116,20 @@ void Proxy::control()
                 continue;
             }
 
-            auto type = detail::to_string(in_msg[1]);
-            auto id = detail::to_string(in_msg[2]);
+            auto& type_msg = in_msg[1];
+            auto& id_msg = in_msg[2];
+
+            auto type = detail::to_string(type_msg);
 
             if (type == constants::ctrl_connect) {
-                router.send(id.data(), id.size(), ZMQ_SNDMORE);
-                router.send(type.data(), type.size(), 0);
+                router.send(id_msg, zmq::send_flags::sndmore);
+                router.send(type_msg, zmq::send_flags::none);
             } else if (type == constants::ctrl_subscribe) {
-                publisher.send(id.data(), id.size(), ZMQ_SNDMORE);
-                publisher.send(type.data(), type.size(), 0);
+                publisher.send(id_msg, zmq::send_flags::sndmore);
+                publisher.send(type_msg, zmq::send_flags::none);
             } else if (type == constants::ctrl_reply) {
-                router.send(id.data(), id.size(), ZMQ_SNDMORE);
-                router.send(type.data(), type.size(), 0);
+                router.send(id_msg, zmq::send_flags::sndmore);
+                router.send(type_msg, zmq::send_flags::none);
             }
         } catch (const zmq::error_t& ex) {
             if (ex.num() != ETERM) {

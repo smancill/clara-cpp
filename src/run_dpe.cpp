@@ -44,7 +44,7 @@ void signal_handler(int sig)
 
 int main(int argc, char** argv)
 {
-    auto options = clara::option::DpeOptionsParser{};
+    auto options = clara::DpeOptionsParser{};
     if (!options.parse(argc, argv)) {
         return EXIT_FAILURE;
     }

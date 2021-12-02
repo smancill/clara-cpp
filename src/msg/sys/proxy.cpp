@@ -30,6 +30,8 @@
 #include <iostream>
 #include <string>
 
+#include <cxxopts.hpp>
+
 #include <unistd.h>
 
 static volatile sig_atomic_t signal_value = 0;
@@ -71,40 +73,49 @@ std::string current_time()
 }
 
 
-// Based on <https://stackoverflow.com/a/868894/401753> by
-// <https://stackoverflow.com/users/85381/iain>.
-char* get_option(char** begin, char** end, const std::string& option)
-{
-    char** itr = std::find(begin, end, option);
-    if (itr != end && ++itr != end) {
-        return *itr;
-    }
-    return nullptr;
-}
-
-
-clara::msg::ProxyAddress get_address(int argc, char** argv)
+clara::msg::ProxyAddress get_address(const cxxopts::ParseResult& result)
 {
     std::string host = clara::msg::util::localhost();
     int port = clara::msg::ProxyAddress::default_port;
 
-    char* arg;
-    if ((arg = get_option(argv, argv + argc, "--host")) != nullptr) {
-        host = clara::msg::util::to_host_addr(arg);
+    if (result.count("host") > 0) {
+        host = result["host"].as<std::string>();
+        host = clara::msg::util::to_host_addr(host);
     }
-    if ((arg = get_option(argv, argv + argc, "--port")) != nullptr) {
-        port = std::stoi(arg);
+    if (result.count("port") > 0) {
+        port = result["port"].as<int>();
     }
 
     return {host, port};
 }
 
 
+cxxopts::Options options_parser()
+{
+    using namespace cxxopts;
+
+    auto options = Options{"c_proxy", "CLARA C++ pub-sub proxy\n"};
+    options.add_options()
+        ("host", "use the given host address", value<std::string>())
+        ("port", "use the given port", value<int>())
+        ("h,help", "Print usage");
+
+    return options;
+}
+
+
 int main(int argc, char** argv)
 {
     try {
-        clara::msg::ProxyAddress addr = get_address(argc, argv);
-        clara::msg::sys::Proxy proxy{addr};
+        auto options = options_parser();
+        auto result = options.parse(argc, argv);
+        if (result["help"].count() > 0) {
+            std::cout << options.help() << std::endl;
+            return EXIT_SUCCESS;
+        }
+
+        auto addr = get_address(result);
+        auto proxy = clara::msg::sys::Proxy{addr};
         proxy.start();
 
         printf("[%s] CLARA proxy INFO: running on host = %s  port = %d\n",

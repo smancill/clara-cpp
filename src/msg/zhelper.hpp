@@ -25,6 +25,7 @@
 #include <zmq.hpp>
 
 #include <array>
+#include <chrono>
 #include <string>
 
 namespace clara::msg::detail {
@@ -35,8 +36,8 @@ public:
     zmq::socket_t create_socket(zmq::socket_type type)
     {
         auto out = zmq::socket_t{ctx_, type};
-        out.setsockopt(ZMQ_RCVHWM, 0);
-        out.setsockopt(ZMQ_SNDHWM, 0);
+        out.set(zmq::sockopt::rcvhwm, 0);
+        out.set(zmq::sockopt::sndhwm, 0);
         return out;
     }
 
@@ -76,7 +77,7 @@ public:
 
     bool poll(int timeout)
     {
-        zmq::poll(items_.data(), 1, timeout);
+        zmq::poll(items_.data(), 1, std::chrono::milliseconds{timeout});
         return (items_[0].revents & ZMQ_POLLIN) != 0;
     }
 
@@ -120,6 +121,16 @@ void connect(zmq::socket_t& socket, const std::string& host, int port)
 {
     socket.connect("tcp://" + host + ":" + std::to_string(port));
 }
+
+
+template<typename C>
+zmq::const_buffer buffer(const C& data)
+{
+    return {data.data(), data.size()};
+}
+
+template<typename C, typename = std::enable_if_t<std::is_rvalue_reference_v<C&&>>>
+auto buffer(C&& data) = delete;
 
 
 inline

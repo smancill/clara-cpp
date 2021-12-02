@@ -42,6 +42,9 @@
 
 namespace clara {
 
+const int DpeConfig::default_max_cores = int(std::thread::hardware_concurrency());
+
+
 class ReportService;
 
 class DpeException : public std::runtime_error

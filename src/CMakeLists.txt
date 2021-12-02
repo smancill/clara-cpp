@@ -55,7 +55,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/clara
 
 
 add_executable(c_dpe run_dpe.cpp)
-target_link_libraries(c_dpe optionparser clara)
+target_link_libraries(c_dpe clara cxxopts)
 
 install(TARGETS c_dpe
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/clara

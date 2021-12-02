@@ -71,7 +71,7 @@ RawMessage::RawMessage(zmq::socket_t& socket)
 {
     while (true) {
         auto& msg = parts[counter];
-        socket.recv(&msg);
+        std::ignore = socket.recv(msg);
         ++counter;
         if (counter == msg_size || !msg.more()) {
             break;
@@ -81,7 +81,7 @@ RawMessage::RawMessage(zmq::socket_t& socket)
     if (CLARA_UNLIKELY(parts.back().more())) {
         while (true) {
             zmq::message_t msg;
-            socket.recv(&msg);
+            std::ignore = socket.recv(msg);
             if (!msg.more()) {
                 break;
             }

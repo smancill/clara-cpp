@@ -181,8 +181,8 @@ RegDriver::RegDriver(Context& ctx, RegAddress addr)
   : addr_{std::move(addr)}
   , socket_{ctx.create_socket(zmq::socket_type::req)}
 {
-    socket_.setsockopt(ZMQ_RCVHWM, 0);
-    socket_.setsockopt(ZMQ_SNDHWM, 0);
+    socket_.set(zmq::sockopt::rcvhwm, 0);
+    socket_.set(zmq::sockopt::sndhwm, 0);
     detail::connect(socket_, addr_.host(), addr_.port());
 }
 
@@ -225,9 +225,9 @@ RegDataSet RegDriver::find(const proto::Registration& data, bool is_publisher)
 Response RegDriver::request(Request& req, int timeout)
 {
     auto out_msg = req.msg();
-    socket_.send(out_msg[0], ZMQ_SNDMORE);
-    socket_.send(out_msg[1], ZMQ_SNDMORE);
-    socket_.send(out_msg[2], 0);
+    socket_.send(out_msg[0], zmq::send_flags::sndmore);
+    socket_.send(out_msg[1], zmq::send_flags::sndmore);
+    socket_.send(out_msg[2], zmq::send_flags::none);
 
     auto poller = detail::BasicPoller{socket_};
     if (poller.poll(timeout)) {
@@ -235,7 +235,7 @@ Response RegDriver::request(Request& req, int timeout)
         while (true) {
             in_msg.emplace_back();
             auto& msg = in_msg.back();
-            socket_.recv(&msg);
+            std::ignore = socket_.recv(msg);
             if (!msg.more()) {
                 break;
             }

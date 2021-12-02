@@ -23,11 +23,12 @@
 #ifndef CLARA_DPE_OPTIONS_HPP
 #define CLARA_DPE_OPTIONS_HPP
 
+#include "constants.hpp"
 #include "dpe_config.hpp"
 
-#include <optionparser.h>
-
 #include <clara/msg/address.hpp>
+
+#include <cxxopts.hpp>
 
 #include <chrono>
 #include <iostream>
@@ -35,180 +36,137 @@
 #include <vector>
 
 namespace clara {
-namespace option {
 
-using namespace ::option;
+namespace opt {
 
-struct Arg : public ::option::Arg
-{
-    static void print_error(const char* msg1, const Option& opt, const char* msg2)
-    {
-        fprintf(stderr, "%s", msg1);
-        fwrite(opt.name, opt.namelen, 1, stderr);
-        fprintf(stderr, "%s", msg2);
-    }
+constexpr auto host = "host";
+constexpr auto port = "port";
+constexpr auto fe_host = "fe-host";
+constexpr auto fe_port = "fe-port";
+constexpr auto session = "session";
+constexpr auto description = "description";
+constexpr auto poolsize = "poolsize";
+constexpr auto max_cores = "max-cores";
+constexpr auto report = "report";
+constexpr auto max_sockets = "max-sockets";
+constexpr auto io_threads = "io-threads";
 
-    static option::ArgStatus Unknown(const Option& option, bool msg)
-    {
-        if (msg) {
-            print_error("Unknown option ", option, "\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus Required(const Option& option, bool msg)
-    {
-        if (option.arg != nullptr) {
-            return option::ARG_OK;
-        }
-        if (msg) {
-            print_error("Option ", option, " requires an argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-};
-
-enum OptionIndex {
-    UNKNOWN, HOST, PORT, FE_HOST, FE_PORT,
-    SESSION, DESC, POOL, CORES, REPORT,
-    CTX_SK, CTX_IO,
-    HELP
-};
-
-constexpr Descriptor usage[] =
-{
-    { UNKNOWN, 0, "", "", Arg::Unknown,             "Usage: c_dpe [options]\n\n"
-                                                    "  Options:" },
-    { HOST, 0, "", "host", Arg::Required,           "  --host <hostname>         \tuse given host for this DPE" },
-    { PORT, 0, "", "port", Arg::Required,           "  --port <port>             \tuse given port for this DPE" },
-    { FE_HOST, 0, "", "fe-host", Arg::Required,     "  --fe-host <hostname>      \tthe host used by the remote front-end" },
-    { FE_PORT, 0, "", "fe-port", Arg::Required,     "  --fe-port <port>          \tthe port used by the remote front-end" },
-    { SESSION, 0, "", "session", Arg::Required,     "  --session <id>            \tthe session ID of this DPE" },
-    { DESC, 0, "", "description", Arg::Required,    "  --description <string>    \ta short description of this DPE\n\n"
-                                                    "  Config options:" },
-    { POOL, 0, "", "poolsize", Arg::Required,       "  --poolsize <size>         \tsize of thread pool to handle requests" },
-    { CORES, 0, "", "max-cores", Arg::Required,     "  --max-cores <cores>       \thow many cores can be used by a service" },
-    { REPORT, 0, "", "report", Arg::Required,       "  --report <seconds>        \tthe period to publish reports\n\n"
-                                                    "  Advanced options:" },
-    { CTX_SK, 0, "", "max-sockets", Arg::Required,  "  --max-sockets <sockets>   \tmaximum number of allowed ZMQ sockets" },
-    { CTX_IO, 0, "", "io-threads", Arg::Required,   "  --io-threads <threads>    \tsize of ZMQ thread pool to handle I/O" },
-    { HELP, 0, "h", "help", Arg::None,              "" },
-    { 0, 0, nullptr, nullptr, nullptr, nullptr}
-};
+}
 
 
 class DpeOptionsParser final
 {
 public:
-    bool parse(int argc, char* argv[])
+    DpeOptionsParser()
     {
-        argc -= static_cast<int>(argc > 0);
-        argv += static_cast<int>(argc > 0);
-        Stats stats(usage, argc, argv);
+        using cxxopts::value;
 
-        options_.resize(stats.options_max);
-        buffer_.resize(stats.buffer_max);
+        options_.add_options("main")
+            (opt::host, "use given host for this DPE", value<std::string>())
+            (opt::port, "use given port for this DPE", value<int>())
+            (opt::fe_host, "the host used by the remote front-end", value<std::string>())
+            (opt::fe_port, "the port used by the remote front-end", value<int>())
+            ;
 
-        parser_ = Parser(usage, argc, argv, &options_[0], &buffer_[0]);
+        options_.add_options("config")
+            (opt::session, "the session ID of this DPE", value<std::string>())
+            (opt::description, "a short description of this DPE", value<std::string>())
+            (opt::poolsize, "size of thread pool to handle requests", value<int>())
+            (opt::max_cores, "how many cores can be used by a service", value<int>())
+            (opt::report, "the period to publish reports [s]", value<int>())
+            ;
 
-        if (parser_.nonOptionsCount() > 0) {
-            std::cerr << "Invalid command line arguments." << std::endl;
-            return false;
-        }
+        options_.add_options("advanced")
+            (opt::max_sockets, "maximum number of allowed ZMQ sockets", value<int>())
+            (opt::io_threads, "size of ZMQ thread pool to handle I/O", value<int>())
+            ;
 
-        if (parser_.error()) {
-            return false;
-        }
+        options_.add_options("other")
+            ("h,help", "Print usage");
+
+        options_.set_width(88);
+    }
+
+    bool parse(int argc, char* argv[])
+    try {
+        using namespace std::literals::string_literals;
+
+        result_ = options_.parse(argc, argv);
 
         if (has_help()) {
             return true;
         }
 
-        if (options_[FE_HOST] == nullptr) {
-            if (options_[FE_PORT] == nullptr) {
+        // C++ DPEs are alwåys worker DPEs that require a FE argument
+        if (!has_frontend()) {
+            return false;
+        }
+
+        // Get local DPE address
+        auto local_host = get(opt::host, "localhost"s);
+        auto local_port = get(opt::port, constants::cpp_port);
+        local_addr_ = msg::ProxyAddress{local_host, local_port};
+
+        // Get remote FE address
+        auto fe_host = result_[opt::fe_host].as<std::string>();
+        auto fe_port = get(opt::fe_port, constants::java_port);
+        fe_addr_ = msg::ProxyAddress{fe_host, fe_port};
+
+        // Get config options
+        config_ = {
+            get(opt::session, ""s),
+            get(opt::description, ""s),
+            get(opt::poolsize, DpeConfig::default_pool_size),
+            get(opt::max_cores, DpeConfig::default_max_cores),
+            parse_report_period()
+        };
+
+        // Get ZMQ options
+        max_sockets_ = get(opt::max_sockets, 1024);
+        io_threads_ = get(opt::io_threads, 1);
+
+        return true;
+    } catch (const cxxopts::OptionException& e) {
+        std::cerr << "error: " << e.what() << std::endl;
+        return false;
+    }
+
+    bool has_help()
+    {
+        return result_.count("help") > 0;
+    }
+
+    void print_help()
+    {
+        std::cout << options_.help({"main", "config", "advanced", "other"})
+                  << std::endl;
+    }
+
+private:
+    bool has_frontend()
+    {
+        if (result_.count(opt::fe_host) == 0) {
+            if (result_.count(opt::fe_port) == 0) {
                 std::cerr << "The remote front-end host is required." << std::endl;
             } else {
                 std::cerr << "Missing front-end host argument." << std::endl;
             }
             return false;
         }
-
-        parse_options();
         return true;
     }
 
-    bool has_help()
+    template<typename T>
+    T get(const std::string& opt, const T& default_value)
     {
-        return options_[HELP] != nullptr;
-    }
-
-    void print_help()
-    {
-        option::printUsage(std::cout, usage);
-    }
-
-private:
-    void parse_options()
-    {
-        const auto default_host = std::string{"localhost"};
-        const auto default_port = 7781;
-        const auto default_fe_port = 7771;
-
-        // Act as front-end by default but if feHost or fePort are passed
-        // act as a worker DPE with remote front-end
-        bool fe = options_[FE_HOST] == nullptr && options_[FE_PORT] == nullptr;
-
-        // Get local DPE address
-        auto local_host = value_of(HOST, default_host);
-        auto local_port = value_of(PORT, default_port);
-        local_addr_ = msg::ProxyAddress{local_host, local_port};
-
-        if (fe) {
-            // Get local FE address (use same local DPE address)
-            fe_addr_ = local_addr_;
-        } else {
-            // Get remote FE address
-            auto fe_host = value_of(FE_HOST, default_host);
-            auto fe_port = value_of(FE_PORT, default_fe_port);
-            fe_addr_ = msg::ProxyAddress{fe_host, fe_port};
-        }
-
-        config_ = {
-            value_of(SESSION, ""),
-            value_of(DESC, ""),
-            value_of(POOL, 2),
-            value_of(CORES, std::thread::hardware_concurrency()),
-            parse_report_period()
-        };
-
-        max_sockets_ = value_of(CTX_SK, 1024);
-        io_threads_ = value_of(CTX_IO, 1);
-    }
-
-    std::string value_of(int opt, const std::string& val)
-    {
-        auto arg = options_[opt].arg;
-        if (arg != nullptr) {
-            return std::string{arg};
-        }
-        return val;
-    }
-
-    int value_of(int opt, int val)
-    {
-        auto arg = options_[opt].arg;
-        if (arg != nullptr) {
-            return std::stoi(arg);
-        }
-        return val;
+        return (result_.count(opt) > 0) ? result_[opt].as<T>() : default_value;
     }
 
     int parse_report_period()
     {
         using namespace std::chrono;
-        auto default_period = 10'000;
-        auto ms = milliseconds{default_period};
-        auto s = value_of(REPORT, duration_cast<seconds>(ms).count());
+        auto ms = milliseconds{DpeConfig::default_report_period};
+        auto s = get(opt::report, int(duration_cast<seconds>(ms).count()));
         return duration_cast<milliseconds>(seconds{s}).count();
     }
 
@@ -239,10 +197,8 @@ public:
     }
 
 private:
-    std::vector<Option> options_;
-    std::vector<Option> buffer_;
-
-    Parser parser_;
+    cxxopts::Options options_{"c_dpe", "CLARA C++ DPE\n"};
+    cxxopts::ParseResult result_;
 
     msg::ProxyAddress local_addr_;
     msg::ProxyAddress fe_addr_;
@@ -253,7 +209,6 @@ private:
     int io_threads_;
 };
 
-} // end namespace option
 } // end namespace clara
 
 #endif // end of include guard: CLARA_DPE_OPTIONS_HPP

@@ -39,9 +39,9 @@ static auto get_clara_home() -> std::string
 }
 
 
-static auto get_alive_report(const std::string& name,
+static auto get_alive_report(std::string_view name,
                              int cores,
-                             const std::string& clara_home) -> std::string
+                             std::string_view clara_home) -> std::string
 {
     using namespace clara::util;
 
@@ -70,7 +70,7 @@ DpeReport::DpeReport(Base& base, DpeConfig& config)
 }
 
 
-auto DpeReport::clara_home() const -> std::string
+auto DpeReport::clara_home() const -> std::string_view
 {
     return clara_home_;
 }

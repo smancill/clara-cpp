@@ -22,31 +22,33 @@
 #ifndef CLARA_MSG_CONSTANTS_H_
 #define CLARA_MSG_CONSTANTS_H_
 
-#include <string>
+#include <string_view>
 
 namespace clara::msg::constants {
 
+using namespace std::literals::string_view_literals;
+
 // clang-format off
-inline const std::string success = "success";
+constexpr auto success = "success"sv;
 
-inline const std::string register_publisher = "registerPublisher";
-inline const std::string register_subscriber = "registerSubscriber";
+constexpr auto register_publisher = "registerPublisher"sv;
+constexpr auto register_subscriber = "registerSubscriber"sv;
 
-inline const std::string remove_publisher = "removePublisherRegistration";
-inline const std::string remove_subscriber = "removeSubscriberRegistration";
-inline const std::string remove_all_registration = "removeAllRegistration";
+constexpr auto remove_publisher = "removePublisherRegistration"sv;
+constexpr auto remove_subscriber = "removeSubscriberRegistration"sv;
+constexpr auto remove_all_registration = "removeAllRegistration"sv;
 
-inline const std::string find_publisher = "findPublisher";
-inline const std::string find_subscriber = "findSubscriber";
+constexpr auto find_publisher = "findPublisher"sv;
+constexpr auto find_subscriber = "findSubscriber"sv;
 
 constexpr auto register_request_timeout = 3000;
 constexpr auto remove_request_timeout = 3000;
 constexpr auto find_request_timeout = 3000;
 
-inline const std::string ctrl_topic = "clara:msg:control";
-inline const std::string ctrl_connect = "pub";
-inline const std::string ctrl_subscribe = "sub";
-inline const std::string ctrl_reply = "rep";
+constexpr auto ctrl_topic = "clara:msg:control"sv;
+constexpr auto ctrl_connect = "pub"sv;
+constexpr auto ctrl_subscribe = "sub"sv;
+constexpr auto ctrl_reply = "rep"sv;
 // clang-format on
 
 } // end namespace clara::msg::constants

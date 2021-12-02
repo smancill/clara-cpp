@@ -31,20 +31,22 @@
 #include <sstream>
 
 
+using namespace std::literals::string_view_literals;
+
 namespace {
 
-const std::string conf_action = "action";
-const std::string conf_filename = "file";
-const std::string conf_order = "order";
+constexpr auto conf_action = "action"sv;
+constexpr auto conf_filename = "file"sv;
+constexpr auto conf_order = "order"sv;
 
-const std::string conf_action_open = "open";
-const std::string conf_action_close = "close";
-const std::string conf_action_skip = "skip";
+constexpr auto conf_action_open = "open"sv;
+constexpr auto conf_action_close = "close"sv;
+constexpr auto conf_action_skip = "skip"sv;
 
-const std::string output_next = "next-rec";
-const std::string event_skip = "skip";
+constexpr auto output_next = "next-rec"sv;
+constexpr auto event_skip = "skip"sv;
 
-const std::string no_file = "No open file";
+constexpr auto no_file = "No open file"sv;
 
 } // namespace
 
@@ -73,7 +75,7 @@ public:
 
 private:
     std::string file_name_;
-    std::string open_error_ = no_file;
+    std::string open_error_ = std::string{no_file};
 
     bool skip_events_ = false;
     int event_counter_ = 0;

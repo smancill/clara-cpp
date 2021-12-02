@@ -23,6 +23,7 @@
 #define CLARA_MSG_TOPIC_H_
 
 #include <string>
+#include <string_view>
 #include <utility>
 
 
@@ -30,10 +31,10 @@ namespace clara::msg {
 
 namespace detail {
 
-auto get_domain(const std::string& topic) -> std::string;
-auto get_subject(const std::string& topic) -> std::string;
-auto get_type(const std::string& topic) ->  std::string;
-auto is_parent(const std::string& topic, const std::string& other) -> bool;
+auto get_domain(std::string_view topic) -> std::string_view;
+auto get_subject(std::string_view topic) -> std::string_view;
+auto get_type(std::string_view topic) ->  std::string_view;
+auto is_parent(std::string_view topic, std::string_view other) -> bool;
 
 } // end namespace detail
 
@@ -90,7 +91,7 @@ public:
      *
      * \param domain the domain of the topic
      */
-    static auto build(const std::string& domain) -> Topic
+    static auto build(std::string_view domain) -> Topic
     {
         return build(domain, ANY, ANY);
     }
@@ -101,8 +102,8 @@ public:
      * \param domain the domain of the topic
      * \param subject the subject of the topic
      */
-    static auto build(const std::string& domain,
-                      const std::string& subject) -> Topic
+    static auto build(std::string_view domain,
+                      std::string_view subject) -> Topic
     {
         return build(domain, subject, ANY);
     }
@@ -114,9 +115,9 @@ public:
      * \param subject the subject of the topic
      * \param type the type of the subject
      */
-    static auto build(const std::string& domain,
-                      const std::string& subject,
-                      const std::string& type) -> Topic;
+    static auto build(std::string_view domain,
+                      std::string_view subject,
+                      std::string_view type) -> Topic;
 
     /**
      * Use the given string as topic.
@@ -142,7 +143,7 @@ public:
      */
     auto domain() const -> std::string
     {
-        return detail::get_domain(topic_);
+        return std::string{detail::get_domain(topic_)};
     }
 
     /**
@@ -151,7 +152,7 @@ public:
      */
     auto subject() const -> std::string
     {
-        return detail::get_subject(topic_);
+        return std::string{detail::get_subject(topic_)};
     }
 
     /**
@@ -160,7 +161,7 @@ public:
      */
     auto type() const -> std::string
     {
-        return detail::get_type(topic_);
+        return std::string{detail::get_type(topic_)};
     }
 
     /**

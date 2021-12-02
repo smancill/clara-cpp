@@ -45,17 +45,17 @@ public:
     DpeReport(Base& base, DpeConfig& config);
 
 public:
-    auto name() const -> std::string { return name_; };
+    auto name() const -> std::string_view { return name_; };
 
-    auto session() const -> std::string { return config_.session; };
+    auto session() const -> std::string_view { return config_.session; };
 
-    auto lang() const -> std::string { return constants::cpp_lang; };
+    auto lang() const -> std::string_view { return constants::cpp_lang; };
 
-    auto description() const -> std::string { return config_.description; };
+    auto description() const -> std::string_view { return config_.description; };
 
-    auto start_time() const -> std::string { return start_time_; };
+    auto start_time() const -> std::string_view { return start_time_; };
 
-    auto clara_home() const -> std::string;
+    auto clara_home() const -> std::string_view;
 
     auto alive_report() const -> std::string { return alive_report_; };
 

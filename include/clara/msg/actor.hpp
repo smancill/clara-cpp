@@ -33,6 +33,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <string_view>
 
 /**
  * Core CLARA classes and functions.
@@ -220,7 +221,7 @@ public:
      * \param description general description of the published messages
      */
     void register_as_publisher(const Topic& topic,
-                               const std::string& description);
+                               std::string_view description);
 
     /**
      * Registers this actor as a publisher of the specified topic,
@@ -234,7 +235,7 @@ public:
      */
     void register_as_publisher(const RegAddress& addr,
                                const Topic& topic,
-                               const std::string& description);
+                               std::string_view description);
 
     /**
      * Registers this actor as a subscriber of the specified topic,
@@ -246,7 +247,7 @@ public:
      * \param description general description of the subscription
      */
     void register_as_subscriber(const Topic& topic,
-                                const std::string& description);
+                                std::string_view description);
 
     /**
      * Registers this actor as a subscriber of the specified topic,
@@ -260,7 +261,7 @@ public:
      */
     void register_as_subscriber(const RegAddress& addr,
                                 const Topic& topic,
-                                const std::string& description);
+                                std::string_view description);
 
     /**
      * Removes this actor as a publisher of the specified topic,

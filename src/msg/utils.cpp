@@ -164,9 +164,9 @@ auto to_host_addr(const std::string& hostname) -> std::string
 }
 
 
-auto is_ipaddr(const std::string& hostname) -> bool
+auto is_ipaddr(std::string_view hostname) -> bool
 {
-    return std::regex_match(hostname, ip_regex);
+    return std::regex_match(hostname.cbegin(), hostname.cend(), ip_regex);
 }
 
 

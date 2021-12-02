@@ -31,24 +31,26 @@
 #include <sstream>
 
 
+using namespace std::literals::string_view_literals;
+
 namespace {
 
-const std::string conf_action = "action";
-const std::string conf_filename = "file";
+constexpr auto conf_action = "action"sv;
+constexpr auto conf_filename = "file"sv;
 
-const std::string conf_action_open = "open";
-const std::string conf_action_close = "close";
+constexpr auto conf_action_open = "open"sv;
+constexpr auto conf_action_close = "close"sv;
 
-const std::string conf_events_skip = "skip";
-const std::string conf_events_max = "max";
+constexpr auto conf_events_skip = "skip"sv;
+constexpr auto conf_events_max = "max"sv;
 
-const std::string request_next = "next";
-const std::string request_next_rec = "next-rec";
-const std::string request_order = "order";
-const std::string request_count = "count";
+constexpr auto request_next = "next"sv;
+constexpr auto request_next_rec = "next-rec"sv;
+constexpr auto request_order = "order"sv;
+constexpr auto request_count = "count"sv;
 
-const std::string no_file = "No open file";
-const std::string end_of_file = "End of file";
+constexpr auto no_file = "No open file"sv;
+constexpr auto end_of_file = "End of file"sv;
 
 constexpr auto eof_not_from_writer = 0;
 constexpr auto eof_waiting_rec = -1;
@@ -73,7 +75,7 @@ public:
 
 private:
     void set_limits(const json11::Json& config_data);
-    auto get_value(const json11::Json& config_data, const std::string& key,
+    auto get_value(const json11::Json& config_data, std::string_view key,
                    int def_val, int min_val, int max_val) -> int;
 
 public:
@@ -91,7 +93,7 @@ public:
 
 private:
     std::string file_name_;
-    std::string open_error_ = no_file;
+    std::string open_error_ = std::string{no_file};
 
     int current_event_;
     int last_event_;
@@ -203,7 +205,7 @@ void EventReaderService::Impl::set_limits(const json11::Json& config_data)
 
 
 auto EventReaderService::Impl::get_value(const json11::Json& config_data,
-                                         const std::string& key,
+                                         std::string_view key,
                                          int def_val,
                                          int min_val,
                                          int max_val) -> int

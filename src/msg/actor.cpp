@@ -200,7 +200,7 @@ void Actor::unsubscribe(std::unique_ptr<Subscription> handler)
 
 
 void Actor::register_as_publisher(const Topic& topic,
-                                  const std::string& description)
+                                  std::string_view description)
 {
     register_as_publisher(actor_->default_reg_addr, topic, description);
 }
@@ -208,7 +208,7 @@ void Actor::register_as_publisher(const Topic& topic,
 
 void Actor::register_as_publisher(const RegAddress& addr,
                                   const Topic& topic,
-                                  const std::string& description)
+                                  std::string_view description)
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto proxy = actor_->default_proxy_addr;
@@ -220,7 +220,7 @@ void Actor::register_as_publisher(const RegAddress& addr,
 
 
 void Actor::register_as_subscriber(const Topic& topic,
-                                   const std::string& description)
+                                   std::string_view description)
 {
     register_as_subscriber(actor_->default_reg_addr, topic, description);
 }
@@ -228,7 +228,7 @@ void Actor::register_as_subscriber(const Topic& topic,
 
 void Actor::register_as_subscriber(const RegAddress& addr,
                                    const Topic& topic,
-                                   const std::string& description)
+                                   std::string_view description)
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto proxy = actor_->default_proxy_addr;

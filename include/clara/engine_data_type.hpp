@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 
 namespace clara {
 
@@ -47,9 +48,9 @@ public:
      * @param mimeType the name of this data-type
      * @param serializer the custom serializer for this data-type
      */
-    EngineDataType(std::string mime_type,
+    EngineDataType(std::string_view mime_type,
                    std::unique_ptr<Serializer> serializer)
-      : mime_type_{std::move(mime_type)}
+      : mime_type_{mime_type}
       , serializer_{std::move(serializer)}
     {
         // nothing
@@ -78,28 +79,28 @@ private:
 
 
 inline auto operator==(const EngineDataType& data_type,
-                       const std::string& mime_type) -> bool
+                       std::string_view mime_type) -> bool
 {
-    return data_type.mime_type() == mime_type;
+    return mime_type == data_type.mime_type();
 }
 
-inline auto operator==(const std::string& mime_type,
+inline auto operator==(std::string_view mime_type,
                        const EngineDataType& data_type) -> bool
 {
-    return data_type == mime_type;
+    return mime_type == data_type.mime_type();
 }
 
 
 inline auto operator!=(const EngineDataType& data_type,
-                       const char* mime_type) -> bool
+                       std::string_view mime_type) -> bool
 {
-    return !(data_type == mime_type);
+    return mime_type != data_type.mime_type() ;
 }
 
-inline auto operator!=(const std::string& mime_type,
+inline auto operator!=(std::string_view mime_type,
                        const EngineDataType& data_type) -> bool
 {
-    return !(data_type == mime_type);
+    return mime_type != data_type.mime_type() ;
 }
 
 

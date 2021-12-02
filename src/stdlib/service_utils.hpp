@@ -38,7 +38,11 @@ template<typename S,
          typename = std::enable_if_t<std::is_constructible_v<std::string, S>>>
 void set_error(EngineData& output, S&& msg, int severity = 1)
 {
-    output.set_description(std::forward<S>(msg));
+    if constexpr (std::is_same_v<std::decay_t<S>, std::string_view>) {
+        output.set_description(std::string{msg});
+    } else {
+        output.set_description(std::forward<S>(msg));
+    }
     output.set_status(clara::EngineStatus::ERROR, severity);
 }
 

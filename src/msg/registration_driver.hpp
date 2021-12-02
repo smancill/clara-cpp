@@ -30,6 +30,7 @@
 
 #include <array>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace clara::msg {
@@ -43,23 +44,26 @@ using ResponseMsg = std::vector<zmq::message_t>;
 class Request final
 {
 public:
-    Request(const std::string& topic,
-            const std::string& sender,
+    Request(std::string_view topic,
+            std::string_view sender,
             const proto::Registration& data);
 
-    Request(const std::string& topic,
-            const std::string& sender,
-            const std::string& text);
+    Request(std::string_view topic,
+            std::string_view sender,
+            std::string_view text);
 
     explicit Request(RequestMsg&& msg);
 
     auto msg() -> RequestMsg& { return msg_; };
 
-    auto topic() const -> std::string { return to_string(msg_[0]); };
+    auto topic() const & -> std::string_view { return to_string_view(msg_[0]); }
+    auto topic() && = delete;
 
-    auto sender() const -> std::string { return to_string(msg_[1]); };
+    auto sender() const & -> std::string_view { return to_string_view(msg_[1]); }
+    auto sender() && = delete;
 
-    auto text() const -> std::string { return to_string(msg_[2]); }
+    auto text() const & -> std::string_view { return to_string_view(msg_[2]); }
+    auto text() && = delete;
 
     auto data() const -> proto::Registration;
 
@@ -73,26 +77,29 @@ private:
 class Response final
 {
 public:
-    Response(const std::string& topic,
-             const std::string& sender);
+    Response(std::string_view topic,
+             std::string_view sender);
 
-    Response(const std::string& topic,
-             const std::string& sender,
+    Response(std::string_view topic,
+             std::string_view sender,
              const RegDataSet& data);
 
-    Response(const std::string& topic,
-             const std::string& sender,
-             const std::string& error_msg);
+    Response(std::string_view topic,
+             std::string_view sender,
+             std::string_view error_msg);
 
     explicit Response(ResponseMsg&& msg);
 
     auto msg() -> ResponseMsg& { return msg_; };
 
-    auto topic() const -> std::string { return to_string(msg_[0]); };
+    auto topic() const & -> std::string_view { return to_string_view(msg_[0]); }
+    auto topic() && = delete;
 
-    auto sender() const -> std::string { return to_string(msg_[1]); };
+    auto sender() const & -> std::string_view { return to_string_view(msg_[1]); }
+    auto sender() && = delete;
 
-    auto status() const -> std::string { return to_string(msg_[2]); }
+    auto status() const & -> std::string_view { return to_string_view(msg_[2]); }
+    auto status() && = delete;
 
     auto data() const -> RegDataSet;
 
@@ -122,7 +129,7 @@ public:
     void add(const proto::Registration& data, bool is_publisher);
 
     void remove(const proto::Registration& data, bool is_publisher);
-    void remove_all(const std::string& sender, const std::string& host);
+    void remove_all(std::string_view sender, std::string_view host);
 
     auto find(const proto::Registration& data, bool is_publisher) -> RegDataSet;
 
@@ -148,9 +155,9 @@ auto operator!=(const Response& lhs, const Response& rhs) -> bool;
 
 namespace registration {
 
-auto create(const std::string& name,
-            const std::string& description,
-            const std::string& host,
+auto create(std::string_view name,
+            std::string_view description,
+            std::string_view host,
             int port,
             const Topic& topic,
             bool is_publisher) -> proto::Registration;

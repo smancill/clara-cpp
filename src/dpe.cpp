@@ -146,8 +146,8 @@ private:
         return build_message(constants::dpe_report, json_report());
     }
 
-    auto build_message(const std::string& topic_prefix,
-                       const std::string& json) -> msg::Message;
+    auto build_message(std::string_view topic_prefix,
+                       std::string_view json) -> msg::Message;
 
 private:
     auto wait(int time_out) -> bool
@@ -500,8 +500,8 @@ void ReportService::run()
 };
 
 
-auto ReportService::build_message(const std::string& topic_prefix,
-                                  const std::string& json) -> msg::Message
+auto ReportService::build_message(std::string_view topic_prefix,
+                                  std::string_view json) -> msg::Message
 {
     auto topic = msg::Topic::build(topic_prefix,
                                     config_.session,

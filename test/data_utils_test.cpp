@@ -9,7 +9,7 @@ using namespace std::string_literals;
 using namespace testing;
 
 
-auto request(const std::string& data) -> cm::Message
+auto request(std::string_view data) -> cm::Message
 {
     auto topic = cm::Topic::raw("topic");
     auto bytes = std::vector<std::uint8_t>{data.begin(), data.end()};

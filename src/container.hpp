@@ -40,7 +40,7 @@ class Container : public Base
 public:
     Container(const Component& self,
               const Component& frontend,
-              const std::string& description);
+              std::string_view description);
 
     Container(const Container&) = delete;
 

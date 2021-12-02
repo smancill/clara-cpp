@@ -22,7 +22,7 @@ auto check_publisher(const cm::proto::Registration& reg) -> bool
 }
 
 
-auto find(const std::string& topic, bool is_publisher) -> cm::RegDataSet
+auto find(std::string_view topic, bool is_publisher) -> cm::RegDataSet
 {
     auto data = cm::RegDataSet{};
     auto search_topic = cm::Topic::raw(topic);
@@ -79,7 +79,7 @@ void remove_random(int size)
 }
 
 
-void remove_host(const std::string& host)
+void remove_host(std::string_view host)
 {
     printf("INFO: Removing host %s\n", host.data());
     for (auto it = reg_data.begin(); it != reg_data.end(); ) {
@@ -109,7 +109,7 @@ void remove_all()
 }
 
 
-auto discovery_request(const std::string& topic, bool is_publisher)
+auto discovery_request(std::string_view topic, bool is_publisher)
     -> cm::proto::Registration
 {
     return t::new_registration(name, "localhost", topic, is_publisher);

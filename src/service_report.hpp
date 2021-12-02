@@ -44,30 +44,30 @@ struct ServiceParameters
 class ServiceReport
 {
 public:
-    ServiceReport(const std::string& name,
+    ServiceReport(std::string_view name,
                   const ServiceParameters& params,
-                  const std::string& author,
-                  const std::string& version,
-                  const std::string& description);
+                  std::string_view author,
+                  std::string_view version,
+                  std::string_view description);
 
 public:
-    auto name() const -> std::string { return name_; };
+    auto name() const -> std::string_view { return name_; };
 
-    auto engine() const -> std::string { return engine_; };
+    auto engine() const -> std::string_view { return engine_; };
 
-    auto library() const -> std::string { return library_; };
+    auto library() const -> std::string_view { return library_; };
 
-    auto author() const -> std::string { return author_; };
+    auto author() const -> std::string_view { return author_; };
 
-    auto lang() const -> std::string { return constants::cpp_lang; };
+    auto lang() const -> std::string_view { return constants::cpp_lang; };
 
     auto pool_size() const -> int { return pool_size_; };
 
-    auto description() const -> std::string { return description_; };
+    auto description() const -> std::string_view { return description_; };
 
-    auto version() const -> std::string { return version_; };
+    auto version() const -> std::string_view { return version_; };
 
-    auto start_time() const -> std::string { return start_time_; };
+    auto start_time() const -> std::string_view { return start_time_; };
 
 public:
     auto n_requests() const -> long { return n_requests_.load(); };

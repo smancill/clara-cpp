@@ -40,7 +40,7 @@ namespace clara {
 
 Container::Container(const Component& self,
                      const Component& frontend,
-                     const std::string& description)
+                     std::string_view description)
   : Base{self, frontend}
   , report_{std::make_shared<ContainerReport>(name(), default_author())}
   , description_{description}

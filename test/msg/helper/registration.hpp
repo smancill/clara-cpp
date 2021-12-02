@@ -56,9 +56,9 @@ const DataArray hosts = {
 // clang-format on
 
 
-auto new_registration(const std::string& name,
-                      const std::string& host,
-                      const std::string& topic,
+auto new_registration(std::string_view name,
+                      std::string_view host,
+                      std::string_view topic,
                       bool is_publisher) -> proto::Registration
 {
     return registration::create(name, "test data",

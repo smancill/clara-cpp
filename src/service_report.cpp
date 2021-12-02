@@ -26,11 +26,11 @@
 
 namespace clara {
 
-ServiceReport::ServiceReport(const std::string& name,
+ServiceReport::ServiceReport(std::string_view name,
                              const ServiceParameters& params,
-                             const std::string& author,
-                             const std::string& version,
-                             const std::string& description)
+                             std::string_view author,
+                             std::string_view version,
+                             std::string_view description)
   : name_{name}
   , engine_{params.engine_name}
   , library_{params.engine_lib}

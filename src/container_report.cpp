@@ -26,8 +26,8 @@
 
 namespace clara {
 
-ContainerReport::ContainerReport(const std::string& name,
-                                 const std::string& author)
+ContainerReport::ContainerReport(std::string_view name,
+                                 std::string_view author)
   : name_{name}
   , author_{author}
   , start_time_{util::get_current_time()}

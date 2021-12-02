@@ -23,9 +23,11 @@
 #ifndef CLARA_CONSTANTS_HPP
 #define CLARA_CONSTANTS_HPP
 
-#include <string>
+#include <string_view>
 
 namespace clara::constants {
+
+using namespace std::literals::string_view_literals;
 
 // clang-format off
 constexpr auto java_port = 7771;
@@ -33,62 +35,62 @@ constexpr auto cpp_port = 7781;
 constexpr auto python_port = 7791;
 constexpr auto reg_port_shift = 4;
 
-inline const std::string java_lang = "java";
-inline const std::string python_lang = "python";
-inline const std::string cpp_lang = "cpp";
+constexpr auto java_lang = "java"sv;
+constexpr auto python_lang = "python"sv;
+constexpr auto cpp_lang = "cpp"sv;
 
-inline const std::string dpe = "dpe";
-inline const std::string start_dpe = "startDpe";
-inline const std::string stop_dpe = "stopDpe";
-inline const std::string stop_remote_dpe = "stopRemoteDpe";
-inline const std::string dpe_exit = "dpeExit";
-inline const std::string ping_dpe = "pingDpe";
-inline const std::string ping_remote_dpe = "pingRemoteDpe";
-inline const std::string dpe_alive = "dpeAlive";
-inline const std::string dpe_report = "dpeReport";
+constexpr auto dpe = "dpe"sv;
+constexpr auto start_dpe = "startDpe"sv;
+constexpr auto stop_dpe = "stopDpe"sv;
+constexpr auto stop_remote_dpe = "stopRemoteDpe"sv;
+constexpr auto dpe_exit = "dpeExit"sv;
+constexpr auto ping_dpe = "pingDpe"sv;
+constexpr auto ping_remote_dpe = "pingRemoteDpe"sv;
+constexpr auto dpe_alive = "dpeAlive"sv;
+constexpr auto dpe_report = "dpeReport"sv;
 
-inline const std::string container = "container";
-inline const std::string state_container = "getContainerState";
-inline const std::string start_container = "startContainer";
-inline const std::string start_remote_container = "startRemoteContainer";
-inline const std::string stop_container = "stopContainer";
-inline const std::string stop_remote_container = "stopRemoteContainer";
-inline const std::string container_down = "containerIsDown";
-inline const std::string remove_container = "removeContainer";
-inline const std::string report_registration = "reportRegistration";
-inline const std::string report_runtime = "reportRuntime";
-inline const std::string report_json = "reportJson";
+constexpr auto container = "container"sv;
+constexpr auto state_container = "getContainerState"sv;
+constexpr auto start_container = "startContainer"sv;
+constexpr auto start_remote_container = "startRemoteContainer"sv;
+constexpr auto stop_container = "stopContainer"sv;
+constexpr auto stop_remote_container = "stopRemoteContainer"sv;
+constexpr auto container_down = "containerIsDown"sv;
+constexpr auto remove_container = "removeContainer"sv;
+constexpr auto report_registration = "reportRegistration"sv;
+constexpr auto report_runtime = "reportRuntime"sv;
+constexpr auto report_json = "reportJson"sv;
 
-inline const std::string registration_key = "DPERegistration";
-inline const std::string runtime_key = "DPERuntime";
+constexpr auto registration_key = "DPERegistration"sv;
+constexpr auto runtime_key = "DPERuntime"sv;
 
-inline const std::string state_service = "getServiceState";
-inline const std::string start_service = "startService";
-inline const std::string start_remote_service = "startRemoteService";
-inline const std::string stop_service = "stopService";
-inline const std::string stop_remote_service = "stopRemoteService";
-inline const std::string deploy_service = "deployService";
-inline const std::string remove_service = "removeService";
-inline const std::string service_report_done = "serviceReportDone";
-inline const std::string service_report_data = "serviceReportData";
+constexpr auto state_service = "getServiceState"sv;
+constexpr auto start_service = "startService"sv;
+constexpr auto start_remote_service = "startRemoteService"sv;
+constexpr auto stop_service = "stopService"sv;
+constexpr auto stop_remote_service = "stopRemoteService"sv;
+constexpr auto deploy_service = "deployService"sv;
+constexpr auto remove_service = "removeService"sv;
+constexpr auto service_report_done = "serviceReportDone"sv;
+constexpr auto service_report_data = "serviceReportData"sv;
 
-inline const std::string set_front_end = "setFrontEnd";
-inline const std::string set_front_end_remote = "setFrontEndRemote";
+constexpr auto set_front_end = "setFrontEnd"sv;
+constexpr auto set_front_end_remote = "setFrontEndRemote"sv;
 
-inline const std::string shared_memory_key = "clara/shmkey";
+constexpr auto shared_memory_key = "clara/shmkey"sv;
 
-inline const std::string mapkey_sep = "#";
-inline const std::string data_sep = "?";
-inline const std::string lang_sep = "_";
-inline const std::string port_sep = "%";
+constexpr auto mapkey_sep = "#"sv;
+constexpr auto data_sep = "?"sv;
+constexpr auto lang_sep = "_"sv;
+constexpr auto port_sep = "%"sv;
 
-inline const std::string info = "INFO";
-inline const std::string warning = "WARNING";
-inline const std::string error = "ERROR";
-inline const std::string done = "done";
-inline const std::string data = "data";
+constexpr auto info = "INFO"sv;
+constexpr auto warning = "WARNING"sv;
+constexpr auto error = "ERROR"sv;
+constexpr auto done = "done"sv;
+constexpr auto data = "data"sv;
 
-inline const std::string udf = "undefined";
+constexpr auto udf = "undefined"sv;
 // clang-format on
 
 } // end namespace clara::constants

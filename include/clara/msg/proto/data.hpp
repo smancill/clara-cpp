@@ -115,31 +115,31 @@ template<> inline auto get_value(const Data& data) -> std::vector<std::string>
         { const auto& a = data.stringa(); return {a.begin(), a.end()}; }
 
 template <typename T>
-inline auto get_mimetype() -> std::string
+inline auto get_mimetype() -> std::string_view
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return ""; }
 
-template<> inline auto get_mimetype<std::int32_t>() -> std::string
+template<> inline auto get_mimetype<std::int32_t>() -> std::string_view
         { return mimetype::single_sfixed32; }
-template<> inline auto get_mimetype<std::int64_t>() -> std::string
+template<> inline auto get_mimetype<std::int64_t>() -> std::string_view
         { return mimetype::single_sfixed64; }
-template<> inline auto get_mimetype<float>() -> std::string
+template<> inline auto get_mimetype<float>() -> std::string_view
         { return mimetype::single_float; }
-template<> inline auto get_mimetype<double>() -> std::string
+template<> inline auto get_mimetype<double>() -> std::string_view
         { return mimetype::single_double; }
-template<> inline auto get_mimetype<std::string>() -> std::string
+template<> inline auto get_mimetype<std::string>() -> std::string_view
         { return mimetype::single_string; }
-template<> inline auto get_mimetype<const char*>() -> std::string
+template<> inline auto get_mimetype<const char*>() -> std::string_view
         { return mimetype::single_string; }
 
-template<> inline auto get_mimetype<std::vector<std::int32_t>>() -> std::string
+template<> inline auto get_mimetype<std::vector<std::int32_t>>() -> std::string_view
         { return mimetype::array_sfixed32; }
-template<> inline auto get_mimetype<std::vector<std::int64_t>>() -> std::string
+template<> inline auto get_mimetype<std::vector<std::int64_t>>() -> std::string_view
         { return mimetype::array_sfixed64; }
-template<> inline auto get_mimetype<std::vector<float>>() -> std::string
+template<> inline auto get_mimetype<std::vector<float>>() -> std::string_view
         { return mimetype::array_float; }
-template<> inline auto get_mimetype<std::vector<double>>() -> std::string
+template<> inline auto get_mimetype<std::vector<double>>() -> std::string_view
         { return mimetype::array_double; }
-template<> inline auto get_mimetype<std::vector<std::string>>() -> std::string
+template<> inline auto get_mimetype<std::vector<std::string>>() -> std::string_view
         { return mimetype::array_string; }
 
 } // end namespace detail

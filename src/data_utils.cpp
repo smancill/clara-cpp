@@ -29,7 +29,7 @@
 
 namespace clara::util {
 
-auto build_request(const msg::Topic& topic, const std::string& data) -> msg::Message
+auto build_request(const msg::Topic& topic, std::string_view data) -> msg::Message
 {
     return msg::Message{topic, type::STRING.mime_type(),
                         std::vector<std::uint8_t>{data.begin(), data.end()}};

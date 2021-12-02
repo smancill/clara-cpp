@@ -62,7 +62,11 @@ template<typename S,
          typename = std::enable_if_t<std::is_constructible_v<std::string, S>>>
 inline void set_datatype(Meta& meta, S&& datatype)
 {
-    meta.set_datatype(std::forward<S>(datatype));
+    if constexpr (std::is_same_v<std::decay_t<S>, std::string_view>) {
+        meta.set_datatype(datatype.data(), datatype.size());
+    } else {
+        meta.set_datatype(std::forward<S>(datatype));
+    }
 }
 
 } // end namespace detail

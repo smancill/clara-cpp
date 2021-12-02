@@ -122,7 +122,7 @@ struct DriverTest : public Test
         });
     }
 
-    static auto make_request(const std::string& topic,
+    static auto make_request(std::string_view topic,
                              const cm::proto::Registration& data) -> Request
     {
         return {topic, data.name(), data};

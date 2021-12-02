@@ -70,8 +70,8 @@ auto operator!=(const Registration& lhs, const Registration& rhs) -> bool
 
 namespace detail {
 
-Request::Request(const std::string& topic,
-                 const std::string& sender,
+Request::Request(std::string_view topic,
+                 std::string_view sender,
                  const proto::Registration& data)
   : msg_{zmq::message_t{topic},
          zmq::message_t{sender},
@@ -79,9 +79,9 @@ Request::Request(const std::string& topic,
 { }
 
 
-Request::Request(const std::string& topic,
-                 const std::string& sender,
-                 const std::string& text)
+Request::Request(std::string_view topic,
+                 std::string_view sender,
+                 std::string_view text)
   : msg_{zmq::message_t{topic},
          zmq::message_t{sender},
          zmq::message_t{text}}
@@ -102,8 +102,8 @@ auto Request::data() const -> proto::Registration
 
 
 
-Response::Response(const std::string& topic,
-                   const std::string& sender)
+Response::Response(std::string_view topic,
+                   std::string_view sender)
 {
     msg_.reserve(n_fields);
     msg_.emplace_back(topic);
@@ -112,8 +112,8 @@ Response::Response(const std::string& topic,
 }
 
 
-Response::Response(const std::string& topic,
-                   const std::string& sender,
+Response::Response(std::string_view topic,
+                   std::string_view sender,
                    const RegDataSet& data)
 {
     msg_.reserve(n_fields + data.size());
@@ -126,9 +126,9 @@ Response::Response(const std::string& topic,
 }
 
 
-Response::Response(const std::string& topic,
-                   const std::string& sender,
-                   const std::string& error_msg)
+Response::Response(std::string_view topic,
+                   std::string_view sender,
+                   std::string_view error_msg)
 {
     msg_.reserve(n_fields);
     msg_.emplace_back(topic);
@@ -182,7 +182,7 @@ void RegDriver::remove(const proto::Registration& data, bool is_publisher)
 }
 
 
-void RegDriver::remove_all(const std::string& sender, const std::string& host)
+void RegDriver::remove_all(std::string_view sender, std::string_view host)
 {
     auto req = Request{constants::remove_all_registration, sender, host};
     request(req, constants::remove_request_timeout);
@@ -252,9 +252,9 @@ auto operator!=(const Response& lhs, const Response& rhs) -> bool
 
 namespace registration {
 
-auto create(const std::string& name,
-            const std::string& description,
-            const std::string& host,
+auto create(std::string_view name,
+            std::string_view description,
+            std::string_view host,
             int port,
             const Topic& topic,
             bool is_publisher) -> proto::Registration
@@ -263,9 +263,9 @@ auto create(const std::string& name,
             ? proto::Registration::PUBLISHER
             : proto::Registration::SUBSCRIBER;
     auto data = proto::Registration{};
-    data.set_name(name);
-    data.set_host(host);
-    data.set_description(description);
+    data.set_name(name.data(), name.size());
+    data.set_host(host.data(), host.size());
+    data.set_description(description.data(), description.size());
     data.set_port(port);
     data.set_domain(topic.domain());
     data.set_subject(topic.subject());

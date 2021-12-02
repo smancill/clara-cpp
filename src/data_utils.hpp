@@ -33,7 +33,7 @@
 
 namespace clara::util {
 
-auto build_request(const msg::Topic& topic, const std::string& data) -> msg::Message;
+auto build_request(const msg::Topic& topic, std::string_view data) -> msg::Message;
 
 auto parse_message(const msg::Message& msg) -> std::string;
 
@@ -98,7 +98,7 @@ public:
         throw invalid_request();
     }
 
-    auto next_string(const std::string& default_value) -> std::string
+    auto next_string(std::string_view default_value) -> std::string
     {
         auto item = std::string{};
         if (std::getline(ss_, item, constants::data_sep[0])) {
@@ -106,7 +106,8 @@ public:
                 return item;
             }
         }
-        return default_value;
+        item = std::string{default_value};
+        return item;
     }
 
     auto next_integer() -> int

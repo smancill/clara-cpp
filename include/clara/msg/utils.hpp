@@ -76,7 +76,7 @@ auto to_host_addr(const std::string& hostname) -> std::string;
  * \param hostname Host name of the computing node.
  * \return true if host name has an IP form.
  */
-auto is_ipaddr(const std::string& hostname) -> bool;
+auto is_ipaddr(std::string_view hostname) -> bool;
 
 /**
  * Thread sleep wrapper.

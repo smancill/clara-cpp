@@ -89,7 +89,7 @@ private:
     void report_problem(EngineData& output);
     void report_result(EngineData& output);
 
-    void report(const std::string& topic_prefix, EngineData& output);
+    void report(std::string_view topic_prefix, EngineData& output);
 
 private:
     std::mutex mutex_;

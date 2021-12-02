@@ -141,6 +141,14 @@ auto to_string(const zmq::message_t& msg) -> std::string
     return {msg.data<const char>(), msg.size()};
 }
 
+inline
+auto to_string_view(const zmq::message_t& msg) -> std::string_view
+{
+    return {msg.data<const char>(), msg.size()};
+}
+
+auto to_string_view(zmq::message_t&& msg) = delete;
+
 
 inline
 auto to_bytes(const zmq::message_t& msg) -> std::vector<std::uint8_t>

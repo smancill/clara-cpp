@@ -38,29 +38,31 @@
  */
 namespace clara::msg::mimetype {
 
+using namespace std::literals::string_view_literals;
+
 // clang-format off
-inline const std::string single_sint32 = "binary/sint32";          ///< Signed integer. Uses variable-length encoding.
-inline const std::string single_sint64 = "binary/sint64";          ///< Signed integer. Uses variable-length encoding.
-inline const std::string single_sfixed32 = "binary/sfixed32";      ///< Signed integer. Always use 4 bytes.
-inline const std::string single_sfixed64 = "binary/sfixed64";      ///< Signed integer. Always use 8 bytes.
-inline const std::string single_float = "binary/float";            ///< Single precision floating point type.
-inline const std::string single_double = "binary/double";          ///< Double precision floating point type.
-inline const std::string single_string = "text/string";            ///< An UTF-8 encoded or 7-bit ASCII text.
-inline const std::string bytes = "binary/bytes";                   ///< An arbitrary sequence of bytes.
+constexpr auto single_sint32 = "binary/sint32"sv;               ///< Signed integer. Uses variable-length encoding.
+constexpr auto single_sint64 = "binary/sint64"sv;               ///< Signed integer. Uses variable-length encoding.
+constexpr auto single_sfixed32 = "binary/sfixed32"sv;           ///< Signed integer. Always use 4 bytes.
+constexpr auto single_sfixed64 = "binary/sfixed64"sv;           ///< Signed integer. Always use 8 bytes.
+constexpr auto single_float = "binary/float"sv;                 ///< Single precision floating point type.
+constexpr auto single_double = "binary/double"sv;               ///< Double precision floating point type.
+constexpr auto single_string = "text/string"sv;                 ///< An UTF-8 encoded or 7-bit ASCII text.
+constexpr auto bytes = "binary/bytes"sv;                        ///< An arbitrary sequence of bytes.
 
-inline const std::string array_sint32 = "binary/array-sint32";     ///< Repeated signed integers. Uses variable-length encoding.
-inline const std::string array_sint64 = "binary/array-sint64";     ///< Repeated signed integers. Uses variable-length encoding.
-inline const std::string array_sfixed32 = "binary/array-sfixed32"; ///< Repeated signed integers. Always use 4 bytes.
-inline const std::string array_sfixed64 = "binary/array-sfixed32"; ///< Repeated signed integers. Always use 8 bytes.
-inline const std::string array_float = "binary/array-float";       ///< Repeated single precision floating point types.
-inline const std::string array_double = "binary/array-double";     ///< Repeated double precision floating point types.
-inline const std::string array_string = "binary/array-string";     ///< Repeated UTF-8 encoded or 7-bit ASCII texts.
-inline const std::string array_bytes = "binary/array-bytes";       ///< Repeated arbitrary sequences of bytes.
+constexpr auto array_sint32 = "binary/array-sint32"sv;          ///< Repeated signed integers. Uses variable-length encoding.
+constexpr auto array_sint64 = "binary/array-sint64"sv;          ///< Repeated signed integers. Uses variable-length encoding.
+constexpr auto array_sfixed32 = "binary/array-sfixed32"sv;      ///< Repeated signed integers. Always use 4 bytes.
+constexpr auto array_sfixed64 = "binary/array-sfixed32"sv;      ///< Repeated signed integers. Always use 8 bytes.
+constexpr auto array_float = "binary/array-float"sv;            ///< Repeated single precision floating point types.
+constexpr auto array_double = "binary/array-double"sv;          ///< Repeated double precision floating point types.
+constexpr auto array_string = "binary/array-string"sv;          ///< Repeated UTF-8 encoded or 7-bit ASCII texts.
+constexpr auto array_bytes = "binary/array-bytes"sv;            ///< Repeated arbitrary sequences of bytes.
 
-inline const std::string plain_data = "binary/native";             ///< A serialized \ref clara::msg::proto::Data "Data" object
-inline const std::string java_object = "binary/java";              ///< A serialized Java object
-inline const std::string cpp_object = "binary/cpp";                ///< A serialized C++ object
-inline const std::string python_object = "binary/python";          ///< A serialized Python object
+constexpr auto plain_data = "binary/native"sv;                  ///< A serialized \ref clara::msg::proto::Data "Data" object
+constexpr auto java_object = "binary/java"sv;                   ///< A serialized Java object
+constexpr auto cpp_object = "binary/cpp"sv;                     ///< A serialized C++ object
+constexpr auto python_object = "binary/python"sv;               ///< A serialized Python object
 // clang-format on
 
 } // end namespace clara::msg::mimetype

@@ -259,7 +259,7 @@ void ServiceEngine::send_result(EngineData& output,
     for (auto&& ss : links) {
         auto host = util::get_dpe_host(ss);
         auto port = util::get_dpe_port(ss);
-        auto addr = msg::ProxyAddress{host, port};
+        auto addr = msg::ProxyAddress{std::string{host}, port};
         auto con = connect(addr);
         auto msg = put_engine_data(output, ss);
         publish(con, msg);
@@ -293,9 +293,9 @@ void ServiceEngine::report_result(EngineData& output)
 }
 
 
-void ServiceEngine::report(const std::string& topic_prefix, EngineData& output)
+void ServiceEngine::report(std::string_view topic_prefix, EngineData& output)
 {
-    auto topic = msg::Topic::raw(topic_prefix + ":" + name());
+    auto topic = msg::Topic::raw(std::string{topic_prefix} + ":" + name());
     auto msg = accessor_.serialize(output, topic, output_types_);
     auto con = connect(frontend().addr());
     publish(con, msg);

@@ -30,6 +30,13 @@
 #include "utils.hpp"
 
 #include <string>
+#include <string_view>
+
+
+using namespace std::literals::string_view_literals;
+
+static constexpr auto containers_key = "containers"sv;
+static constexpr auto services_key = "services"sv;
 
 
 namespace clara {
@@ -37,6 +44,7 @@ namespace clara {
 auto JsonReport::generate(const DpeReport& report) const -> std::string
 {
     using namespace util;
+    using namespace constants;
 
     auto buffer = Buffer{};
     auto writer = Writer{buffer};
@@ -45,21 +53,21 @@ auto JsonReport::generate(const DpeReport& report) const -> std::string
 
     writer.StartObject();
 
-    writer.Key(constants::runtime_key.c_str());
+    writer.Key(runtime_key.data(), runtime_key.size());
     writer.StartObject();
     put(writer, "name", report.name());
     put(writer, "snapshot_time", snapshot_time);
     put(writer, "cpu_usage", report.cpu_usage());
     put(writer, "memory_usage", report.memory_usage());
     put(writer, "load", report.load());
-    writer.Key("containers");
+    writer.Key(containers_key.data(), containers_key.size());
     writer.StartArray();
     for (const auto& cr : report.containers()) {
         auto cont_requests = 0L;
         writer.StartObject();
         put(writer, "name", cr->name());
         put(writer, "snapshot_time", snapshot_time);
-        writer.Key("services");
+        writer.Key(services_key.data(), services_key.size());
         writer.StartArray();
         for (const auto& sr : cr->services()) {
             auto service_requests = sr->n_requests();
@@ -83,7 +91,7 @@ auto JsonReport::generate(const DpeReport& report) const -> std::string
     writer.EndArray();
     writer.EndObject();
 
-    writer.Key(constants::registration_key.c_str());
+    writer.Key(registration_key.data(), registration_key.size());
     writer.StartObject();
     put(writer, "name", report.name());
     put(writer, "language", report.lang());
@@ -91,7 +99,7 @@ auto JsonReport::generate(const DpeReport& report) const -> std::string
     put(writer, "n_cores", report.core_count());
     put(writer, "memory_size", report.memory_size());
     put(writer, "start_time", report.start_time());
-    writer.Key("containers");
+    writer.Key(containers_key.data(), containers_key.size());
     writer.StartArray();
     for (const auto& cr : report.containers()) {
         writer.StartObject();
@@ -99,7 +107,7 @@ auto JsonReport::generate(const DpeReport& report) const -> std::string
         put(writer, "language", cr->lang());
         put(writer, "author", cr->author());
         put(writer, "start_time", cr->start_time());
-        writer.Key("services");
+        writer.Key(services_key.data(), services_key.size());
         writer.StartArray();
         for (const auto& sr : cr->services()) {
             writer.StartObject();

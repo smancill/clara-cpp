@@ -34,16 +34,16 @@ namespace clara {
 
 namespace util {
 
-auto make_name(const std::string& host,
+auto make_name(std::string_view host,
                int port,
-               const std::string& lang) -> std::string;
+               std::string_view lang) -> std::string;
 
-auto make_name(const std::string& dpe,
-               const std::string& container) -> std::string;
+auto make_name(std::string_view dpe,
+               std::string_view container) -> std::string;
 
-auto make_name(const std::string& dpe,
-               const std::string& container,
-               const std::string& engine) -> std::string;
+auto make_name(std::string_view dpe,
+               std::string_view container,
+               std::string_view engine) -> std::string;
 
 } // end namespace util
 
@@ -52,7 +52,7 @@ class Component
 public:
     template<typename A>
     static auto dpe(A&& addr,
-                    const std::string& lang = constants::cpp_lang) -> Component
+                    std::string_view lang = constants::cpp_lang) -> Component
     {
         auto cname = util::make_name(addr.host(), addr.pub_port(), lang);
         auto topic = msg::Topic::build("dpe", cname);
@@ -60,7 +60,7 @@ public:
     }
 
     static auto container(const Component& dpe,
-                          const std::string& name) -> Component
+                          std::string_view name) -> Component
     {
         auto cname = util::make_name(dpe.name(), name);
         auto topic = msg::Topic::build("container", cname);
@@ -68,7 +68,7 @@ public:
     }
 
     static auto service(const Component& container,
-                        const std::string& name) -> Component
+                        std::string_view name) -> Component
     {
         auto cname = util::make_name(container.name(), name);
         auto topic = msg::Topic::raw(cname);

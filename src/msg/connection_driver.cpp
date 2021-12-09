@@ -38,7 +38,7 @@ constexpr auto subscribe_poll_timeout = 100;
 namespace clara::msg::detail {
 
 ProxyDriver::ProxyDriver(Context& ctx,
-                         const ProxyAddress& addr,
+                         const ProxyAddress& addr,  // NOLINT(modernize-pass-by-value)
                          std::shared_ptr<ConnectionSetup> setup)
   : addr_{addr}
   , setup_{std::move(setup)}

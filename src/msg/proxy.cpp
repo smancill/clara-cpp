@@ -36,16 +36,16 @@ std::mutex mtx;
 
 namespace clara::msg::sys {
 
-Proxy::Proxy(std::unique_ptr<Context> ctx, const ProxyAddress& addr)
+Proxy::Proxy(std::unique_ptr<Context> ctx, ProxyAddress addr)
   : ctx_{std::move(ctx)}
-  , addr_{addr}
+  , addr_{std::move(addr)}
   , is_alive_{false}
 { }
 
 
-Proxy::Proxy(const ProxyAddress& addr)
+Proxy::Proxy(ProxyAddress addr)
   : ctx_{Context::create()},
-    addr_{addr},
+    addr_{std::move(addr)},
     is_alive_{false}
 { }
 

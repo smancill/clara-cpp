@@ -105,7 +105,7 @@ public:
      *
      * \param name the name of this actor
      */
-    explicit Actor(const std::string& name);
+    explicit Actor(std::string name);
 
     /**
      * Creates an actor specifying the default registrar to be used.
@@ -114,8 +114,8 @@ public:
      * \param name the name of this actor
      * \param default_registrar the address to the default registrar
      */
-    explicit Actor(const std::string& name,
-                   const RegAddress& default_registrar);
+    explicit Actor(std::string name,
+                   RegAddress default_registrar);
 
     /**
      * Creates an actor specifying the default proxy and registrar to be used.
@@ -124,9 +124,9 @@ public:
      * \param default_proxy the address to the default proxy
      * \param default_registrar the address to the default registrar
      */
-    explicit Actor(const std::string& name,
-                   const ProxyAddress& default_proxy,
-                   const RegAddress& default_registrar);
+    explicit Actor(std::string name,
+                   ProxyAddress default_proxy,
+                   RegAddress default_registrar);
 
     Actor(const Actor& rhs) = delete;
     Actor& operator=(const Actor& rhs) = delete;

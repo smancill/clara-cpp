@@ -48,7 +48,7 @@ namespace clara::msg {
  * actor.
  */
 
-Subscription::Subscription(const Topic& topic,
+Subscription::Subscription(const Topic& topic,  // NOLINT(modernize-pass-by-value)
                            ConnectionWrapperPtr connection,
                            Callback handler)
   : topic_{topic}

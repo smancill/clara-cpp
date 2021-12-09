@@ -47,14 +47,11 @@ namespace clara::msg {
 /// \cond HIDDEN_SYMBOLS
 struct Actor::Impl
 {
-
-    Impl(const std::string& name,
-         const ProxyAddress& proxy_addr,
-         const RegAddress& reg_addr)
-      : name{name}
-      , id{detail::encode_identity(proxy_addr.host(), name)}
-      , default_proxy_addr{proxy_addr}
-      , default_reg_addr{reg_addr}
+    Impl(std::string&& name, ProxyAddress&& proxy_addr, RegAddress&& reg_addr)
+      : name{std::move(name)}
+      , id{detail::encode_identity(proxy_addr.host(), this->name)}
+      , default_proxy_addr{std::move(proxy_addr)}
+      , default_reg_addr{std::move(reg_addr)}
     { }
 
     ConnectionPool* con_pool()
@@ -107,21 +104,23 @@ private:
 /// \endcond
 
 
-Actor::Actor(const std::string& name)
-  : Actor{name, {}, {}}
+Actor::Actor(std::string name)
+  : Actor{std::move(name), {}, {}}
 { }
 
 
-Actor::Actor(const std::string& name,
-             const RegAddress& default_registrar)
-  : Actor{name, {}, default_registrar}
+Actor::Actor(std::string name,
+             RegAddress default_registrar)
+  : Actor{std::move(name), {}, std::move(default_registrar)}
 { }
 
 
-Actor::Actor(const std::string& name,
-             const ProxyAddress& default_proxy,
-             const RegAddress& default_registrar)
-  : actor_{new Impl{name, default_proxy, default_registrar}}
+Actor::Actor(std::string name,
+             ProxyAddress default_proxy,
+             RegAddress default_registrar)
+  : actor_{new Impl{std::move(name),
+                    std::move(default_proxy),
+                    std::move(default_registrar)}}
 { }
 
 

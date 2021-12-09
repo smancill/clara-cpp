@@ -65,9 +65,9 @@ public:
 class Dpe::DpeImpl : public Base
 {
 public:
-    DpeImpl(const msg::ProxyAddress& local,
-            const msg::ProxyAddress& frontend,
-            const DpeConfig& config);
+    DpeImpl(msg::ProxyAddress&& local,
+            msg::ProxyAddress&& frontend,
+            DpeConfig&& config);
 
     ~DpeImpl() override;
 
@@ -180,10 +180,11 @@ private:
 
 
 Dpe::Dpe(bool /*is_frontend*/,
-         const msg::ProxyAddress& local,
-         const msg::ProxyAddress& frontend,
-         const DpeConfig& config)
-  : dpe_{std::make_unique<DpeImpl>(local, frontend, config)}
+         msg::ProxyAddress local,
+         msg::ProxyAddress frontend,
+         DpeConfig config)
+  : dpe_{std::make_unique<DpeImpl>(
+          std::move(local), std::move(frontend), std::move(config))}
 {
     // nop
 }
@@ -214,13 +215,13 @@ void Dpe::stop()
 }
 
 
-Dpe::DpeImpl::DpeImpl(const msg::ProxyAddress& local,
-                      const msg::ProxyAddress& frontend,
-                      const DpeConfig& config)
-  : Base{Component::dpe(local),
-         Component::dpe(frontend, constants::java_lang)}
-  , proxy_{std::make_unique<msg::sys::Proxy>(local)}
-  , config_(config)
+Dpe::DpeImpl::DpeImpl(msg::ProxyAddress&& local,
+                      msg::ProxyAddress&& frontend,
+                      DpeConfig&& config)
+  : Base{Component::dpe(std::move(local)),
+         Component::dpe(std::move(frontend), constants::java_lang)}
+  , proxy_{std::make_unique<msg::sys::Proxy>(self().addr())}
+  , config_(std::move(config))
   , report_{*this, config_}
   , report_service_{std::make_unique<ReportService>(*this, config_, report_)}
 {

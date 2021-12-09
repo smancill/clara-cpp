@@ -109,7 +109,7 @@ TEST(RawBytesSerializer, MoveSemantics)
 
     using rnd_eng = std::default_random_engine;
     using rnd_byte_eng = std::independent_bits_engine<rnd_eng, CHAR_BIT, std::uint8_t>;
-    rnd_byte_eng rbe;
+    auto rbe = rnd_byte_eng{};
 
     auto r = std::vector<std::uint8_t>(100);
     std::generate(r.begin(), r.end(), std::ref(rbe));

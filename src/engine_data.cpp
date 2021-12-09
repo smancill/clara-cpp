@@ -89,6 +89,12 @@ const std::string& EngineData::description() const
 }
 
 
+void EngineData::set_description(const std::string& description)
+{
+    meta_->set_description(description);
+}
+
+
 EngineStatus EngineData::status() const
 {
     auto status = meta_->status();
@@ -133,12 +139,6 @@ void EngineData::set_status(EngineStatus status, int severity)
             throw std::domain_error{"unexpected engine status"};
     }
     meta_->set_severityid(severity);
-}
-
-
-void EngineData::set_description(const std::string& description)
-{
-    meta_->set_description(description);
 }
 
 

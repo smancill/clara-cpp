@@ -45,19 +45,19 @@ std::vector<std::string> get_addresses()
     struct AddrList {
         AddrList() { getifaddrs(&ifl); }
 
-        ~AddrList() { if (ifl != nullptr) freeifaddrs(ifl); }
+        ~AddrList() { if (ifl != nullptr) { freeifaddrs(ifl); } }
 
         struct ifaddrs* ifl = nullptr;
     } ifl;
 
-    std::vector<std::string> all_addrs;
+    auto all_addrs = std::vector<std::string>{};
 
     for (struct ifaddrs* ifa = ifl.ifl; ifa != nullptr; ifa = ifa->ifa_next) {
         if (ifa->ifa_addr == nullptr) {
             continue;
         }
         if (ifa->ifa_addr->sa_family == AF_INET) {
-            void* s_addr = &((struct sockaddr_in*) ifa->ifa_addr)->sin_addr;
+            void* s_addr = &reinterpret_cast<sockaddr_in*>(ifa->ifa_addr)->sin_addr;
             char addr_buf[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, s_addr, addr_buf, INET_ADDRSTRLEN);
 
@@ -78,7 +78,7 @@ std::string get_host_address(const std::string& hostname)
     if (h == nullptr) {
         throw std::system_error{EFAULT, std::system_category()};
     }
-    return { inet_ntoa(*((struct in_addr*) h->h_addr)) };
+    return {inet_ntoa(*reinterpret_cast<in_addr*>(h->h_addr))};
 }
 
 
@@ -142,7 +142,7 @@ void update_localhost_addrs()
 std::string to_host_addr(const std::string& hostname)
 {
     if (is_ipaddr(hostname)) {
-        return { hostname };
+        return {hostname};
     }
     if (hostname == "localhost") {
         return local_addrs().get_first();

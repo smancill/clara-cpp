@@ -53,7 +53,7 @@ private:
 
 
 // language identifier (Java:1, C++:2, Python:3)
-const auto cpp_id = 2;
+constexpr auto cpp_id = 2;
 
 std::atomic_uint_fast32_t rt_seq{[]{
     auto d = std::uniform_int_distribution<std::uint_fast32_t>{0, 999'999};
@@ -70,15 +70,15 @@ namespace clara::msg::detail {
 RawMessage::RawMessage(zmq::socket_t& socket)
 {
     while (true) {
-        auto& msg = parts[counter];
+        auto& msg = parts_[counter_];
         std::ignore = socket.recv(msg);
-        ++counter;
-        if (counter == msg_size || !msg.more()) {
+        ++counter_;
+        if (counter_ == msg_size || !msg.more()) {
             break;
         }
     }
 
-    if (CLARA_UNLIKELY(parts.back().more())) {
+    if (CLARA_UNLIKELY(parts_.back().more())) {
         while (true) {
             zmq::message_t msg;
             std::ignore = socket.recv(msg);
@@ -112,9 +112,9 @@ void set_unique_replyto(std::uint_fast32_t value)
 // actor unique ID: format is 8 digits: [dddddddd]
 std::string encode_identity(const std::string& address, const std::string& name)
 {
-    std::uniform_int_distribution<std::uint_fast8_t> dist{0, 99};
-    std::string id = address + "#" + name + "#" + std::to_string(rng(dist));
-    std::stringstream ss;
+    auto dist = std::uniform_int_distribution<std::uint_fast8_t>{0, 99};
+    auto id = address + "#" + name + "#" + std::to_string(rng(dist));
+    auto ss = std::stringstream{};
     ss << std::hex << std::hash<std::string>{}(id);
     return ss.str().substr(0, 8);
 }
@@ -125,10 +125,10 @@ std::string get_random_id()
 {
     static const auto id_prefix = []{
         auto ip_hash = std::hash<std::string>{}(util::localhost());
-        return cpp_id * 100'000'000 + (ip_hash % 1000) * 100'000;
+        return cpp_id * 100'000'000 + (ip_hash % 1'000) * 100'000;
     }();
 
-    std::uniform_int_distribution<std::uint_fast32_t> id_dist{0, 99'999};
+    auto id_dist = std::uniform_int_distribution<std::uint_fast32_t>{0, 99'999};
 
     return std::to_string(id_prefix + rng(id_dist));
 }

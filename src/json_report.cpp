@@ -37,8 +37,8 @@ std::string JsonReport::generate(const DpeReport& report) const
 {
     using namespace util;
 
-    Buffer buffer;
-    Writer writer{buffer};
+    auto buffer = Buffer{};
+    auto writer = Writer{buffer};
 
     auto snapshot_time = util::get_current_time();
 

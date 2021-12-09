@@ -113,7 +113,7 @@ RequestMsg Request::msg()
 
 proto::Registration Request::data() const
 {
-    proto::Registration rd;
+    auto rd = proto::Registration{};
     rd.ParseFromString(data_);
     return rd;
 }
@@ -164,7 +164,7 @@ Response::Response(const ResponseMsg& msg)
 
 ResponseMsg Response::msg()
 {
-    ResponseMsg msg;
+    auto msg = ResponseMsg{};
     msg.reserve(n_fields + data_.size());
     msg.emplace_back(topic_.begin(), topic_.end());
     msg.emplace_back(sender_.begin(), sender_.end());
@@ -191,8 +191,8 @@ void RegDriver::add(const proto::Registration& data, bool is_publisher)
 {
     auto topic = is_publisher ? constants::register_publisher
                               : constants::register_subscriber;
-    auto reg_req = Request{topic, data.name(), data};
-    request(reg_req, constants::register_request_timeout);
+    auto req = Request{topic, data.name(), data};
+    request(req, constants::register_request_timeout);
 }
 
 
@@ -200,15 +200,15 @@ void RegDriver::remove(const proto::Registration& data, bool is_publisher)
 {
     auto topic = is_publisher ? constants::remove_publisher
                               : constants::remove_subscriber;
-    auto reg_req = Request{topic, data.name(), data};
-    request(reg_req, constants::remove_request_timeout);
+    auto req = Request{topic, data.name(), data};
+    request(req, constants::remove_request_timeout);
 }
 
 
 void RegDriver::remove_all(const std::string& sender, const std::string& host)
 {
-    auto reg_req = Request{constants::remove_all_registration, sender, host};
-    request(reg_req, constants::remove_request_timeout);
+    auto req = Request{constants::remove_all_registration, sender, host};
+    request(req, constants::remove_request_timeout);
 }
 
 
@@ -216,8 +216,8 @@ RegDataSet RegDriver::find(const proto::Registration& data, bool is_publisher)
 {
     auto topic = is_publisher ? constants::find_publisher
                               : constants::find_subscriber;
-    auto reg_req = Request{topic, data.name(), data};
-    auto res = request(reg_req, constants::find_request_timeout);
+    auto req = Request{topic, data.name(), data};
+    auto res = request(req, constants::find_request_timeout);
     return std::move(res.data());
 }
 

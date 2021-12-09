@@ -93,19 +93,19 @@ public:
 
     auto& operator[](std::size_t idx)
     {
-        return parts[idx];
+        return parts_[idx];
     }
 
     std::size_t size()
     {
-        return counter;
+        return counter_;
     }
 
 private:
-    static const size_t msg_size = 3;
+    static const std::size_t msg_size = 3;
 
-    std::size_t counter = 0;
-    std::array<zmq::message_t, msg_size> parts;
+    std::size_t counter_ = 0;
+    std::array<zmq::message_t, msg_size> parts_;
 };
 
 

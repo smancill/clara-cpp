@@ -36,7 +36,7 @@ namespace util {
 msg::Message build_request(const msg::Topic& topic, const std::string& data)
 {
     return msg::Message{topic, type::STRING.mime_type(),
-                        std::vector<uint8_t>{data.begin(), data.end()}};
+                        std::vector<std::uint8_t>{data.begin(), data.end()}};
 }
 
 

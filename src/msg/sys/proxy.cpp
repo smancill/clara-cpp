@@ -73,14 +73,17 @@ std::string current_time()
 }
 
 
-clara::msg::ProxyAddress get_address(const cxxopts::ParseResult& result)
+using namespace clara::msg;
+
+
+ProxyAddress get_address(const cxxopts::ParseResult& result)
 {
-    std::string host = clara::msg::util::localhost();
-    int port = clara::msg::ProxyAddress::default_port;
+    auto host = util::localhost();
+    auto port = ProxyAddress::default_port;
 
     if (result.count("host") > 0) {
         host = result["host"].as<std::string>();
-        host = clara::msg::util::to_host_addr(host);
+        host = util::to_host_addr(host);
     }
     if (result.count("port") > 0) {
         port = result["port"].as<int>();
@@ -115,7 +118,7 @@ int main(int argc, char** argv)
         }
 
         auto addr = get_address(result);
-        auto proxy = clara::msg::sys::Proxy{addr};
+        auto proxy = sys::Proxy{addr};
         proxy.start();
 
         printf("[%s] CLARA proxy INFO: running on host = %s  port = %d\n",

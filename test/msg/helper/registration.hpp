@@ -73,7 +73,7 @@ proto::Registration new_registration(const std::string& name,
 
 const std::string& random(const DataArray& data)
 {
-    int idx = udist(rng) % data.size();
+    auto idx = udist(rng) % data.size();
     return data[idx];
 }
 

@@ -96,7 +96,7 @@ public:
     RegDataSet& data() { return data_; }
 
 private:
-    static constexpr size_t n_fields = 3;
+    static constexpr std::size_t n_fields = 3;
 
     std::string topic_;
     std::string sender_;

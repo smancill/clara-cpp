@@ -42,13 +42,13 @@ Topic Topic::build(const std::string& domain,
     if (domain == ANY) {
         throw std::invalid_argument("domain is not defined");
     }
-    std::stringstream topic;
+    auto topic = std::stringstream{};
     topic << domain;
     if (subject != ANY) {
         topic << SEPARATOR << subject;
         if (type != ANY) {
-            std::stringstream ss{type};
-            std::string tst;
+            auto ss = std::stringstream{type};
+            auto tst = std::string{};
             while (std::getline(ss, tst, SEPARATOR)) {
                 if (tst != ANY) {
                     topic << SEPARATOR << tst;
@@ -64,7 +64,7 @@ Topic Topic::build(const std::string& domain,
     }
 
 
-    return { topic.str() };
+    return {topic.str()};
 }
 
 
@@ -72,7 +72,7 @@ std::string Topic::domain() const
 {
     auto firstSep = topic_.find(SEPARATOR);
     if (firstSep == std::string::npos) {
-        return { topic_ };
+        return {topic_};
     }
     return topic_.substr(0, firstSep);
 }
@@ -82,7 +82,7 @@ std::string Topic::subject() const
 {
     auto firstSep = topic_.find(SEPARATOR);
     if (firstSep == std::string::npos) {
-        return { ANY };
+        return {ANY};
     }
     auto secondSep = topic_.find(SEPARATOR, firstSep + 1);
     if (secondSep == std::string::npos) {
@@ -96,11 +96,11 @@ std::string Topic::type() const
 {
     auto firstSep = topic_.find(SEPARATOR);
     if (firstSep == std::string::npos) {
-        return { ANY };
+        return {ANY};
     }
     auto secondSep = topic_.find(SEPARATOR, firstSep + 1);
     if (secondSep == std::string::npos) {
-        return { ANY };
+        return {ANY};
     }
     return topic_.substr(secondSep + 1);
 }

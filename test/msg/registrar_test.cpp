@@ -9,11 +9,11 @@
 namespace cm = clara::msg;
 namespace t = clara::msg::test;
 
-cm::detail::Context ctx;
-cm::detail::RegDriver driver{ctx, {}};
+auto ctx = cm::detail::Context{};
+auto driver = cm::detail::RegDriver{ctx, {}};
 
-cm::RegDataSet reg_data;
-std::string name = "registrat_test";
+auto reg_data = cm::RegDataSet{};
+auto name = std::string{"registrat_test"};
 
 
 bool check_publisher(const cm::proto::Registration& reg)
@@ -60,7 +60,7 @@ void remove_random(int size)
 {
     printf("INFO: Removing %d random actors...\n", size);
 
-    std::uniform_int_distribution<int> gen(0, reg_data.size() - size);
+    auto gen = std::uniform_int_distribution<int>(0, reg_data.size() - size);
     auto first = gen(t::rng);
     auto end = first + size;
     auto i = 0;

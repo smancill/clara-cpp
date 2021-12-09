@@ -29,8 +29,9 @@
 #include <stdexcept>
 
 namespace {
-constexpr std::uint16_t privileged_ports = 1024;
-constexpr std::uint16_t max_port_number = UINT16_MAX;
+
+constexpr auto privileged_ports = 1024;
+constexpr auto max_port_number = UINT16_MAX;
 
 inline bool invalid_port(int port)
 {
@@ -41,6 +42,7 @@ inline int default_sub_port(int pub_port)
 {
     return pub_port + 1;
 }
+
 } // end empty namespace
 
 

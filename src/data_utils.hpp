@@ -55,7 +55,7 @@ public:
     {
         const auto& mt = msg.datatype();
         if (mt == "text/string") {
-            return { msg.meta(), parse_message(msg) };
+            return {msg.meta(), parse_message(msg)};
         }
         throw InvalidRequest{"invalid mime-type = " + mt};
     }
@@ -89,7 +89,7 @@ public:
 public:
     std::string next_string()
     {
-        std::string item;
+        auto item = std::string{};
         if (std::getline(ss_, item, constants::data_sep[0])) {
             if (item.empty()) {
                 throw invalid_request();
@@ -101,7 +101,7 @@ public:
 
     std::string next_string(const std::string& default_value)
     {
-        std::string item;
+        auto item = std::string{};
         if (std::getline(ss_, item, constants::data_sep[0])) {
             if (!item.empty()) {
                 return item;

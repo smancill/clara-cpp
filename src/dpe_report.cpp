@@ -44,8 +44,8 @@ static std::string get_alive_report(const std::string& name,
 {
     using namespace clara::util;
 
-    Buffer buffer;
-    Writer writer{buffer};
+    auto buffer = Buffer{};
+    auto writer = Writer{buffer};
 
     writer.StartObject();
     put(writer, "name", name);

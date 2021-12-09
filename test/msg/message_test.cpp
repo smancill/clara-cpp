@@ -15,14 +15,14 @@ auto make_test_data()
 {
     auto data = cm::proto::Data{};
     data.set_flsint32(29);
-    data.set_float_(42.f);
+    data.set_float_(42.F);
     data.set_string("november");
     data.add_doublea(0.);
     data.add_doublea(9.);
     return data;
 }
 
-const cm::Topic topic = cm::Topic::raw("test/topic");
+const auto topic = cm::Topic::raw("test/topic");
 
 }
 
@@ -130,7 +130,7 @@ TEST(Message, CreateWithIntegerData)
 
 TEST(Message, CreateWithFloatData)
 {
-    auto data = 4.8f;
+    auto data = 4.8F;
     auto msg = cm::make_message(topic, data);
     auto result = cm::parse_message<float>(msg);
 

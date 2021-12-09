@@ -227,7 +227,7 @@ void EventWriterService::Impl::write_event(const EngineData& input,
         return;
     }
 
-    std::unique_lock<std::mutex> lock{mutex_};
+    auto lock = std::unique_lock<std::mutex>{mutex_};
     if (has_file()) {
         try {
             service_->write_event(input.data());
@@ -235,7 +235,7 @@ void EventWriterService::Impl::write_event(const EngineData& input,
             output.set_data(type::STRING, OUTPUT_NEXT);
             output.set_description("event saved");
         } catch (const EventWriterError& e) {
-            std::ostringstream msg;
+            auto msg = std::ostringstream{};
             msg << "Error saving event to file " << file_name_ << "\n\n"
                 << e.what();
             util::set_error(output, msg.str());

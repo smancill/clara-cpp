@@ -28,9 +28,9 @@
 
 static tp::ThreadPoolOptions thread_pool_options(int pool_size, int queue_size)
 {
-    tp::ThreadPoolOptions opts;
-    opts.setThreadCount(static_cast<size_t>(pool_size));
-    opts.setQueueSize(static_cast<size_t>(queue_size));
+    auto opts = tp::ThreadPoolOptions{};
+    opts.setThreadCount(static_cast<std::size_t>(pool_size));
+    opts.setQueueSize(static_cast<std::size_t>(queue_size));
     return opts;
 }
 

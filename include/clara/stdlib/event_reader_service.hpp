@@ -110,7 +110,7 @@ private:
      * @return the total number of events in the file
      * @throws EventReaderError if the file could not be read
      */
-    virtual size_t read_event_count() = 0;
+    virtual std::size_t read_event_count() = 0;
 
     /**
      * Gets the byte order of the events stored in the input file.

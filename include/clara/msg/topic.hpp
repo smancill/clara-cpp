@@ -118,7 +118,7 @@ public:
      */
     static Topic raw(const std::string& topic)
     {
-        return { topic };
+        return {topic};
     }
 
     /**
@@ -132,7 +132,7 @@ public:
      */
     static Topic raw(std::string&& topic)
     {
-        return { std::move(topic) };
+        return {std::move(topic)};
     }
 
 

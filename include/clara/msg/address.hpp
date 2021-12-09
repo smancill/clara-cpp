@@ -144,9 +144,8 @@ struct hash<clara::msg::ProxyAddress>
     std::size_t operator()(const clara::msg::ProxyAddress& k) const
     {
         using std::hash;
-        using std::string;
 
-        return hash<std::string>()(k.host()) ^ (hash<int>()(k.pub_port()) << 1);
+        return hash<std::string>{}(k.host()) ^ (hash<int>{}(k.pub_port()) << 1);
     }
 };
 
@@ -157,7 +156,7 @@ struct hash<clara::msg::RegAddress>
     {
         using std::hash;
 
-        return hash<std::string>()(k.host()) ^ (hash<int>()(k.port()) << 1);
+        return hash<std::string>{}(k.host()) ^ (hash<int>{}(k.port()) << 1);
     }
 };
 

@@ -64,7 +64,7 @@ public:
     {
         using Msg = msg::Message;
 
-        auto& mime_type = data.meta_->datatype();
+        const auto& mime_type = data.meta_->datatype();
         for (auto&& dt : data_types) {
             if (dt.mime_type() == mime_type) {
                 try {
@@ -88,8 +88,8 @@ public:
     EngineData deserialize(const msg::Message& msg,
                            const std::vector<EngineDataType>& data_types)
     {
-        auto* metadata = msg.meta();
-        auto& mime_type = metadata->datatype();
+        const auto* metadata = msg.meta();
+        const auto& mime_type = metadata->datatype();
         for (auto&& dt : data_types) {
             if (dt.mime_type() == mime_type) {
                 try {

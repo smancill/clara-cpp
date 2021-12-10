@@ -31,7 +31,7 @@
 
 static std::string get_clara_home()
 {
-    auto clara_home = std::getenv("CLARA_HOME");
+    auto* clara_home = std::getenv("CLARA_HOME");
     if (!clara_home) {
         throw std::runtime_error{"Missing CLARA_HOME env variable"};
     }

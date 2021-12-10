@@ -51,8 +51,8 @@ clara::EngineData build_done_data(clara::EngineDataAccessor& accessor,
     auto done_output = clara::EngineData{};
     done_output.set_data(clara::type::STRING.mime_type(), "done");
 
-    auto done_meta = accessor.view_meta(done_output);
-    auto out_meta = accessor.view_meta(output);
+    auto* done_meta = accessor.view_meta(done_output);
+    auto* out_meta = accessor.view_meta(output);
     done_meta->CopyFrom(*out_meta);
 
     return done_output;
@@ -217,8 +217,8 @@ msg::Message ServiceEngine::put_engine_data(const EngineData& output,
 
 void ServiceEngine::update_metadata(const EngineData& input, EngineData& output)
 {
-    auto in_meta = accessor_.view_meta(input);
-    auto out_meta = accessor_.view_meta(output);
+    const auto* in_meta = accessor_.view_meta(input);
+    auto* out_meta = accessor_.view_meta(output);
 
     out_meta->set_author(name());
     out_meta->set_version(engine_->version());
@@ -233,7 +233,7 @@ void ServiceEngine::update_metadata(const EngineData& input, EngineData& output)
 
 void ServiceEngine::parse_composition(const EngineData& input)
 {
-    auto& current_composition = input.composition();
+    const auto& current_composition = input.composition();
     if (current_composition != prev_composition_) {
         compiler_.compile(current_composition);
         prev_composition_ = current_composition;

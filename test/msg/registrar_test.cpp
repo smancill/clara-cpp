@@ -26,7 +26,7 @@ cm::RegDataSet find(const std::string& topic, bool is_publisher)
 {
     auto data = cm::RegDataSet{};
     auto search_topic = cm::Topic::raw(topic);
-    for (auto& reg : reg_data) {
+    for (const auto& reg : reg_data) {
         if (is_publisher != check_publisher(reg)) {
             continue;
         }
@@ -102,7 +102,7 @@ void remove_random_host()
 void remove_all()
 {
     printf("INFO: Removing all actors\n");
-    for (auto& host : t::hosts) {
+    for (const auto& host : t::hosts) {
         driver.remove_all("test", host);
     }
     reg_data.clear();
@@ -118,7 +118,7 @@ cm::proto::Registration discovery_request(const std::string& topic,
 
 void check(bool is_publisher)
 {
-    for (auto& topic : t::topics) {
+    for (const auto& topic : t::topics) {
         auto data = discovery_request(topic, is_publisher);
 
         auto result = driver.find(data, is_publisher);

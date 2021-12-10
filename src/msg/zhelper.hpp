@@ -145,7 +145,7 @@ std::string to_string(const zmq::message_t& msg)
 inline
 std::vector<std::uint8_t> to_bytes(const zmq::message_t& msg)
 {
-    auto ptr = msg.data<std::uint8_t>();
+    const auto* ptr = msg.data<std::uint8_t>();
     return {ptr, ptr + msg.size()};
 }
 

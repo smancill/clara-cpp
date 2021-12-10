@@ -58,9 +58,9 @@ template<> inline std::int64_t get_value(const Data& data)
         { return data.vlsint64(); }
 
 template<> inline std::vector<std::int32_t> get_value(const Data& data)
-        { auto& a = data.vlsint32a(); return {a.begin(), a.end()}; }
+        { const auto& a = data.vlsint32a(); return {a.begin(), a.end()}; }
 template<> inline std::vector<std::int64_t> get_value(const Data& data)
-        { auto& a = data.vlsint64a(); return {a.begin(), a.end()}; }
+        { const auto& a = data.vlsint64a(); return {a.begin(), a.end()}; }
 }
 
 // ---------------------------------------------------------------------------

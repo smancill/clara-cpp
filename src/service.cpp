@@ -133,7 +133,7 @@ void Service::callback(msg::Message& msg)
 {
     std::unique_lock<std::mutex> lock{cb_mutex_};
     try {
-        auto meta = msg.meta();
+        const auto* meta = msg.meta();
         if (!meta->has_action()) {
             setup(msg);
         } else if (meta->action() == msg::proto::Meta::CONFIGURE) {

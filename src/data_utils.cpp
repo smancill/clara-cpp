@@ -38,7 +38,7 @@ msg::Message build_request(const msg::Topic& topic, const std::string& data)
 
 std::string parse_message(const msg::Message& msg)
 {
-    auto& data = msg.data();
+    const auto& data = msg.data();
     return std::string{data.begin(), data.end()};
 }
 

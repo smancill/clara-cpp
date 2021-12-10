@@ -169,7 +169,7 @@ ResponseMsg Response::msg()
     msg.emplace_back(topic_.begin(), topic_.end());
     msg.emplace_back(sender_.begin(), sender_.end());
     msg.emplace_back(status_.begin(), status_.end());
-    for (auto& reg : data_) {
+    for (const auto& reg : data_) {
         auto buf = reg.SerializeAsString();
         msg.emplace_back(buf.begin(), buf.end());
     }

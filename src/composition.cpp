@@ -39,8 +39,8 @@ void SimpleCompiler::compile(const std::string& composition)
     prev_.clear();
     next_.clear();
 
-    auto sub_composition = &prev_;
-    bool service_found = false;
+    auto* sub_composition = &prev_;
+    auto service_found = false;
 
     auto ss = std::stringstream{composition};
     auto service = std::string{};

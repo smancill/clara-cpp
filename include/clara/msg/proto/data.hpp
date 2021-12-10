@@ -102,15 +102,15 @@ template<> inline std::string get_value(const Data& data)
         { return data.string(); }
 
 template<> inline std::vector<std::int32_t> get_value(const Data& data)
-        { auto& a = data.flsint32a(); return {a.begin(), a.end()}; }
+        { const auto& a = data.flsint32a(); return {a.begin(), a.end()}; }
 template<> inline std::vector<std::int64_t> get_value(const Data& data)
-        { auto& a = data.flsint64a(); return {a.begin(), a.end()}; }
+        { const auto& a = data.flsint64a(); return {a.begin(), a.end()}; }
 template<> inline std::vector<float> get_value(const Data& data)
-        { auto& a = data.floata(); return {a.begin(), a.end()}; }
+        { const auto& a = data.floata(); return {a.begin(), a.end()}; }
 template<> inline std::vector<double> get_value(const Data& data)
-        { auto& a = data.doublea(); return {a.begin(), a.end()}; }
+        { const auto& a = data.doublea(); return {a.begin(), a.end()}; }
 template<> inline std::vector<std::string> get_value(const Data& data)
-        { auto& a = data.stringa(); return {a.begin(), a.end()}; }
+        { const auto& a = data.stringa(); return {a.begin(), a.end()}; }
 
 template <typename T>
 inline std::string get_mimetype()

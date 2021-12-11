@@ -79,16 +79,6 @@ std::string to_host_addr(const std::string& hostname);
 bool is_ipaddr(const std::string& hostname);
 
 /**
- * Checks if the argument is a valid IP address.
- *
- * \param address the address to be validated
- * \return the given address
- * \throws std::invalid_argument if the address is null or not a valid IP
- */
-void validate_ipaddr(const std::string& address);
-
-
-/**
  * Thread sleep wrapper.
  *
  * \param millis the length of time to sleep in milliseconds

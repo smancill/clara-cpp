@@ -26,7 +26,6 @@
 
 #include <clara/msg/topic.hpp>
 
-#include <ctime>
 #include <stdexcept>
 
 namespace {
@@ -54,16 +53,6 @@ int get_port(const std::string& full_name, int index)
 
 namespace clara {
 namespace util {
-
-std::string get_current_time()
-{
-    time_t now;
-    std::time(&now);
-    char buf[sizeof "2001-01-01 00:00:00"];
-    std::strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S", std::localtime(&now));
-    return buf;
-}
-
 
 std::string get_dpe_name(const std::string& canonical_name)
 {

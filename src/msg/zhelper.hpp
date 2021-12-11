@@ -93,20 +93,20 @@ class RawMessage {
 public:
     RawMessage(zmq::socket_t& socket);
 
-    auto& operator[](std::size_t idx)
+    auto& operator[](int idx)
     {
         return parts_[idx];
     }
 
-    std::size_t size()
+    int size() const
     {
         return counter_;
     }
 
 private:
-    static const std::size_t msg_size = 3;
+    static constexpr int msg_size = 3;
 
-    std::size_t counter_ = 0;
+    int counter_ = 0;
     std::array<zmq::message_t, msg_size> parts_;
 };
 

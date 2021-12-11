@@ -25,13 +25,19 @@
 
 #include <csignal>
 #include <cstdlib>
-#include <ctime>
 #include <iostream>
 #include <string>
 
 #include <cxxopts.hpp>
 
 #include <unistd.h>
+
+namespace clara::msg::util {
+
+std::string get_current_time();
+
+}
+
 
 static volatile sig_atomic_t signal_value = 0;
 
@@ -59,16 +65,6 @@ static void wait_signals()
         std::cout << std::endl;
     }
     std::cout << "Exiting..." << std::endl;
-}
-
-
-std::string current_time()
-{
-    time_t now;
-    std::time(&now);
-    char buf[sizeof "2001-01-01 00:00:00"];
-    std::strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S", std::localtime(&now));
-    return buf;
 }
 
 
@@ -121,7 +117,7 @@ int main(int argc, char** argv)
         proxy.start();
 
         printf("[%s] CLARA proxy INFO: running on host = %s  port = %d\n",
-               current_time().c_str(), addr.host().c_str(), addr.pub_port());
+               util::get_current_time().c_str(), addr.host().c_str(), addr.pub_port());
 
         wait_signals();
     } catch (std::exception& e) {

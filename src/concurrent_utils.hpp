@@ -65,8 +65,7 @@ private:
 };
 
 
-using ThreadPool = tp::ThreadPoolImpl<tp::FixedFunction<void(), 128>,
-                                      BlockingQueue>;
+using ThreadPool = tp::ThreadPoolImpl<tp::FixedFunction<void()>, BlockingQueue>;
 
 
 template <typename T>

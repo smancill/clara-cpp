@@ -78,7 +78,7 @@ public:
         // nop
     }
 
-    RequestParser(RequestParser&& other)
+    RequestParser(RequestParser&& other) noexcept
       : meta_{other.meta_}
       , data_{std::move(other.data_)}
       , ss_{data_}

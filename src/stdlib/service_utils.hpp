@@ -33,21 +33,9 @@ namespace util {
  *
  * @param output the engine data that will be returned by the service
  * @param msg a description for the error
- */
-inline void set_error(EngineData& output, const std::string& msg)
-{
-    output.set_description(msg);
-    output.set_status(clara::EngineStatus::ERROR, 1);
-}
-
-/**
- * Sets the given engine data with an error status.
- *
- * @param output the engine data that will be returned by the service
- * @param msg a description for the error
  * @param severity the severity of the error, as a positive integer
  */
-inline void set_error(EngineData& output, const std::string& msg, int severity)
+inline void set_error(EngineData& output, const std::string& msg, int severity = 1)
 {
     output.set_description(msg);
     output.set_status(clara::EngineStatus::ERROR, severity);

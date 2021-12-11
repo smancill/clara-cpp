@@ -25,11 +25,14 @@
 #include "logging.hpp"
 
 
+static constexpr auto default_queue_size = 1024;
+
+
 static tp::ThreadPoolOptions thread_pool_options(int pool_size, int queue_size)
 {
     auto opts = tp::ThreadPoolOptions{};
-    opts.setThreadCount(static_cast<std::size_t>(pool_size));
-    opts.setQueueSize(static_cast<std::size_t>(queue_size));
+    opts.setThreadCount(pool_size);
+    opts.setQueueSize(queue_size);
     return opts;
 }
 
@@ -41,7 +44,7 @@ Service::Service(const Component& self,
                  const ServiceParameters& params)
   : Base{self, frontend}
   , loader_{params.engine_lib}
-  , thread_pool_{thread_pool_options(params.pool_size, 1024)}
+  , thread_pool_{thread_pool_options(params.pool_size, default_queue_size)}
   , sys_config_{std::make_shared<ServiceConfig>()}
   , report_{std::make_shared<ServiceReport>(name(), params,
                                             loader_->author(),

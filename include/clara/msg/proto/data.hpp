@@ -194,7 +194,7 @@ inline T parse_data(const Data& data)
 inline std::vector<std::uint8_t> serialize_data(const Data& data)
 {
     auto buffer = std::vector<std::uint8_t>(data.ByteSizeLong());
-    data.SerializeToArray(buffer.data(), buffer.size());
+    data.SerializeToArray(buffer.data(), static_cast<int>(buffer.size()));
     return buffer;
 }
 
@@ -210,7 +210,7 @@ inline std::vector<std::uint8_t> serialize_data(const Data& data)
 inline Data parse_data(const std::vector<std::uint8_t>& buffer)
 {
     auto xdata = Data{};
-    xdata.ParseFromArray(buffer.data(), buffer.size());
+    xdata.ParseFromArray(buffer.data(), static_cast<int>(buffer.size()));
     return xdata;
 }
 

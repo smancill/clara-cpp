@@ -88,13 +88,10 @@ public:
     template<typename T, typename V>
     Message(T&& topic, std::unique_ptr<proto::Meta>&& metadata, V&& data)
       : topic_{std::forward<T>(topic)}
-      , meta_{std::move(metadata)}
+      , meta_{metadata ? std::move(metadata)
+                       : throw std::invalid_argument{"null metadata"} }
       , data_{std::forward<V>(data)}
-    {
-        if (!meta_) {
-            throw std::invalid_argument{"null metadata"};
-        }
-    }
+    { }
 
     /**
      * Creates a new message with the given topic, data type and serialized
@@ -127,9 +124,11 @@ public:
 
     Message& operator=(const Message& other)
     {
-        topic_ = other.topic_;
-        meta_ = proto::copy_meta(*other.meta_);
-        data_ = other.data_;
+        if (this != &other) {
+            topic_ = other.topic_;
+            meta_ = proto::copy_meta(*other.meta_);
+            data_ = other.data_;
+        }
         return *this;
     }
 

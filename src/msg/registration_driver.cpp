@@ -47,16 +47,14 @@ namespace proto {
 bool CompareRegistration::operator()(const Registration& lhs,
                                      const Registration& rhs) const
 {
-    int l_port, l_owner;
-    int r_port, r_owner;
+    int l_port, l_owner, r_port, r_owner;  // NOLINT
     return make_tie(lhs, l_port, l_owner) < make_tie(rhs, r_port, r_owner);
 }
 
 
 bool operator==(const Registration& lhs, const Registration& rhs)
 {
-    int l_port, l_owner;
-    int r_port, r_owner;
+    int l_port, l_owner, r_port, r_owner;  // NOLINT
     return make_tie(lhs, l_port, l_owner) == make_tie(rhs, r_port, r_owner);
 }
 
@@ -153,10 +151,9 @@ Response::Response(const ResponseMsg& msg)
   , sender_{detail::to_string(msg[1])}
   , status_{detail::to_string(msg[2])}
 {
-    using ZFrame = const zmq::message_t;
-    std::for_each(msg.begin() + n_fields, msg.end(), [=](ZFrame& f) {
+    std::for_each(msg.begin() + n_fields, msg.end(), [=](const zmq::message_t& f) {
         auto reg = proto::Registration{};
-        reg.ParseFromArray(f.data(), f.size());
+        reg.ParseFromArray(f.data(), static_cast<int>(f.size()));
         data_.insert(reg);
     });
 }

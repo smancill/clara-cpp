@@ -80,10 +80,7 @@ ServiceEngine::ServiceEngine(const Component& self,
 }
 
 
-ServiceEngine::~ServiceEngine()
-{
-    // nop
-}
+ServiceEngine::~ServiceEngine() = default;
 
 
 void ServiceEngine::setup(msg::Message& msg)
@@ -191,7 +188,7 @@ EngineData ServiceEngine::execute_engine(EngineData& input)
 
 EngineData ServiceEngine::get_engine_data(msg::Message& msg)
 {
-    report_->add_bytes_recv(msg.data().size());
+    report_->add_bytes_recv(static_cast<std::int64_t>(msg.data().size()));
     return accessor_.deserialize(msg, input_types_);
 }
 
@@ -200,7 +197,7 @@ msg::Message ServiceEngine::put_engine_data(const EngineData& output,
                                             const msg::Topic& topic)
 {
     auto msg = accessor_.serialize(output, topic, output_types_);
-    report_->add_bytes_sent(msg.data().size());
+    report_->add_bytes_sent(static_cast<std::int64_t>(msg.data().size()));
     return msg;
 }
 
@@ -210,7 +207,7 @@ msg::Message ServiceEngine::put_engine_data(const EngineData& output,
 {
     auto topic = msg::Topic::raw(receiver);
     auto msg = accessor_.serialize(output, topic, output_types_);
-    report_->add_bytes_sent(msg.data().size());
+    report_->add_bytes_sent(static_cast<std::int64_t>(msg.data().size()));
     return msg;
 }
 
@@ -241,8 +238,8 @@ void ServiceEngine::parse_composition(const EngineData& input)
 }
 
 
-std::set<std::string> ServiceEngine::get_links(const EngineData&,
-                                               const EngineData&)
+std::set<std::string> ServiceEngine::get_links(const EngineData& /*input*/,
+                                               const EngineData& /*output*/)
 {
     return compiler_.outputs();
 }

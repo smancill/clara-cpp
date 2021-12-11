@@ -48,62 +48,37 @@ std::string make_name(const std::string& dpe,
 class Component
 {
 public:
-    static Component dpe(const msg::ProxyAddress& address)
+    template<typename A>
+    static Component dpe(A&& addr,
+                         const std::string& lang = constants::cpp_lang)
     {
-        return dpe(address, constants::cpp_lang);
-    }
-
-    static Component dpe(const msg::ProxyAddress& address, const std::string& lang)
-    {
-        auto name = util::make_name(address.host(), address.pub_port(), lang);
-        return Component{name, address, [](auto& n) {
-            return msg::Topic::build("dpe", n);
-        }};
+        auto cname = util::make_name(addr.host(), addr.pub_port(), lang);
+        auto topic = msg::Topic::build("dpe", cname);
+        return Component{std::move(cname), std::forward<A>(addr), std::move(topic)};
     }
 
     static Component container(const Component& dpe, const std::string& name)
     {
-        return Component{dpe, name, [](auto& n) {
-            return msg::Topic::build("container", n);
-        }};
+        auto cname = util::make_name(dpe.name(), name);
+        auto topic = msg::Topic::build("container", cname);
+        return Component{std::move(cname), dpe.addr_, std::move(topic)};
     }
 
     static Component service(const Component& container,
                              const std::string& name)
     {
-        return Component{container, name, [](auto& n) {
-            return msg::Topic::raw(n);
-        }};
+        auto cname = util::make_name(container.name(), name);
+        auto topic = msg::Topic::raw(cname);
+        return Component{std::move(cname), container.addr_, std::move(topic)};
     }
-
-
-    // static Component service()
-    // {
-
-    // }
 
 private:
-    template<typename F>
-    Component(const std::string& name,
-              const msg::ProxyAddress& addr,
-              F topic_gen)
-      : name_{name}
-      , addr_{addr}
-      , topic_{topic_gen(name_)}
-    {
-        // nop
-    }
-
-    template<typename F>
-    Component(const Component& parent,
-              const std::string& name,
-              F topic_gen)
-      : name_{util::make_name(parent.name(), name)}
-      , addr_{parent.addr()}
-      , topic_{topic_gen(name_)}
-    {
-        // nop
-    }
+    template<typename S, typename A, typename T>
+    Component(S&& name, A&& addr, T&& topic)
+      : name_{std::forward<S>(name)}
+      , addr_{std::forward<A>(addr)}
+      , topic_{std::forward<T>(topic)}
+    { }
 
 public:
     const std::string& name() const { return name_; }

@@ -77,13 +77,13 @@ struct Actor::Impl
 class ScopedSubscription final
 {
 public:
-    ScopedSubscription(detail::ProxyDriver& connection, const Topic& topic)
+    ScopedSubscription(detail::ProxyDriver& connection, Topic&& topic)
       : connection_{connection}
-      , topic_{topic}
+      , topic_{std::move(topic)}
       , poller_{connection_.sub_socket()}
     {
         connection_.subscribe(topic_);
-        util::sleep(10);
+        util::sleep(10);  // NOLINT
     }
 
     ScopedSubscription(const ScopedSubscription&) = delete;
@@ -162,7 +162,7 @@ Message Actor::sync_publish(ProxyConnection& connection,
     auto return_addr = detail::get_unique_replyto(actor_->id);
     msg.meta_->set_replyto(return_addr);
 
-    ScopedSubscription sub{*connection, Topic::raw(return_addr)};
+    ScopedSubscription sub{*connection, Topic::raw(std::move(return_addr))};
     connection->send(msg);
 
     const auto dt = 10;
@@ -215,8 +215,6 @@ void Actor::register_as_publisher(const RegAddress& addr,
     auto data = registration::create(actor_->name, description,
                                      proxy.host(), proxy.pub_port(),
                                      topic, true);
-    data.set_description(description);
-
     driver->add(data, true);
 }
 
@@ -237,8 +235,6 @@ void Actor::register_as_subscriber(const RegAddress& addr,
     auto data = registration::create(actor_->name, description,
                                      proxy.host(), proxy.sub_port(),
                                      topic, false);
-    data.set_description(description);
-
     driver->add(data, false);
 }
 

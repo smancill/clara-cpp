@@ -33,26 +33,25 @@
 
 namespace {
 
-const std::string CONF_ACTION = "action";
-const std::string CONF_FILENAME = "file";
+const std::string conf_action = "action";
+const std::string conf_filename = "file";
 
-const std::string CONF_ACTION_OPEN = "open";
-const std::string CONF_ACTION_CLOSE = "close";
+const std::string conf_action_open = "open";
+const std::string conf_action_close = "close";
 
-const std::string CONF_EVENTS_SKIP = "skip";
-const std::string CONF_EVENTS_MAX = "max";
+const std::string conf_events_skip = "skip";
+const std::string conf_events_max = "max";
 
-const std::string REQUEST_NEXT = "next";
-const std::string REQUEST_NEXT_REC = "next-rec";
-const std::string REQUEST_ORDER = "order";
-const std::string REQUEST_COUNT = "count";
+const std::string request_next = "next";
+const std::string request_next_rec = "next-rec";
+const std::string request_order = "order";
+const std::string request_count = "count";
 
-const std::string NO_NAME = "";
-const std::string NO_FILE = "No open file";
-const std::string END_OF_FILE = "End of file";
+const std::string no_file = "No open file";
+const std::string end_of_file = "End of file";
 
-const int EOF_NOT_FROM_WRITER = 0;
-const int EOF_WAITING_REC = -1;
+constexpr auto eof_not_from_writer = 0;
+constexpr auto eof_waiting_rec = -1;
 
 } // namespace
 
@@ -92,14 +91,14 @@ public:
     void reset();
 
 private:
-    std::string file_name_ = NO_NAME;
-    std::string open_error_ = NO_FILE;
+    std::string file_name_;
+    std::string open_error_ = no_file;
 
     int current_event_;
     int last_event_;
     int event_count_;
 
-    std::set<int> processing_events_;
+    std::set<long> processing_events_;
     int eof_request_count_;
 
 private:
@@ -132,13 +131,13 @@ EngineData EventReaderService::configure(EngineData& input)
     if (input.mime_type() == type::JSON) {
         try {
             auto data = parse_json(data_cast<std::string>(input));
-            auto action = get_string(data, CONF_ACTION);
-            if (action == CONF_ACTION_OPEN) {
+            auto action = get_string(data, conf_action);
+            if (action == conf_action_open) {
                 impl_->open_file(data);
-            } else if (action == CONF_ACTION_CLOSE) {
+            } else if (action == conf_action_close) {
                 impl_->close_file(data);
             } else {
-                std::cerr << name() << " config: invalid \"" << CONF_ACTION
+                std::cerr << name() << " config: invalid \"" << conf_action
                           << "\" value: \"" << action << "\"" << std::endl;
             }
         } catch (const bad_any_cast& e) {
@@ -163,7 +162,7 @@ void EventReaderService::Impl::open_file(const json11::Json& config_data)
         close_file();
     }
 
-    file_name_ = get_string(config_data, CONF_FILENAME);
+    file_name_ = get_string(config_data, conf_filename);
     std::cout << service_->name() << " request to open file " << file_name_
               << std::endl;
     try {
@@ -174,7 +173,7 @@ void EventReaderService::Impl::open_file(const json11::Json& config_data)
     } catch (const EventReaderError& e) {
         std::cerr << service_->name() << " could not open file " << e.what()
                   << std::endl;
-        file_name_ = NO_NAME;
+        file_name_.clear();
     }
 }
 
@@ -182,7 +181,7 @@ void EventReaderService::Impl::open_file(const json11::Json& config_data)
 void EventReaderService::Impl::set_limits(const json11::Json& config_data)
 {
     event_count_ = service_->read_event_count();
-    int skip_events = get_value(config_data, CONF_EVENTS_SKIP,
+    int skip_events = get_value(config_data, conf_events_skip,
                                 0, 0, event_count_);
     if (skip_events != 0) {
         std::cout << service_->name() << " config: skip first " << skip_events
@@ -191,7 +190,7 @@ void EventReaderService::Impl::set_limits(const json11::Json& config_data)
     current_event_ = skip_events;
 
     int rem_events = event_count_ - skip_events;
-    int max_events = get_value(config_data, CONF_EVENTS_MAX,
+    int max_events = get_value(config_data, conf_events_max,
                                rem_events, 0, rem_events);
     if (max_events != rem_events) {
         std::cout << service_->name() << " config: read first " << max_events
@@ -230,7 +229,7 @@ void EventReaderService::Impl::close_file(const json11::Json& config_data)
 {
     std::unique_lock<std::mutex> lock{mutex_};
 
-    file_name_ = get_string(config_data, CONF_FILENAME);
+    file_name_ = get_string(config_data, conf_filename);
     std::cout << service_->name() << " request to close file " << file_name_
               << std::endl;
     if (has_file()) {
@@ -239,8 +238,8 @@ void EventReaderService::Impl::close_file(const json11::Json& config_data)
         std::cerr << service_->name() << " file " << file_name_ << " not open"
                   << std::endl;
     }
-    open_error_ = NO_FILE;
-    file_name_ = NO_NAME;
+    open_error_ = no_file;
+    file_name_.clear();
 }
 
 
@@ -258,11 +257,11 @@ EngineData EventReaderService::execute(EngineData& input)
     const auto& dt = input.mime_type();
     if (dt == type::STRING) {
         const auto& request = data_cast<std::string>(input);
-        if (request == REQUEST_NEXT || request == REQUEST_NEXT_REC) {
+        if (request == request_next || request == request_next_rec) {
             impl_->get_next_event(input, output);
-        } else if (request == REQUEST_ORDER) {
+        } else if (request == request_order) {
             impl_->get_file_byte_order(output);
-        } else if (request == REQUEST_COUNT) {
+        } else if (request == request_count) {
             impl_->get_event_count(output);
         } else {
             util::set_error(output, "Wrong input data: " + request);
@@ -277,7 +276,7 @@ EngineData EventReaderService::execute(EngineData& input)
 
 inline bool EventReaderService::Impl::is_rec_request(const EngineData& input)
 {
-    return data_cast<std::string>(input) == REQUEST_NEXT_REC;
+    return data_cast<std::string>(input) == request_next_rec;
 }
 
 
@@ -295,17 +294,17 @@ void EventReaderService::Impl::get_next_event(const EngineData& input,
     } else if (current_event_ < last_event_) {
         return_next_event(output);
     } else {
-        util::set_error(output, END_OF_FILE, 1);
+        util::set_error(output, end_of_file, 1);
         if (from_rec) {
             if (processing_events_.empty()) {
                 eof_request_count_++;
-                util::set_error(output, END_OF_FILE, eof_request_count_ + 1);
+                util::set_error(output, end_of_file, eof_request_count_ + 1);
                 output.set_data(type::SFIXED32, eof_request_count_);
             } else {
-                output.set_data(type::SFIXED32, EOF_WAITING_REC);
+                output.set_data(type::SFIXED32, eof_waiting_rec);
             }
         } else {
-            output.set_data(type::SFIXED32, EOF_NOT_FROM_WRITER);
+            output.set_data(type::SFIXED32, eof_not_from_writer);
         }
     }
 }

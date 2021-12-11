@@ -31,7 +31,7 @@
 namespace clara {
 
 EngineData::EngineData()
-  : data_{}
+  : data_{}  // NOLINT
   , meta_{std::make_unique<Meta>()}
 {
     // nop
@@ -56,8 +56,10 @@ EngineData::EngineData(const EngineData& rhs)
 
 EngineData& EngineData::operator=(const EngineData& rhs)
 {
-    data_ = rhs.data_;
-    meta_ = msg::proto::copy_meta(*rhs.meta_);
+    if (this != &rhs) {
+        data_ = rhs.data_;
+        meta_ = msg::proto::copy_meta(*rhs.meta_);
+    }
     return *this;
 }
 
@@ -117,12 +119,6 @@ EngineStatus EngineData::status() const
 int EngineData::status_severity() const
 {
     return meta_->severityid();
-}
-
-
-void EngineData::set_status(EngineStatus status)
-{
-    set_status(status, 1);
 }
 
 

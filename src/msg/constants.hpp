@@ -26,6 +26,7 @@
 
 namespace clara::msg::constants {
 
+// clang-format off
 inline const std::string success = "success";
 
 inline const std::string register_publisher = "registerPublisher";
@@ -38,14 +39,15 @@ inline const std::string remove_all_registration = "removeAllRegistration";
 inline const std::string find_publisher = "findPublisher";
 inline const std::string find_subscriber = "findSubscriber";
 
-constexpr int register_request_timeout = 3000;
-constexpr int remove_request_timeout = 3000;
-constexpr int find_request_timeout = 3000;
+constexpr auto register_request_timeout = 3000;
+constexpr auto remove_request_timeout = 3000;
+constexpr auto find_request_timeout = 3000;
 
 inline const std::string ctrl_topic = "clara:msg:control";
 inline const std::string ctrl_connect = "pub";
 inline const std::string ctrl_subscribe = "sub";
 inline const std::string ctrl_reply = "rep";
+// clang-format on
 
 } // end namespace clara::msg::constants
 

@@ -94,9 +94,7 @@ public:
 
     int status_severity() const;
 
-    void set_status(EngineStatus status);
-
-    void set_status(EngineStatus status, int severity);
+    void set_status(EngineStatus status, int severity = 1);
 
 public:
     const std::string& engine_state() const;

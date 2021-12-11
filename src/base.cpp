@@ -50,11 +50,7 @@ Base::Base(const Component& self, const Component& frontend)
     // nop
 }
 
-
-Base::~Base()
-{
-    // nothing
-}
+Base::~Base() = default;
 
 
 void Base::send(const Component& component, const std::string& data)

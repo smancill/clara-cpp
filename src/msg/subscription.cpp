@@ -54,7 +54,6 @@ Subscription::Subscription(const Topic& topic,
   : topic_{topic}
   , connection_{std::move(connection)}
   , handler_{std::move(handler)}
-  , thread_{}
   , is_alive_{false}
 {
     connection_->subscribe(topic_);

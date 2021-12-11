@@ -88,7 +88,7 @@ int get_int(const json11::Json& obj, const std::string& key)
 }
 
 
-int get_double(const json11::Json& obj, const std::string& key)
+double get_double(const json11::Json& obj, const std::string& key)
 {
     const auto& val = get_value(obj, key);
     if (val.type() == json11::Json::Type::NUMBER) {
@@ -124,7 +124,7 @@ const json11::Json& get_object(const json11::Json& obj, const std::string& key)
     if (val.type() == json11::Json::Type::OBJECT) {
         return val;
     }
-    throw JsonError{"JSON key \"" + key + "\" is not an array"};
+    throw JsonError{"JSON key \"" + key + "\" is not an object"};
 }
 
 

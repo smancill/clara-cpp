@@ -33,11 +33,19 @@
 
 namespace {
 
+template<typename T>
+using IntDist = std::uniform_int_distribution<T>;
+
+// the request IDs support overflow
+using u32_t = std::uint_fast32_t;
+using atomic_u32_t = std::atomic_uint_fast32_t;
+
+
 class RandomGenerator
 {
 public:
     template<typename D>
-    auto operator()(D& dist)
+    auto operator()(D&& dist)
     {
         std::lock_guard<std::mutex> guard{mtx_};
         return dist(rng_);
@@ -46,20 +54,18 @@ public:
 private:
     std::mutex mtx_;
 
-    std::mt19937_64 rng_{[]{
-        std::random_device rd;
-        return rd();
-    }()};
+    std::mt19937_64 rng_{std::random_device{}()};
 } rng;
 
 
 // language identifier (Java:1, C++:2, Python:3)
 constexpr auto cpp_id = 2;
 
-std::atomic_uint_fast32_t rt_seq{[]{
-    auto d = std::uniform_int_distribution<std::uint_fast32_t>{0, 999'999};
-    return rng(d);
-}()};
+constexpr auto rt_seq_max = 1'000'000;
+constexpr auto rt_seq_base = cpp_id * rt_seq_max;
+constexpr auto rt_seq_size = 7;
+
+auto rt_seq = atomic_u32_t{rng(IntDist<u32_t>{0, rt_seq_max - 1})};
 
 }
 
@@ -95,12 +101,14 @@ RawMessage::RawMessage(zmq::socket_t& socket)
 // replyTo generation: format is "ret:<id>:2[dddddd]"
 std::string get_unique_replyto(const std::string& subject)
 {
-    static constexpr auto rt_seq_size = 1'000'000;
-    static constexpr auto rt_seq_base = cpp_id * rt_seq_size;
+    constexpr auto rt_fixed_size = 4 + 1 + rt_seq_size;
 
-    auto id = ++rt_seq % rt_seq_size + rt_seq_base;
+    auto id = ++rt_seq % rt_seq_max + rt_seq_base;
 
-    return "ret:" + subject + ":" + std::to_string(id);
+    auto rt = std::string{};
+    rt.reserve(rt_fixed_size + subject.size());
+    rt.append("ret:").append(subject).append(":").append(std::to_string(id));
+    return rt;
 }
 
 
@@ -113,11 +121,15 @@ void set_unique_replyto(std::uint_fast32_t value)
 // actor unique ID: format is 8 digits: [dddddddd]
 std::string encode_identity(const std::string& address, const std::string& name)
 {
-    auto dist = std::uniform_int_distribution<std::uint_fast8_t>{0, 99};
+    constexpr auto id_size = 8;
+    constexpr auto max_suffix = 99;
+
+    static auto dist = IntDist<std::int_fast8_t>{0, max_suffix};
+
     auto id = address + "#" + name + "#" + std::to_string(rng(dist));
     auto ss = std::stringstream{};
     ss << std::hex << std::hash<std::string>{}(id);
-    return ss.str().substr(0, 8);
+    return ss.str().substr(0, id_size);
 }
 
 
@@ -126,10 +138,10 @@ std::string get_random_id()
 {
     static const auto id_prefix = []{
         auto ip_hash = std::hash<std::string>{}(util::localhost());
-        return cpp_id * 100'000'000 + (ip_hash % 1'000) * 100'000;
+        return cpp_id * 100'000'000L + (ip_hash % 1'000) * 100'000;
     }();
 
-    auto id_dist = std::uniform_int_distribution<std::uint_fast32_t>{0, 99'999};
+    static auto id_dist = IntDist<std::int_fast32_t>{0, 99'999};
 
     return std::to_string(id_prefix + rng(id_dist));
 }

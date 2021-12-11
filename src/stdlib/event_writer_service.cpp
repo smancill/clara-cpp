@@ -33,19 +33,18 @@
 
 namespace {
 
-const std::string CONF_ACTION = "action";
-const std::string CONF_FILENAME = "file";
-const std::string CONF_ORDER = "order";
+const std::string conf_action = "action";
+const std::string conf_filename = "file";
+const std::string conf_order = "order";
 
-const std::string CONF_ACTION_OPEN = "open";
-const std::string CONF_ACTION_CLOSE = "close";
-const std::string CONF_ACTION_SKIP = "skip";
+const std::string conf_action_open = "open";
+const std::string conf_action_close = "close";
+const std::string conf_action_skip = "skip";
 
-const std::string OUTPUT_NEXT = "next-rec";
-const std::string EVENT_SKIP = "skip";
+const std::string output_next = "next-rec";
+const std::string event_skip = "skip";
 
-const std::string NO_NAME = "";
-const std::string NO_FILE = "No open file";
+const std::string no_file = "No open file";
 
 } // namespace
 
@@ -75,14 +74,12 @@ public:
     void reset();
 
 private:
-    std::string file_name_ = NO_NAME;
-    std::string open_error_ = NO_FILE;
+    std::string file_name_;
+    std::string open_error_ = no_file;
 
-public:
     bool skip_events_ = false;
     int event_counter_ = 0;
 
-private:
     EventWriterService* service_;
 
     std::mutex mutex_;
@@ -112,15 +109,15 @@ EngineData EventWriterService::configure(EngineData& input)
     if (input.mime_type() == type::JSON) {
         try {
             auto data = parse_json(input);
-            auto action = get_string(data, CONF_ACTION);
-            if (action == CONF_ACTION_OPEN) {
+            auto action = get_string(data, conf_action);
+            if (action == conf_action_open) {
                 impl_->open_file(data);
-            } else if (action == CONF_ACTION_CLOSE) {
+            } else if (action == conf_action_close) {
                 impl_->close_file(data);
-            } else if (action == CONF_ACTION_SKIP) {
+            } else if (action == conf_action_skip) {
                 impl_->skip_all();
             } else {
-                std::cerr << name() << " config: invalid \"" << CONF_ACTION
+                std::cerr << name() << " config: invalid \"" << conf_action
                           << "\" value: \"" << action << "\"" << std::endl;
             }
         } catch (const bad_any_cast& e) {
@@ -145,7 +142,7 @@ void EventWriterService::Impl::open_file(const json11::Json& config_data)
         close_file();
     }
 
-    file_name_ = get_string(config_data, CONF_FILENAME);
+    file_name_ = get_string(config_data, conf_filename);
     std::cout << service_->name() << " request to open file " << file_name_
               << std::endl;
     try {
@@ -156,7 +153,7 @@ void EventWriterService::Impl::open_file(const json11::Json& config_data)
     } catch (const EventWriterError& e) {
         std::cerr << service_->name() << " could not open file " << e.what()
                   << std::endl;
-        file_name_ = NO_NAME;
+        file_name_.clear();
         event_counter_ = 0;
     }
 }
@@ -166,7 +163,7 @@ void EventWriterService::Impl::close_file(const json11::Json& config_data)
 {
     std::unique_lock<std::mutex> lock{mutex_};
 
-    file_name_ = get_string(config_data, CONF_FILENAME);
+    file_name_ = get_string(config_data, conf_filename);
     std::cout << service_->name() << " request to close file " << file_name_
               << std::endl;
     if (has_file()) {
@@ -175,8 +172,8 @@ void EventWriterService::Impl::close_file(const json11::Json& config_data)
         std::cerr << service_->name() << " file " << file_name_ << " not open"
                   << std::endl;
     }
-    open_error_ = NO_FILE;
-    file_name_ = NO_NAME;
+    open_error_ = no_file;
+    file_name_.clear();
     event_counter_ = 0;
 }
 
@@ -220,8 +217,8 @@ EngineData EventWriterService::execute(EngineData& input)
 void EventWriterService::Impl::write_event(const EngineData& input,
                                            EngineData& output)
 {
-    if (skip_events_ || input.description() == EVENT_SKIP) {
-        output.set_data(type::STRING, OUTPUT_NEXT);
+    if (skip_events_ || input.description() == event_skip) {
+        output.set_data(type::STRING, output_next);
         output.set_description("event skipped");
         return;
     }
@@ -231,7 +228,7 @@ void EventWriterService::Impl::write_event(const EngineData& input,
         try {
             service_->write_event(input.data());
             event_counter_++;
-            output.set_data(type::STRING, OUTPUT_NEXT);
+            output.set_data(type::STRING, output_next);
             output.set_description("event saved");
         } catch (const EventWriterError& e) {
             auto msg = std::ostringstream{};
@@ -245,7 +242,7 @@ void EventWriterService::Impl::write_event(const EngineData& input,
 }
 
 
-EngineData EventWriterService::execute_group(const std::vector<EngineData>&)
+EngineData EventWriterService::execute_group(const std::vector<EngineData>& /*inputs*/)
 {
     return {};
 }
@@ -287,8 +284,8 @@ void EventWriterService::Impl::reset()
 EventWriterService::Endian
 EventWriterService::parse_byte_order(const json11::Json& opts)
 {
-    if (has_key(opts, CONF_ORDER)) {
-        auto byte_order = get_string(opts, CONF_ORDER);
+    if (has_key(opts, conf_order)) {
+        auto byte_order = get_string(opts, conf_order);
         if (byte_order == "BIG_ENDIAN") {
             return Endian::Big;
         }

@@ -40,14 +40,14 @@ class EventWriterService : public Engine
 {
 public:
     EventWriterService();
-    virtual ~EventWriterService();
+     ~EventWriterService() override;
 
 public:
-    EngineData configure(EngineData&) override;
+    EngineData configure(EngineData& input) override;
 
     EngineData execute(EngineData& input) override;
 
-    EngineData execute_group(const std::vector<EngineData>&) override;
+    EngineData execute_group(const std::vector<EngineData>& inputs) override;
 
 protected:
     /**

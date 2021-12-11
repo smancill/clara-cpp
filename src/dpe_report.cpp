@@ -31,8 +31,8 @@
 
 static std::string get_clara_home()
 {
-    auto* clara_home = std::getenv("CLARA_HOME");
-    if (!clara_home) {
+    auto* clara_home = std::getenv("CLARA_HOME");  // NOLINT(concurrency-mt-unsafe): setenv is never used
+    if (clara_home == nullptr) {
         throw std::runtime_error{"Missing CLARA_HOME env variable"};
     }
     return {clara_home};

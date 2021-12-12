@@ -57,15 +57,6 @@ TEST(Message, PassingNullMetadataThrows)
 }
 
 
-TEST(Message, PassingNullMimeTypeThrows)
-{
-    auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
-
-    EXPECT_EXCEPTION(cm::Message(topic, nullptr, data),
-                     std::invalid_argument, "null mime-type");
-}
-
-
 TEST(Message, EqualMessages)
 {
     auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};

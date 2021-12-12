@@ -35,9 +35,11 @@ namespace util {
  * @param msg a description for the error
  * @param severity the severity of the error, as a positive integer
  */
-inline void set_error(EngineData& output, const std::string& msg, int severity = 1)
+template<typename S,
+         typename = std::enable_if_t<std::is_constructible_v<std::string, S>>>
+void set_error(EngineData& output, S&& msg, int severity = 1)
 {
-    output.set_description(msg);
+    output.set_description(std::forward<S>(msg));
     output.set_status(clara::EngineStatus::ERROR, severity);
 }
 

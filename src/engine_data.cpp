@@ -82,6 +82,12 @@ void EngineData::set_mime_type(const std::string& mime_type)
 }
 
 
+void EngineData::set_mime_type(std::string&& mime_type)
+{
+    meta_->set_datatype(std::move(mime_type));
+}
+
+
 void EngineData::set_mime_type(const EngineDataType& data_type)
 {
     meta_->set_datatype(data_type.mime_type());
@@ -97,6 +103,12 @@ const std::string& EngineData::description() const
 void EngineData::set_description(const std::string& description)
 {
     meta_->set_description(description);
+}
+
+
+void EngineData::set_description(std::string&& description)
+{
+    meta_->set_description(std::move(description));
 }
 
 
@@ -150,6 +162,12 @@ const std::string& EngineData::engine_state() const
 void EngineData::set_engine_state(const std::string& state)
 {
     meta_->set_senderstate(state);
+}
+
+
+void EngineData::set_engine_state(std::string&& state)
+{
+    meta_->set_senderstate(std::move(state));
 }
 
 

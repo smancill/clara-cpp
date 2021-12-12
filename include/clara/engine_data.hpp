@@ -78,6 +78,7 @@ public:
 
 private:
     void set_mime_type(const std::string& mime_type);
+    void set_mime_type(std::string&& mime_type);
     void set_mime_type(const EngineDataType& data_type);
 
     template<typename T>
@@ -89,6 +90,7 @@ public:
     const std::string& description() const;
 
     void set_description(const std::string& description);
+    void set_description(std::string&& description);
 
     EngineStatus status() const;
 
@@ -100,6 +102,7 @@ public:
     const std::string& engine_state() const;
 
     void set_engine_state(const std::string& state);
+    void set_engine_state(std::string&& state);
 
     const std::string& engine_name() const;
 

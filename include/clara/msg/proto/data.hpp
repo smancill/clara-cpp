@@ -68,6 +68,8 @@ inline void set_value(Data& data, double value)
         { data.set_double_(value); }
 inline void set_value(Data& data, const std::string& value)
         { data.set_string(value); }
+inline void set_value(Data& data, std::string&& value)
+        { data.set_string(std::move(value)); }
 inline void set_value(Data& data, const char* value)
         { data.set_string(value); }
 

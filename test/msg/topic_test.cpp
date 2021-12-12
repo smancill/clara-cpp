@@ -1,166 +1,162 @@
 #include <clara/msg/topic.hpp>
 
+#include "helper/utils.hpp"
+
 #include <gmock/gmock.h>
+
+#include <stdexcept>
+#include <string>
 
 using namespace testing;
 
 using clara::msg::Topic;
-using TopicQuery = std::string (Topic::*)() const;
+
+using TopicStr = std::string;
+using TopicArgs = std::vector<std::string>;
 
 
-template<typename S>
-inline void assert_topic(const Topic& t, const S& s)
+auto build(const TopicArgs& args) -> TopicStr
 {
-    EXPECT_THAT(t.str(), StrEq(s));
+    switch (args.size()) {
+        case 1: return Topic::build(args[0]).str();
+        case 2: return Topic::build(args[0], args[1]).str();
+        case 3: return Topic::build(args[0], args[1], args[2]).str();
+        default: throw std::logic_error{"invalid number of params"};
+    }
 }
 
 
-template<typename T, typename S>
-inline void assert_call(const T& topic, TopicQuery fun, const S& part)
+using TopicBuilderParam = std::pair<TopicArgs, TopicStr>;
+PARAMETERIZED_SUITE(TopicBuildSuite, TopicBuilderParam)
 {
-    EXPECT_THAT((Topic::raw(topic).*fun)(), StrEq(part));
-}
-
-
-template<typename T, typename S>
-inline void assert_parent(const T& t1, const S& t2)
-{
-    EXPECT_TRUE(Topic::raw(t1).is_parent(Topic::raw(t2)));
-}
-
-template<typename T, typename S>
-inline void assert_not_parent(const T& t1, const S& t2)
-{
-    EXPECT_FALSE(Topic::raw(t1).is_parent(Topic::raw(t2)));
-}
-
-
-TEST(Topic, BuildWithValidValues)
-{
-    assert_topic(Topic::build("rock"), "rock");
-    assert_topic(Topic::build("rock", "metal"), "rock:metal");
-    assert_topic(Topic::build("rock", "metal", "metallica"), "rock:metal:metallica");
-}
-
-
-TEST(Topic, BuildWithExtendedTopic)
-{
-    assert_topic(Topic::build("rock", "metal", "metallica:lars:*"),
-                 "rock:metal:metallica:lars");
-    assert_topic(Topic::build("rock", "metal", "metallica:lars:james"),
-                 "rock:metal:metallica:lars:james");
-}
-
-
-TEST(Topic, BuildWithValidUndefinedValues)
-{
-    assert_topic(Topic::build("rock", "*"), "rock");
-    assert_topic(Topic::build("rock", "*", "*"), "rock");
-    assert_topic(Topic::build("rock", "metal", "*"), "rock:metal");
-}
-
-
-TEST(Topic, BuildWithInvalidUndefinedValues)
-{
-    auto check_exception = [](auto... params) {
-        ASSERT_THROW(Topic::build(params...), std::invalid_argument);
+    return {
+        // basic
+        {{"rock"}, {"rock"}},
+        {{"rock", "metal"}, {"rock:metal"}},
+        {{"rock", "metal", "metallica"}, {"rock:metal:metallica"}},
+        // extended parts
+        {{"rock", "metal", "metallica:lars:*"}, {"rock:metal:metallica:lars"}},
+        {{"rock", "metal", "metallica:lars:james"}, {"rock:metal:metallica:lars:james"}},
+        // undefined values
+        {{"rock", "*"}, {"rock"}},
+        {{"rock", "*", "*"}, {"rock"}},
+        {{"rock", "metal", "*"}, {"rock:metal"}},
     };
-    check_exception("*");
-    check_exception("*", "master");
-    check_exception("rock", "*", "metallica");
+}
+
+TEST_P(TopicBuildSuite, BuildTopicFromParts)
+{
+    const auto& [args, expected] = GetParam();
+
+    ASSERT_THAT(build(args), Eq(expected));
 }
 
 
-TEST(Topic, WrapRawTopic)
+PARAMETERIZED_SUITE(TopicBuildErrorSuite, TopicArgs)
 {
-    auto assert_raw = [](auto t) {
-        assert_topic(Topic::raw(t), t);
+    return {
+        {"*"},
+        {"*", "master"},
+        {"rock", "*", "metallica"},
     };
-    assert_raw("rock");
-    assert_raw("rock:metal");
-    assert_raw("rock:metal:metallica");
-    assert_raw("rock:metal:metallica:lars:james");
+}
+
+TEST_P(TopicBuildErrorSuite, BuildTopicFromPartsThrowsOnInvalidArgs)
+{
+    const auto& args = GetParam();
+
+    ASSERT_THROW(build(args), std::invalid_argument);
 }
 
 
-TEST(Topic, GetDomain)
+using TopicRawParam = std::pair<TopicStr, TopicStr>;
+PARAMETERIZED_SUITE(TopicWrapSuite, TopicRawParam)
 {
-    auto assert_domain = [](auto t) {
-        assert_call(t, &Topic::domain, "rock");
+    return {
+        {{"rock"}, {"rock"}},
+        {{"rock:metal"}, {"rock:metal"}},
+        {{"rock:metal:metallica"}, {"rock:metal:metallica"}},
+        {{"rock:metal:metallica:lars:james"}, {"rock:metal:metallica:lars:james"}},
     };
-    assert_domain("rock");
-    assert_domain("rock:metal");
-    assert_domain("rock:metal:metallica");
-    assert_domain("rock:metal:metallica:lars");
+}
+
+TEST_P(TopicWrapSuite, BuildTopicFromRawString)
+{
+    const auto& [arg, expected] = GetParam();
+
+    ASSERT_THAT(Topic::raw(arg).str(), StrEq(expected));
 }
 
 
-TEST(Topic, GetSubject)
+using TopicPartsParam = std::pair<TopicStr, TopicArgs>;
+PARAMETERIZED_SUITE(TopicPartsSuite, TopicPartsParam)
 {
-    auto assert_subject = [](auto t, auto s) {
-        assert_call(t, &Topic::subject, s);
+    return {
+        {{"rock"}, {"rock", Topic::ANY, Topic::ANY}},
+        {{"rock:metal"}, {"rock", "metal", Topic::ANY}},
+        {{"rock:metal:metallica"}, {"rock", "metal", "metallica"}},
+        {{"rock:metal:metallica:lars"}, {"rock", "metal", "metallica:lars"}},
     };
-    assert_subject("rock", Topic::ANY);
-    assert_subject("rock:metal", "metal");
-    assert_subject("rock:metal:metallica", "metal");
-    assert_subject("rock:metal:metallica:lars", "metal");
+}
+
+TEST_P(TopicPartsSuite, GetTopicParts)
+{
+    const auto& [arg, expected] = GetParam();
+
+    auto topic = Topic::raw(arg);
+
+    EXPECT_THAT(topic.domain(), StrEq(expected[0]));
+    EXPECT_THAT(topic.subject(), StrEq(expected[1]));
+    EXPECT_THAT(topic.type(), StrEq(expected[2]));
 }
 
 
-TEST(Topic, GetType)
+using TopicParentParam = std::tuple<TopicStr, TopicStr, bool>;
+PARAMETERIZED_SUITE(TopicParentSuite, TopicParentParam)
 {
-    auto assert_type = [](auto t, auto s) {
-        assert_call(t, &Topic::type, s);
+    return {
+        {{"rock"}, {"rock"}, true},
+        {{"rock"}, {"rock:metal"}, true},
+        {{"rock"}, {"rock:metal:slayer"}, true},
+
+        {{"rock"}, {"movies"}, false},
+        {{"rock"}, {"movies:classic"}, false},
+        {{"rock"}, {"movies:classic:casablanca"}, false},
+
+        {{"rock:metal"}, {"rock:metal"}, true},
+        {{"rock:metal"}, {"rock:metal:metallica"}, true},
+
+        {{"rock:metal"}, {"rock"}, false},
+        {{"rock:metal"}, {"rock:alternative"}, false},
+        {{"rock:metal"}, {"rock:alternative:nirvana"}, false},
+
+        {{"rock:metal"}, {"movies"}, false},
+        {{"rock:metal"}, {"movies:thriller"}, false},
+        {{"rock:metal"}, {"movies:thriller:shark"}, false},
+
+        {{"rock:metal:metallica"}, {"rock:metal:metallica"}, true},
+
+        {{"rock:metal:metallica"}, {"rock"}, false},
+
+        {{"rock:metal:metallica"}, {"rock:metal"}, false},
+        {{"rock:metal:metallica"}, {"rock:metal:slayer"}, false},
+
+        {{"rock:metal:metallica"}, {"rock:alternative"}, false},
+        {{"rock:metal:metallica"}, {"rock:alternative:nirvana"}, false},
+
+        {{"rock:metal:metallica"}, {"movies"}, false},
+        {{"rock:metal:metallica"}, {"movies:thriller"}, false},
+        {{"rock:metal:metallica"}, {"movies:thriller:shark"}, false},
     };
-    assert_type("rock", Topic::ANY);
-    assert_type("rock:metal", Topic::ANY);
-    assert_type("rock:metal:metallica", "metallica");
-    assert_type("rock:metal:metallica:lars", "metallica:lars");
 }
 
-
-TEST(Topic, IsParentCompareDomain)
+TEST_P(TopicParentSuite, IsParentTopic)
 {
-    assert_parent("rock", "rock");
-    assert_parent("rock", "rock:metal");
-    assert_parent("rock", "rock:metal:slayer");
+    const auto& [lhs, rhs, expected] = GetParam();
+    auto topic = Topic::raw(lhs);
+    auto other = Topic::raw(rhs);
 
-    assert_not_parent("rock", "movies");
-    assert_not_parent("rock", "movies:classic");
-    assert_not_parent("rock", "movies:classic:casablanca");
-}
-
-
-TEST(Topic, IsParentCompareSubject)
-{
-    assert_parent("rock:metal", "rock:metal");
-    assert_parent("rock:metal", "rock:metal:metallica");
-
-    assert_not_parent("rock:metal", "rock");
-    assert_not_parent("rock:metal", "rock:alternative");
-    assert_not_parent("rock:metal", "rock:alternative:nirvana");
-
-    assert_not_parent("rock:metal", "movies");
-    assert_not_parent("rock:metal", "movies:thriller");
-    assert_not_parent("rock:metal", "movies:thriller:shark");
-}
-
-
-TEST(Topic, IsParentCompareType)
-{
-    assert_parent("rock:metal:metallica", "rock:metal:metallica");
-
-    assert_not_parent("rock:metal:metallica", "rock");
-
-    assert_not_parent("rock:metal:metallica", "rock:metal");
-    assert_not_parent("rock:metal:metallica", "rock:metal:slayer");
-
-    assert_not_parent("rock:metal:metallica", "rock:alternative");
-    assert_not_parent("rock:metal:metallica", "rock:alternative:nirvana");
-
-    assert_not_parent("rock:metal:metallica", "movies");
-    assert_not_parent("rock:metal:metallica", "movies:thriller");
-    assert_not_parent("rock:metal:metallica", "movies:thriller:shark");
+    ASSERT_THAT(topic.is_parent(other), Eq(expected));
 }
 
 

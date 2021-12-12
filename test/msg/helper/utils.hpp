@@ -52,6 +52,19 @@ private:
         ASSERT_THAT(std::string{e.what()}, StrEq(expected_message));           \
     }
 
+
+#define PARAMETERIZED_SUITE(SuiteName, ParamType)                              \
+class SuiteName : public TestWithParam<ParamType> { };                         \
+                                                                               \
+std::vector<ParamType> SuiteName ## _params();                                 \
+                                                                               \
+INSTANTIATE_TEST_SUITE_P(                                                      \
+        TopicParams,                                                           \
+        SuiteName,                                                             \
+        ValuesIn(SuiteName ## _params()));                                     \
+                                                                               \
+std::vector<ParamType> SuiteName ## _params()                                  \
+
 }
 
 #endif

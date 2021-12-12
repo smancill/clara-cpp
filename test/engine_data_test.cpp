@@ -32,11 +32,11 @@ TEST(EngineData, ReadFromMessage)
     EXPECT_THAT(d.status(), Eq(clara::EngineStatus::INFO));
     EXPECT_THAT(d.status_severity(), Eq(2));
 
-    EXPECT_THAT(d.engine_name(), Eq("host/cont/service"));
-    EXPECT_THAT(d.engine_version(), Eq("2.0"));
+    EXPECT_THAT(d.engine_name(), StrEq("host/cont/service"));
+    EXPECT_THAT(d.engine_version(), StrEq("2.0"));
 
     EXPECT_THAT(d.communication_id(), Eq(2000));
-    EXPECT_THAT(d.composition(), Eq("composition string"));
+    EXPECT_THAT(d.composition(), StrEq("composition string"));
     EXPECT_THAT(d.execution_time(), Eq(24500));
 }
 
@@ -80,7 +80,7 @@ TEST(EngineData, CreateFromString)
 
     d.set_data(clara::type::STRING, s);
 
-    EXPECT_THAT(clara::data_cast<std::string>(d), Eq("Ash nazg durbatulûk"));
+    EXPECT_THAT(clara::data_cast<std::string>(d), StrEq("Ash nazg durbatulûk"));
 }
 
 
@@ -90,7 +90,7 @@ TEST(EngineData, CreateFromStringLiteral)
 
     d.set_data(clara::type::STRING, "Ash nazg durbatulûk");
 
-    EXPECT_THAT(clara::data_cast<std::string>(d), Eq("Ash nazg durbatulûk"));
+    EXPECT_THAT(clara::data_cast<std::string>(d), StrEq("Ash nazg durbatulûk"));
 }
 
 
@@ -129,10 +129,10 @@ TEST(EngineData, CopyConstruction)
     auto c = d;
 
     EXPECT_THAT(clara::data_cast<std::vector<std::int32_t>>(d), Eq(v));
-    EXPECT_THAT(d.description(), Eq("numbers"));
+    EXPECT_THAT(d.description(), StrEq("numbers"));
 
     EXPECT_THAT(clara::data_cast<std::vector<std::int32_t>>(c), Eq(v));
-    EXPECT_THAT(c.description(), Eq("numbers"));
+    EXPECT_THAT(c.description(), StrEq("numbers"));
 }
 
 
@@ -148,7 +148,7 @@ TEST(EngineData, MoveConstruction)
     auto c = std::move(d);
 
     EXPECT_THAT(clara::data_cast<decltype(v)>(c), Eq(v));
-    EXPECT_THAT(c.description(), Eq("numbers"));
+    EXPECT_THAT(c.description(), StrEq("numbers"));
 
     EXPECT_THAT(e.view_meta(d), Eq(nullptr));
 }
@@ -177,6 +177,7 @@ TEST(EngineData, GetDataByReference)
     a.value = 1;
 
     auto& b = clara::data_cast<A>(d);
+
     EXPECT_THAT(b.value, Eq(1));
 }
 
@@ -187,7 +188,7 @@ TEST(EngineData, SetDataDescription)
 
     d.set_description("data description");
 
-    EXPECT_THAT(d.description(), Eq("data description"));
+    EXPECT_THAT(d.description(), StrEq("data description"));
 }
 
 
@@ -213,7 +214,7 @@ TEST(EngineData, SetEngineState)
 
     d.set_engine_state("all clear");
 
-    EXPECT_THAT(d.engine_state(), Eq("all clear"));
+    EXPECT_THAT(d.engine_state(), StrEq("all clear"));
 }
 
 

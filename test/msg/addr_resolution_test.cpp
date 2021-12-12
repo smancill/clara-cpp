@@ -4,6 +4,7 @@
 
 namespace util = clara::msg::util;
 
+
 int main(int argc, char** argv)
 {
     std::cout << "-- All local addresses" << std::endl;

@@ -8,13 +8,12 @@ namespace util = clara::util;
 using namespace std::string_literals;
 using namespace testing;
 
-const auto topic = cm::Topic::build("topic");
-
 
 cm::Message request(const std::string& data)
 {
+    auto topic = cm::Topic::raw("topic");
     auto bytes = std::vector<std::uint8_t>{data.begin(), data.end()};
-    return cm::Message{topic, "text/string", std::move(bytes)};
+    return cm::Message{std::move(topic), "text/string", std::move(bytes)};
 }
 
 
@@ -24,10 +23,10 @@ TEST(RequestParser, ParseContainerRequest)
     auto m = request(r);
     auto p = util::RequestParser::build(m);
 
-    EXPECT_THAT(p.next_string(),  Eq("startContainer"));
-    EXPECT_THAT(p.next_string(),  Eq("master"));
+    EXPECT_THAT(p.next_string(),  StrEq("startContainer"));
+    EXPECT_THAT(p.next_string(),  StrEq("master"));
     EXPECT_THAT(p.next_integer(), Eq(5));
-    EXPECT_THAT(p.next_string(),  Eq("undefined"));
+    EXPECT_THAT(p.next_string(),  StrEq("undefined"));
 
     EXPECT_THAT(p.request(), Eq(r));
 }
@@ -39,13 +38,13 @@ TEST(RequestParser, ParseServiceRequest)
     auto m = request(r);
     auto p = util::RequestParser::build(m);
 
-    EXPECT_THAT(p.next_string(),  Eq("startService"));
-    EXPECT_THAT(p.next_string(),  Eq("master"));
-    EXPECT_THAT(p.next_string(),  Eq("E1"));
-    EXPECT_THAT(p.next_string(),  Eq("org.jlab.clara.examples.engines.E1"));
+    EXPECT_THAT(p.next_string(),  StrEq("startService"));
+    EXPECT_THAT(p.next_string(),  StrEq("master"));
+    EXPECT_THAT(p.next_string(),  StrEq("E1"));
+    EXPECT_THAT(p.next_string(),  StrEq("org.jlab.clara.examples.engines.E1"));
     EXPECT_THAT(p.next_integer(), Eq(3));
-    EXPECT_THAT(p.next_string(),  Eq("undefined"));
-    EXPECT_THAT(p.next_string(),  Eq("undefined"));
+    EXPECT_THAT(p.next_string(),  StrEq("undefined"));
+    EXPECT_THAT(p.next_string(),  StrEq("undefined"));
 
     EXPECT_THAT(p.request(), Eq(r));
 }
@@ -53,7 +52,7 @@ TEST(RequestParser, ParseServiceRequest)
 
 TEST(RequestParser, InvalidMimeType)
 {
-    auto m = cm::make_message(topic, 34.8);
+    auto m = cm::make_message(cm::Topic::raw("topic"), 34.8);
 
     ASSERT_THROW(util::RequestParser::build(m), util::InvalidRequest);
 }
@@ -73,7 +72,7 @@ TEST(RequestParser, SingleStringElement)
     auto m = request("pingDpe");
     auto p = util::RequestParser::build(m);
 
-    EXPECT_THAT(p.next_string(), Eq("pingDpe"));
+    EXPECT_THAT(p.next_string(), StrEq("pingDpe"));
 }
 
 
@@ -109,7 +108,7 @@ TEST(RequestParser, DefaultMissingStringElement)
     p.next_string();
     p.next_string();
 
-    EXPECT_THAT(p.next_string("E1"), Eq("E1"));
+    EXPECT_THAT(p.next_string("E1"), StrEq("E1"));
 }
 
 
@@ -120,8 +119,8 @@ TEST(RequestParser, DefaultEmptyStringElement)
 
     p.next_string();
 
-    EXPECT_THAT(p.next_string("master"), Eq("master"));
-    EXPECT_THAT(p.next_string(), Eq("E1"));
+    EXPECT_THAT(p.next_string("master"), StrEq("master"));
+    EXPECT_THAT(p.next_string(), StrEq("E1"));
 }
 
 

@@ -43,7 +43,7 @@ TEST(PrimitiveSerializer, StringSerialization)
     const auto b = s->write(clara::any{std::string{"Master of Puppets"}});
     const auto d = clara::any_cast<std::string>(s->read(b));
 
-    ASSERT_THAT(d, Eq("Master of Puppets"));
+    ASSERT_THAT(d, StrEq("Master of Puppets"));
 }
 
 

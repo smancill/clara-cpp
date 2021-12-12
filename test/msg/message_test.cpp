@@ -60,6 +60,7 @@ TEST(Message, PassingNullMetadataThrows)
 TEST(Message, PassingNullMimeTypeThrows)
 {
     auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
+
     EXPECT_EXCEPTION(cm::Message(topic, nullptr, data),
                      std::invalid_argument, "null mime-type");
 }
@@ -72,7 +73,7 @@ TEST(Message, EqualMessages)
     auto msg1 = cm::Message{topic, "test/binary", data};
     auto msg2 = cm::Message{topic, "test/binary", data};
 
-    ASSERT_TRUE(msg1 == msg2);
+    ASSERT_THAT(msg1, Eq(msg2));
 }
 
 
@@ -83,7 +84,7 @@ TEST(Message, CreateCopy)
     auto msg1 = cm::Message{topic, "test/binary", data};
     auto msg2 = cm::Message{msg1};
 
-    ASSERT_TRUE(msg1 == msg2);
+    ASSERT_THAT(msg1, Eq(msg2));
 }
 
 
@@ -91,6 +92,7 @@ TEST(Message, SwapMessages)
 {
     auto topic1 = cm::Topic::raw("topic1");
     auto topic2 = cm::Topic::raw("topic2");
+
     auto data1 = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
     auto data2 = std::vector<std::uint8_t>{0x0, 0x4, 0x5, 0x6, 0xc, 0xd};
 

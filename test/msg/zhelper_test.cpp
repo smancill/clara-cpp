@@ -10,6 +10,7 @@ namespace cm_ = clara::msg::detail;
 
 using namespace testing;
 
+
 TEST(UniqueReplyTo, GenerateUniqueReplyTo)
 {
     cm_::set_unique_replyto(-1);

@@ -61,7 +61,7 @@ void remove_random(int size)
     printf("INFO: Removing %d random actors...\n", size);
 
     auto gen = std::uniform_int_distribution<std::size_t>(0, reg_data.size() - size);
-    auto first = gen(t::rng);
+    auto first = t::next(gen);
     auto end = first + size;
     auto i = 0U;
     for (auto reg_it = reg_data.begin(); reg_it != reg_data.end(); ) {

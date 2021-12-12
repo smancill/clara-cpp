@@ -32,14 +32,28 @@ namespace {
 constexpr auto privileged_ports = 1024;
 constexpr auto max_port_number = UINT16_MAX;
 
-inline bool invalid_port(int port)
-{
-    return port < privileged_ports || port > max_port_number;
-}
-
-inline int default_sub_port(int pub_port)
+inline int to_sub_port(int pub_port)
 {
     return pub_port + 1;
+}
+
+template<typename T, typename R = std::decay_t<T>>
+inline R to_addr(T&& host)
+{
+    using namespace clara::msg;
+
+    if (util::is_ipaddr(host)) {
+        return R{std::forward<T>(host)};
+    }
+    return std::string{util::to_host_addr(host)};
+}
+
+inline int check(int port)
+{
+    if (port < privileged_ports || port > max_port_number) {
+        throw std::invalid_argument{"invalid port: " + std::to_string(port)};
+    };
+    return port;
 }
 
 } // end empty namespace
@@ -48,53 +62,75 @@ inline int default_sub_port(int pub_port)
 namespace clara::msg {
 
 ProxyAddress::ProxyAddress()
-  : ProxyAddress{util::localhost()}
+  : host_{util::localhost()}
+  , pub_port_{default_port}
+  , sub_port_{to_sub_port(default_port)}
 { }
 
 
 ProxyAddress::ProxyAddress(const std::string& host)
-  : ProxyAddress{host, default_port}
+  : host_{to_addr(host)}
+  , pub_port_{default_port}
+  , sub_port_{to_sub_port(default_port)}
+{ }
+
+
+ProxyAddress::ProxyAddress(std::string&& host)
+  : host_{to_addr(std::move(host))}
+  , pub_port_{default_port}
+  , sub_port_{to_sub_port(default_port)}
 { }
 
 
 ProxyAddress::ProxyAddress(const std::string& host, int pub_port)
-  : host_{util::to_host_addr(host)}
-  , pub_port_{pub_port}
-  , sub_port_{default_sub_port(pub_port)}
-{
-    if (invalid_port(pub_port_)) {
-        throw std::invalid_argument{"invalid pub port: " + std::to_string(pub_port_)};
-    };
-    if (invalid_port(sub_port_)) {
-        throw std::invalid_argument{"invalid sub port: " + std::to_string(sub_port_)};
-    };
-}
+  : host_{to_addr(host)}
+  , pub_port_{check(pub_port)}
+  , sub_port_{check(to_sub_port(pub_port))}
+{ }
+
+
+ProxyAddress::ProxyAddress(std::string&& host, int pub_port)
+  : host_{to_addr(std::move(host))}
+  , pub_port_{check(pub_port)}
+  , sub_port_{check(to_sub_port(pub_port))}
+{ }
 
 
 RegAddress::RegAddress()
-  : RegAddress{util::localhost(), default_port}
+  : host_{util::localhost()}
+  , port_{default_port}
 { }
 
 
 RegAddress::RegAddress(const std::string& host)
-  : RegAddress{host, default_port}
+  : host_{to_addr(host)}
+  , port_{default_port}
+{ }
+
+
+RegAddress::RegAddress(std::string&& host)
+  : host_{to_addr(std::move(host))}
+  , port_{default_port}
 { }
 
 
 RegAddress::RegAddress(const std::string& host, int port)
-  : host_{util::to_host_addr(host)}
-  , port_{port}
-{
-    if (invalid_port(port_)) {
-        throw std::invalid_argument{"invalid reg port: " + std::to_string(port_)};
-    };
-}
+  : host_{to_addr(host)}
+  , port_{check(port)}
+{ }
+
+
+RegAddress::RegAddress(std::string&& host, int port)
+  : host_{to_addr(std::move(host))}
+  , port_{check(port)}
+{ }
 
 
 std::ostream& operator<<(std::ostream& os, const ProxyAddress& a)
 {
     return os << a.host() << ":" << a.pub_port();
 }
+
 
 std::ostream& operator<<(std::ostream& os, const RegAddress& a)
 {

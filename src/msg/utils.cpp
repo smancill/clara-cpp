@@ -157,9 +157,6 @@ void update_localhost_addrs()
 
 std::string to_host_addr(const std::string& hostname)
 {
-    if (is_ipaddr(hostname)) {
-        return {hostname};
-    }
     if (hostname == "localhost") {
         return local_addrs().get_first();
     }

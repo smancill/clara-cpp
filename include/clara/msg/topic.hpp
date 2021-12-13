@@ -25,7 +25,18 @@
 #include <string>
 #include <utility>
 
+
 namespace clara::msg {
+
+namespace detail {
+
+std::string get_domain(const std::string& topic);
+std::string get_subject(const std::string& topic);
+std::string get_type(const std::string& topic);
+bool is_parent(const std::string& topic, const std::string& other);
+
+} // end namespace detail
+
 
 /**
  * The standard identification for CLARA pub/sub communications.
@@ -116,25 +127,12 @@ public:
      *
      * \param topic a valid topic string
      */
-    static Topic raw(const std::string& topic)
+    template<typename T,
+             typename = std::enable_if_t<std::is_constructible_v<std::string, T>>>
+    static Topic raw(T&& topic)
     {
-        return {topic};
+        return {std::forward<T>(topic)};
     }
-
-    /**
-     * Use the given string as topic.
-     * No validation is done to the string.
-     * The caller must be sure it is a valid topic.
-     * This factory method is provided for speed purposes.
-     * It should be used with caution.
-     *
-     * \param topic a valid topic string
-     */
-    static Topic raw(std::string&& topic)
-    {
-        return {std::move(topic)};
-    }
-
 
     static inline const std::string ANY = "*";
 
@@ -142,19 +140,28 @@ public:
     /**
      * Returns the domain part of the topic.
      */
-    std::string domain() const;
+    std::string domain() const
+    {
+        return detail::get_domain(topic_);
+    }
 
     /**
      * Returns the subject part of the topic.
      * If the topic has no subject, then \c "*" is returned.
      */
-    std::string subject() const;
+    std::string subject() const
+    {
+        return detail::get_subject(topic_);
+    }
 
     /**
      * Returns the type part of the topic.
      * If the topic has no type, then \c "*" is returned.
      */
-    std::string type() const;
+    std::string type() const
+    {
+        return detail::get_type(topic_);
+    }
 
     /**
      * Returns true if this topic is a parent of the given topic.
@@ -173,7 +180,10 @@ public:
      * \param other the topic to match as a children
      * \return true if this topic is a parent of the other
      */
-    bool is_parent(const Topic& other) const;
+    bool is_parent(const Topic& other) const
+    {
+        return detail::is_parent(topic_, other.topic_);
+    }
 
     /**
      * Returns the string representation of this topic.

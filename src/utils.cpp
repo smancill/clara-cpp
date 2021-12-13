@@ -24,8 +24,6 @@
 
 #include "constants.hpp"
 
-#include <clara/msg/topic.hpp>
-
 #include <stdexcept>
 
 namespace {
@@ -52,17 +50,32 @@ int get_port(const std::string& full_name, int index)
 
 
 namespace clara {
+
+namespace msg::detail {
+
+std::string get_domain(const std::string& topic);
+std::string get_subject(const std::string& topic);
+std::string get_type(const std::string& topic);
+
+} // end namespace msg::detail
+
+
 namespace util {
+
+using msg::detail::get_domain;
+using msg::detail::get_subject;
+using msg::detail::get_type;
+
 
 std::string get_dpe_name(const std::string& canonical_name)
 {
-    return msg::Topic::raw(canonical_name).domain();
+    return get_domain(canonical_name);
 }
 
 
 std::string get_container_name(const std::string& canonical_name)
 {
-    return msg::Topic::raw(canonical_name).subject();
+    return get_subject(canonical_name);
 }
 
 
@@ -82,7 +95,7 @@ std::string get_container_canonical_name(const std::string& canonical_name)
 
 std::string get_engine_name(const std::string& canonical_name)
 {
-    return msg::Topic::raw(canonical_name).type();
+    return get_type(canonical_name);
 }
 
 

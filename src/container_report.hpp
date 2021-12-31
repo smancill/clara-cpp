@@ -26,13 +26,10 @@
 #include "concurrent_utils.hpp"
 #include "constants.hpp"
 
-#include <memory>
 #include <string>
-#include <vector>
 
 namespace clara {
 
-class Base;
 class ServiceReport;
 
 class ContainerReport

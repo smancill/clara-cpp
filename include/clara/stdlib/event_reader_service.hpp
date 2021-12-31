@@ -27,7 +27,6 @@
 #include <clara/third_party/json11.hpp>
 
 #include <memory>
-#include <set>
 #include <stdexcept>
 
 namespace clara {

@@ -23,6 +23,7 @@
 
 #include <zmq.h>
 
+#include <cerrno>
 #include <stdexcept>
 
 namespace clara::msg {

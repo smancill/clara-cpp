@@ -29,7 +29,9 @@
 #include "container_report.hpp"
 #include "service.hpp"
 
+#include <memory>
 #include <mutex>
+#include <string>
 
 namespace clara {
 

@@ -22,8 +22,9 @@
 
 #include "json_report.hpp"
 
-#include "dpe_report.hpp"
+#include "constants.hpp"
 #include "container_report.hpp"
+#include "dpe_report.hpp"
 #include "json_utils.hpp"
 #include "service_report.hpp"
 #include "utils.hpp"

@@ -24,12 +24,9 @@
 
 #include "constants.hpp"
 
-#include <clara/msg/mimetype.hpp>
 #include <clara/msg/topic.hpp>
 
 #include <ctime>
-#include <iomanip>
-#include <sstream>
 #include <stdexcept>
 
 namespace {

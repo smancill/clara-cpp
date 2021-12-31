@@ -26,6 +26,7 @@
 #include "constants.hpp"
 
 #include <atomic>
+#include <cstdint>
 #include <string>
 
 namespace clara {

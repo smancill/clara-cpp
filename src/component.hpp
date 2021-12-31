@@ -25,9 +25,9 @@
 
 #include "constants.hpp"
 
-#include <clara/msg/actor.hpp>
+#include <clara/msg/address.hpp>
+#include <clara/msg/topic.hpp>
 
-#include <memory>
 #include <string>
 
 namespace clara {

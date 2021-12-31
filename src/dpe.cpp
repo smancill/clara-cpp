@@ -27,6 +27,7 @@
 #include "constants.hpp"
 #include "container.hpp"
 #include "data_utils.hpp"
+#include "dpe_config.hpp"
 #include "dpe_report.hpp"
 #include "json_report.hpp"
 #include "logging.hpp"
@@ -36,7 +37,12 @@
 #include <clara/msg/proxy.hpp>
 
 #include <condition_variable>
+#include <chrono>
+#include <cstdint>
+#include <exception>
+#include <iostream>
 #include <mutex>
+#include <vector>
 #include <thread>
 
 

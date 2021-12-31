@@ -24,10 +24,7 @@
 #include "connection_driver.hpp"
 #include "likely.hpp"
 
-#include <clara/msg/message.hpp>
-#include <clara/msg/utils.hpp>
-
-#include <array>
+#include <exception>
 #include <iostream>
 
 namespace clara::msg {

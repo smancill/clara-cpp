@@ -27,9 +27,8 @@
 #include "service_config.hpp"
 #include "service_report.hpp"
 
-#include <clara/msg/utils.hpp>
-
 #include <chrono>
+#include <stdexcept>
 
 
 namespace {

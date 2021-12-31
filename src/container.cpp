@@ -25,6 +25,7 @@
 #include "logging.hpp"
 
 #include <cstdlib>
+#include <exception>
 
 namespace {
 std::string default_author()

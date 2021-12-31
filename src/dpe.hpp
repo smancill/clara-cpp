@@ -23,8 +23,6 @@
 #ifndef CLARA_DPE_HPP
 #define CLARA_DPE_HPP
 
-#include "dpe_config.hpp"
-
 #include <memory>
 
 namespace clara {
@@ -32,6 +30,8 @@ namespace clara {
 namespace msg {
     class ProxyAddress;
 } // end namespace msg
+
+struct DpeConfig;
 
 
 class Dpe final

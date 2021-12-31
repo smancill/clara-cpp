@@ -27,9 +27,9 @@
 
 #include <clara/msg/mimetype.hpp>
 
-#include <algorithm>
-#include <functional>
+#include <cstdint>
 #include <iostream>
+#include <vector>
 
 namespace {
     clara::msg::RegAddress get_fe_address(const clara::Component& fe)

@@ -23,7 +23,6 @@
 
 #include <clara/msg/utils.hpp>
 
-#include <algorithm>
 #include <csignal>
 #include <cstdlib>
 #include <ctime>

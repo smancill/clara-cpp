@@ -29,8 +29,9 @@
 #include "composition.hpp"
 #include "engine_data_helper.hpp"
 
-#include <memory>
 #include <mutex>
+#include <set>
+#include <string>
 
 namespace clara {
 

@@ -21,7 +21,6 @@
 
 #include <clara/msg/topic.hpp>
 
-#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>

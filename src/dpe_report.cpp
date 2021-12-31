@@ -27,6 +27,7 @@
 #include "utils.hpp"
 
 #include <cstdlib>
+#include <stdexcept>
 
 static std::string get_clara_home()
 {

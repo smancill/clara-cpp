@@ -25,6 +25,9 @@
 
 #include <clara/msg/proto/meta.hpp>
 
+#include <stdexcept>
+
+
 namespace clara {
 
 EngineData::EngineData()

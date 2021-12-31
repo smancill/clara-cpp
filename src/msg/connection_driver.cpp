@@ -23,9 +23,6 @@
 
 #include "constants.hpp"
 
-#include <clara/msg/utils.hpp>
-
-#include <array>
 #include <iostream>
 
 namespace clara::msg::detail {

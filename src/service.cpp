@@ -22,7 +22,6 @@
 
 #include "service.hpp"
 
-#include "data_utils.hpp"
 #include "logging.hpp"
 
 

@@ -22,7 +22,6 @@
 #include <clara/msg/actor.hpp>
 
 #include <clara/msg/connection_pool.hpp>
-#include <clara/msg/context.hpp>
 #include <clara/msg/utils.hpp>
 
 #include "connection_driver.hpp"
@@ -31,8 +30,6 @@
 #ifdef __APPLE__
 #include "thread_local.hpp"
 #endif
-
-#include <random>
 
 #ifdef __APPLE__
 using ConPool = clara::msg::ConnectionPool;

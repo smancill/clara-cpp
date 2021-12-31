@@ -29,7 +29,6 @@
 #include <iostream>
 #include <mutex>
 #include <sstream>
-#include <stdexcept>
 
 
 namespace {

@@ -26,7 +26,9 @@
 
 #include <array>
 #include <chrono>
+#include <cstdint>
 #include <string>
+#include <vector>
 
 namespace clara::msg::detail {
 

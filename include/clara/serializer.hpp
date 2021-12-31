@@ -25,6 +25,7 @@
 
 #include <clara/any.hpp>
 
+#include <cstdint>
 #include <vector>
 
 namespace clara {

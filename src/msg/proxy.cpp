@@ -24,6 +24,7 @@
 #include "constants.hpp"
 #include "zhelper.hpp"
 
+#include <exception>
 #include <iostream>
 #include <mutex>
 

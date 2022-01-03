@@ -36,45 +36,45 @@ namespace clara::msg {
 
 namespace detail {
 
-std::string get_domain(const std::string& topic)
+auto get_domain(std::string_view topic) -> std::string_view
 {
     auto firstSep = topic.find(SEPARATOR);
-    if (firstSep == std::string::npos) {
+    if (firstSep == decltype(topic)::npos) {
         return topic;
     }
     return topic.substr(0, firstSep);
 }
 
 
-std::string get_subject(const std::string& topic)
+auto get_subject(std::string_view topic) -> std::string_view
 {
     auto firstSep = topic.find(SEPARATOR);
-    if (firstSep == std::string::npos) {
+    if (firstSep == decltype(topic)::npos) {
         return {Topic::ANY};
     }
     auto secondSep = topic.find(SEPARATOR, firstSep + 1);
-    if (secondSep == std::string::npos) {
+    if (secondSep == decltype(topic)::npos) {
         return topic.substr(firstSep + 1);
     }
     return topic.substr(firstSep + 1, secondSep - firstSep - 1);
 }
 
 
-std::string get_type(const std::string& topic)
+auto get_type(std::string_view topic) -> std::string_view
 {
     auto firstSep = topic.find(SEPARATOR);
-    if (firstSep == std::string::npos) {
+    if (firstSep == decltype(topic)::npos) {
         return {Topic::ANY};
     }
     auto secondSep = topic.find(SEPARATOR, firstSep + 1);
-    if (secondSep == std::string::npos) {
+    if (secondSep == decltype(topic)::npos) {
         return {Topic::ANY};
     }
     return topic.substr(secondSep + 1);
 }
 
 
-bool is_parent(const std::string& topic, const std::string& other)
+auto is_parent(std::string_view topic, std::string_view other) -> bool
 {
     return other.compare(0, topic.size(), topic) == 0;
 }
@@ -82,9 +82,9 @@ bool is_parent(const std::string& topic, const std::string& other)
 } // end namespace detail
 
 
-Topic Topic::build(const std::string& domain,
-                   const std::string& subject,
-                   const std::string& type)
+auto Topic::build(std::string_view domain,
+                  std::string_view subject,
+                  std::string_view type) -> Topic
 {
     if (domain == ANY) {
         throw std::invalid_argument("domain is not defined");
@@ -94,7 +94,8 @@ Topic Topic::build(const std::string& domain,
     if (subject != ANY) {
         topic << SEPARATOR << subject;
         if (type != ANY) {
-            auto ss = std::stringstream{type};
+            auto ss = std::stringstream{};
+            ss << type;
             auto tst = std::string{};
             while (std::getline(ss, tst, SEPARATOR)) {
                 if (tst != ANY) {

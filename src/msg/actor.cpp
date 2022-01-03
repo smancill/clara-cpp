@@ -47,17 +47,14 @@ namespace clara::msg {
 /// \cond HIDDEN_SYMBOLS
 struct Actor::Impl
 {
-
-    Impl(const std::string& name,
-         const ProxyAddress& proxy_addr,
-         const RegAddress& reg_addr)
-      : name{name}
-      , id{detail::encode_identity(proxy_addr.host(), name)}
-      , default_proxy_addr{proxy_addr}
-      , default_reg_addr{reg_addr}
+    Impl(std::string&& name, ProxyAddress&& proxy_addr, RegAddress&& reg_addr)
+      : name{std::move(name)}
+      , id{detail::encode_identity(proxy_addr.host(), this->name)}
+      , default_proxy_addr{std::move(proxy_addr)}
+      , default_reg_addr{std::move(reg_addr)}
     { }
 
-    ConnectionPool* con_pool()
+    auto con_pool() -> ConnectionPool*
     {
 #ifdef __APPLE__
         return tls::getThreadInstance();
@@ -87,14 +84,15 @@ public:
     }
 
     ScopedSubscription(const ScopedSubscription&) = delete;
-    ScopedSubscription& operator=(const ScopedSubscription&) = delete;
+
+    auto operator=(const ScopedSubscription&) -> ScopedSubscription& = delete;
 
     ~ScopedSubscription()
     {
         connection_.unsubscribe(topic_);
     }
 
-    bool poll(int timeout)
+    auto poll(int timeout) -> bool
     {
         return poller_.poll(timeout);
     }
@@ -107,37 +105,40 @@ private:
 /// \endcond
 
 
-Actor::Actor(const std::string& name)
-  : Actor{name, {}, {}}
+Actor::Actor(std::string name)
+  : Actor{std::move(name), {}, {}}
 { }
 
 
-Actor::Actor(const std::string& name,
-             const RegAddress& default_registrar)
-  : Actor{name, {}, default_registrar}
+Actor::Actor(std::string name,
+             RegAddress default_registrar)
+  : Actor{std::move(name), {}, std::move(default_registrar)}
 { }
 
 
-Actor::Actor(const std::string& name,
-             const ProxyAddress& default_proxy,
-             const RegAddress& default_registrar)
-  : actor_{new Impl{name, default_proxy, default_registrar}}
+Actor::Actor(std::string name,
+             ProxyAddress default_proxy,
+             RegAddress default_registrar)
+  : actor_{new Impl{std::move(name),
+                    std::move(default_proxy),
+                    std::move(default_registrar)}}
 { }
 
 
 Actor::Actor(Actor &&) noexcept = default;
-Actor& Actor::operator=(Actor &&) noexcept = default;
+
+auto Actor::operator=(Actor &&) noexcept -> Actor& = default;
 
 Actor::~Actor() = default;
 
 
-ProxyConnection Actor::connect()
+auto Actor::connect() -> ProxyConnection
 {
     return actor_->con_pool()->get_connection(actor_->default_proxy_addr);
 }
 
 
-ProxyConnection Actor::connect(const ProxyAddress& addr)
+auto Actor::connect(const ProxyAddress& addr) -> ProxyConnection
 {
     return actor_->con_pool()->get_connection(addr);
 }
@@ -155,9 +156,9 @@ void Actor::publish(ProxyConnection& connection, Message& msg)
 }
 
 
-Message Actor::sync_publish(ProxyConnection& connection,
-                            Message& msg,
-                            int timeout)
+auto Actor::sync_publish(ProxyConnection& connection,
+                         Message& msg,
+                         int timeout) -> Message
 {
     auto return_addr = detail::get_unique_replyto(actor_->id);
     msg.meta_->set_replyto(return_addr);
@@ -182,10 +183,9 @@ Message Actor::sync_publish(ProxyConnection& connection,
 }
 
 
-std::unique_ptr<Subscription>
-Actor::subscribe(const Topic& topic,
-                 ProxyConnection&& connection,
-                 std::function<void(Message&)> callback)
+auto Actor::subscribe(const Topic& topic,
+                      ProxyConnection&& connection,
+                      CallbackFn callback) -> std::unique_ptr<Subscription>
 {
     return std::unique_ptr<Subscription>{
             new Subscription{topic, connection.release(), std::move(callback)}
@@ -200,7 +200,7 @@ void Actor::unsubscribe(std::unique_ptr<Subscription> handler)
 
 
 void Actor::register_as_publisher(const Topic& topic,
-                                  const std::string& description)
+                                  std::string_view description)
 {
     register_as_publisher(actor_->default_reg_addr, topic, description);
 }
@@ -208,7 +208,7 @@ void Actor::register_as_publisher(const Topic& topic,
 
 void Actor::register_as_publisher(const RegAddress& addr,
                                   const Topic& topic,
-                                  const std::string& description)
+                                  std::string_view description)
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto proxy = actor_->default_proxy_addr;
@@ -220,7 +220,7 @@ void Actor::register_as_publisher(const RegAddress& addr,
 
 
 void Actor::register_as_subscriber(const Topic& topic,
-                                   const std::string& description)
+                                   std::string_view description)
 {
     register_as_subscriber(actor_->default_reg_addr, topic, description);
 }
@@ -228,7 +228,7 @@ void Actor::register_as_subscriber(const Topic& topic,
 
 void Actor::register_as_subscriber(const RegAddress& addr,
                                    const Topic& topic,
-                                   const std::string& description)
+                                   std::string_view description)
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto proxy = actor_->default_proxy_addr;
@@ -274,13 +274,13 @@ void Actor::deregister_as_subscriber(const RegAddress& addr, const Topic& topic)
 }
 
 
-RegDataSet Actor::find_publishers(const Topic& topic)
+auto Actor::find_publishers(const Topic& topic) -> RegDataSet
 {
     return find_publishers(actor_->default_reg_addr, topic);
 }
 
 
-RegDataSet Actor::find_publishers(const RegAddress& addr, const Topic& topic)
+auto Actor::find_publishers(const RegAddress& addr, const Topic& topic) -> RegDataSet
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto proxy = actor_->default_proxy_addr;
@@ -291,13 +291,13 @@ RegDataSet Actor::find_publishers(const RegAddress& addr, const Topic& topic)
 }
 
 
-RegDataSet Actor::find_subscribers(const Topic& topic)
+auto Actor::find_subscribers(const Topic& topic) -> RegDataSet
 {
     return find_subscribers(actor_->default_reg_addr, topic);
 }
 
 
-RegDataSet Actor::find_subscribers(const RegAddress& addr, const Topic& topic)
+auto Actor::find_subscribers(const RegAddress& addr, const Topic& topic) -> RegDataSet
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto proxy = actor_->default_proxy_addr;
@@ -308,19 +308,19 @@ RegDataSet Actor::find_subscribers(const RegAddress& addr, const Topic& topic)
 }
 
 
-const std::string& Actor::name() const
+auto Actor::name() const -> const std::string&
 {
     return actor_->name;
 }
 
 
-const RegAddress& Actor::default_registrar() const
+auto Actor::default_registrar() const -> const RegAddress&
 {
     return actor_->default_reg_addr;
 }
 
 
-const ProxyAddress& Actor::default_proxy() const
+auto Actor::default_proxy() const -> const ProxyAddress&
 {
     return actor_->default_proxy_addr;
 }

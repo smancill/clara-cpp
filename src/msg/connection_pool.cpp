@@ -54,7 +54,7 @@ class ConnectionPool::ConnectionCache
     using ConnectionMap = std::unordered_map<A, ConnectionQueue>;
 
 public:
-    U get(const A& addr)
+    auto get(const A& addr) -> U
     {
         U up;
         auto it = cache_.find(addr);
@@ -97,12 +97,13 @@ ConnectionPool::ConnectionPool(std::shared_ptr<Context> ctx)
 
 
 ConnectionPool::ConnectionPool(ConnectionPool&&) noexcept = default;
-ConnectionPool& ConnectionPool::operator=(ConnectionPool&&) noexcept = default;
+
+auto ConnectionPool::operator=(ConnectionPool&&) noexcept -> ConnectionPool& = default;
 
 ConnectionPool::~ConnectionPool() = default;
 
 
-ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr)
+auto ConnectionPool::get_connection(const ProxyAddress& addr) -> ProxyConnection
 {
     auto con = proxy_cache_->get(addr);
     if (!con) {
@@ -121,7 +122,7 @@ void ConnectionPool::set_default_setup(std::unique_ptr<ConnectionSetup> setup)
 }
 
 
-RegConnection ConnectionPool::get_connection(const RegAddress& addr)
+auto ConnectionPool::get_connection(const RegAddress& addr) -> RegConnection
 {
     auto con = reg_cache_->get(addr);
     if (!con) {
@@ -134,7 +135,8 @@ RegConnection ConnectionPool::get_connection(const RegAddress& addr)
 }
 
 
-detail::ProxyDriverPtr ConnectionPool::create_connection(const ProxyAddress& addr)
+auto ConnectionPool::create_connection(const ProxyAddress& addr)
+    -> detail::ProxyDriverPtr
 {
     auto con = detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx_->impl_, addr, setup_)};
     con->connect();
@@ -142,7 +144,8 @@ detail::ProxyDriverPtr ConnectionPool::create_connection(const ProxyAddress& add
 }
 
 
-detail::RegDriverPtr ConnectionPool::create_connection(const RegAddress& addr)
+auto ConnectionPool::create_connection(const RegAddress& addr)
+    -> detail::RegDriverPtr
 {
     return detail::RegDriverPtr{new detail::RegDriver(*ctx_->impl_, addr)};
 }

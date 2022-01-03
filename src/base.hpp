@@ -46,9 +46,9 @@ public:
                        msg::proto::Meta::Status status);
 
 public:
-    const Component& self() { return self_; }
+    auto self() -> const Component& { return self_; }
 
-    const Component& frontend() { return frontend_; }
+    auto frontend() -> const Component& { return frontend_; }
 
 private:
     Component self_;

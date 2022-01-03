@@ -32,13 +32,13 @@ namespace {
 constexpr auto privileged_ports = 1024;
 constexpr auto max_port_number = UINT16_MAX;
 
-inline int to_sub_port(int pub_port)
+inline auto to_sub_port(int pub_port) -> int
 {
     return pub_port + 1;
 }
 
 template<typename T, typename R = std::decay_t<T>>
-inline R to_addr(T&& host)
+inline auto to_addr(T&& host) -> R
 {
     using namespace clara::msg;
 
@@ -48,7 +48,7 @@ inline R to_addr(T&& host)
     return std::string{util::to_host_addr(host)};
 }
 
-inline int check(int port)
+inline auto check(int port) -> int
 {
     if (port < privileged_ports || port > max_port_number) {
         throw std::invalid_argument{"invalid port: " + std::to_string(port)};
@@ -126,13 +126,13 @@ RegAddress::RegAddress(std::string&& host, int port)
 { }
 
 
-std::ostream& operator<<(std::ostream& os, const ProxyAddress& a)
+auto operator<<(std::ostream& os, const ProxyAddress& a) -> std::ostream&
 {
     return os << a.host() << ":" << a.pub_port();
 }
 
 
-std::ostream& operator<<(std::ostream& os, const RegAddress& a)
+auto operator<<(std::ostream& os, const RegAddress& a) -> std::ostream&
 {
     return os << a.host() << ":" << a.port();
 }

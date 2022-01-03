@@ -37,30 +37,31 @@ namespace clara {
 class EngineDataAccessor final
 {
 public:
-    EngineData create(any&& data, std::unique_ptr<msg::proto::Meta>&& meta)
+    auto create(std::any&& data, std::unique_ptr<msg::proto::Meta>&& meta)
+        -> EngineData
     {
         return EngineData{std::move(data), std::move(meta)};
     }
 
-    const msg::proto::Meta* view_meta(const EngineData& data)
+    auto view_meta(const EngineData& data) -> const msg::proto::Meta*
     {
         return data.meta_.get();
     }
 
 
-    msg::proto::Meta* view_meta(EngineData& data)
+    auto view_meta(EngineData& data) -> msg::proto::Meta*
     {
         return data.meta_.get();
     }
 
-    std::unique_ptr<msg::proto::Meta>& move_meta(EngineData& data)
+    auto move_meta(EngineData& data) -> std::unique_ptr<msg::proto::Meta>&
     {
         return data.meta_;
     }
 
-    msg::Message serialize(const EngineData& data,
-                           const msg::Topic& topic,
-                           const std::vector<EngineDataType>& data_types)
+    auto serialize(const EngineData& data,
+                   const msg::Topic& topic,
+                   const std::vector<EngineDataType>& data_types) -> msg::Message
     {
         using Msg = msg::Message;
 
@@ -85,8 +86,8 @@ public:
     }
 
 
-    EngineData deserialize(const msg::Message& msg,
-                           const std::vector<EngineDataType>& data_types)
+    auto deserialize(const msg::Message& msg,
+                     const std::vector<EngineDataType>& data_types) -> EngineData
     {
         const auto* metadata = msg.meta();
         const auto& mime_type = metadata->datatype();

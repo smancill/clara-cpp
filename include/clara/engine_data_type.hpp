@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 
 namespace clara {
 
@@ -47,9 +48,9 @@ public:
      * @param mimeType the name of this data-type
      * @param serializer the custom serializer for this data-type
      */
-    EngineDataType(std::string mime_type,
+    EngineDataType(std::string_view mime_type,
                    std::unique_ptr<Serializer> serializer)
-      : mime_type_{std::move(mime_type)}
+      : mime_type_{mime_type}
       , serializer_{std::move(serializer)}
     {
         // nothing
@@ -58,7 +59,7 @@ public:
     /**
      * Returns the name of this data type.
      */
-    const std::string& mime_type() const
+    auto mime_type() const -> const std::string&
     {
         return mime_type_;
     }
@@ -66,7 +67,7 @@ public:
     /**
      * Returns the serializer of this data type.
      */
-    const Serializer* serializer() const
+    auto serializer() const -> const Serializer*
     {
         return serializer_.get();
     }
@@ -77,29 +78,29 @@ private:
 };
 
 
-inline
-bool operator==(const EngineDataType& data_type, const std::string& mime_type)
+inline auto operator==(const EngineDataType& data_type,
+                       std::string_view mime_type) -> bool
 {
-    return data_type.mime_type() == mime_type;
+    return mime_type == data_type.mime_type();
 }
 
-inline
-bool operator==(const std::string& mime_type, const EngineDataType& data_type)
+inline auto operator==(std::string_view mime_type,
+                       const EngineDataType& data_type) -> bool
 {
-    return data_type == mime_type;
+    return mime_type == data_type.mime_type();
 }
 
 
-inline
-bool operator!=(const EngineDataType& data_type, const char* mime_type)
+inline auto operator!=(const EngineDataType& data_type,
+                       std::string_view mime_type) -> bool
 {
-    return !(data_type == mime_type);
+    return mime_type != data_type.mime_type() ;
 }
 
-inline
-bool operator!=(const std::string& mime_type, const EngineDataType& data_type)
+inline auto operator!=(std::string_view mime_type,
+                       const EngineDataType& data_type) -> bool
 {
-    return !(data_type == mime_type);
+    return mime_type != data_type.mime_type() ;
 }
 
 

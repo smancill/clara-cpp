@@ -25,8 +25,7 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace clara {
-namespace composition {
+namespace clara::composition {
 
 SimpleCompiler::SimpleCompiler(std::string service_name)
   : service_name_{std::move(service_name)}
@@ -60,7 +59,7 @@ void SimpleCompiler::compile(const std::string& composition)
     }
 }
 
-std::set<std::string> SimpleCompiler::outputs()
+auto SimpleCompiler::outputs() -> std::set<std::string>
 {
     std::set<std::string> out;
     if (!next_.empty()) {
@@ -69,5 +68,4 @@ std::set<std::string> SimpleCompiler::outputs()
     return out;
 }
 
-} // end namespace composition
-} // end namespace clara
+} // end namespace clara::composition

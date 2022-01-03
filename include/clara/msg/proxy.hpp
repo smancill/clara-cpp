@@ -34,11 +34,12 @@ namespace clara::msg::sys {
 class Proxy final
 {
 public:
-    Proxy(std::unique_ptr<Context> ctx, const ProxyAddress& addr);
-    explicit Proxy(const ProxyAddress& addr);
+    Proxy(std::unique_ptr<Context> ctx, ProxyAddress addr);
+    explicit Proxy(ProxyAddress addr);
 
     Proxy(const Proxy&) = delete;
-    Proxy& operator=(const Proxy&) = delete;
+
+    auto operator=(const Proxy&) -> Proxy& = delete;
 
     ~Proxy();
 

@@ -22,33 +22,37 @@
 
 #include "component.hpp"
 
-namespace clara {
-namespace util {
+namespace clara::util {
 
-std::string make_name(const std::string& host, int port, const std::string& lang)
+auto make_name(std::string_view host,
+               int port,
+               std::string_view lang) -> std::string
 {
-    auto name = host;
+    auto name = std::string{host};
     if (port != constants::cpp_port) {
-        name += constants::port_sep + std::to_string(port);
+        name.append(constants::port_sep).append(std::to_string(port));
     }
-    name += constants::lang_sep + lang;
+    name.append(constants::lang_sep).append(lang);
     return name;
 }
 
 
-std::string make_name(const std::string& dpe,
-                      const std::string& container)
+auto make_name(std::string_view dpe,
+               std::string_view container) -> std::string
 {
-    return dpe + ":" + container;
+    auto name = std::string{};
+    name.append(dpe).append(":").append(container);
+    return name;
 }
 
 
-std::string make_name(const std::string& dpe,
-                      const std::string& container,
-                      const std::string& engine)
+auto make_name(std::string_view dpe,
+               std::string_view container,
+               std::string_view engine) -> std::string
 {
-    return dpe + ":" + container + ":" + engine;
+    auto name = std::string{};
+    name.append(dpe).append(":").append(container).append(":").append(engine);
+    return name;
 }
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util

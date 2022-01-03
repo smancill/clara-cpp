@@ -31,6 +31,7 @@ namespace json11 {
 static const int max_depth = 200;
 
 using std::string;
+using std::string_view;
 using std::vector;
 using std::map;
 using std::make_shared;
@@ -211,7 +212,7 @@ public:
 
 class JsonObject final : public Value<Json::OBJECT, Json::object> {
     const Json::object &object_items() const override { return m_value; }
-    const Json & operator[](const string &key) const override;
+    const Json & operator[](string_view key) const override;
 public:
     explicit JsonObject(const Json::object &value) : Value(value) {}
     explicit JsonObject(Json::object &&value)      : Value(move(value)) {}
@@ -231,7 +232,7 @@ struct Statics {
     const std::shared_ptr<JsonValue> f = make_shared<JsonBoolean>(false);
     const string empty_string;
     const vector<Json> empty_vector;
-    const map<string, Json> empty_map;
+    const map<string, Json, std::less<>> empty_map;
     Statics() {}
 };
 
@@ -273,20 +274,20 @@ int Json::int_value()                             const { return m_ptr->int_valu
 bool Json::bool_value()                           const { return m_ptr->bool_value();   }
 const string & Json::string_value()               const { return m_ptr->string_value(); }
 const vector<Json> & Json::array_items()          const { return m_ptr->array_items();  }
-const map<string, Json> & Json::object_items()    const { return m_ptr->object_items(); }
+const map<string, Json, std::less<>> & Json::object_items() const { return m_ptr->object_items(); }
 const Json & Json::operator[] (size_t i)          const { return (*m_ptr)[i];           }
-const Json & Json::operator[] (const string &key) const { return (*m_ptr)[key];         }
+const Json & Json::operator[] (string_view key)   const { return (*m_ptr)[key];         }
 
 double                    JsonValue::number_value()              const { return 0; }
 int                       JsonValue::int_value()                 const { return 0; }
 bool                      JsonValue::bool_value()                const { return false; }
 const string &            JsonValue::string_value()              const { return statics().empty_string; }
 const vector<Json> &      JsonValue::array_items()               const { return statics().empty_vector; }
-const map<string, Json> & JsonValue::object_items()              const { return statics().empty_map; }
+const map<string, Json, std::less<>> & JsonValue::object_items() const { return statics().empty_map; }
 const Json &              JsonValue::operator[] (size_t)         const { return static_null(); }
-const Json &              JsonValue::operator[] (const string &) const { return static_null(); }
+const Json &              JsonValue::operator[] (string_view)    const { return static_null(); }
 
-const Json & JsonObject::operator[] (const string &key) const {
+const Json & JsonObject::operator[] (string_view key) const {
     auto iter = m_value.find(key);
     return (iter == m_value.end()) ? static_null() : iter->second;
 }
@@ -668,7 +669,7 @@ struct JsonParser final {
             return parse_string();
 
         if (ch == '{') {
-            map<string, Json> data;
+            map<string, Json, std::less<>> data;
             ch = get_next_token();
             if (ch == '}')
                 return data;

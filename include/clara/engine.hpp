@@ -38,27 +38,27 @@ namespace clara {
 class Engine
 {
 public:
-    virtual EngineData configure(EngineData&) = 0;
+    virtual auto configure(EngineData&) -> EngineData = 0;
 
-    virtual EngineData execute(EngineData&) = 0;
+    virtual auto execute(EngineData&) -> EngineData = 0;
 
-    virtual EngineData execute_group(const std::vector<EngineData>&) = 0;
-
-public:
-    virtual std::vector<EngineDataType> input_data_types() const = 0;
-
-    virtual std::vector<EngineDataType> output_data_types() const = 0;
-
-    virtual std::set<std::string> states() const { return std::set<std::string>{};  }
+    virtual auto execute_group(const std::vector<EngineData>&) -> EngineData = 0;
 
 public:
-    virtual std::string name() const = 0;
+    virtual auto input_data_types() const -> std::vector<EngineDataType> = 0;
 
-    virtual std::string author() const = 0;
+    virtual auto output_data_types() const -> std::vector<EngineDataType> = 0;
 
-    virtual std::string description() const = 0;
+    virtual auto states() const -> std::set<std::string> { return {}; }
 
-    virtual std::string version() const = 0;
+public:
+    virtual auto name() const -> std::string = 0;
+
+    virtual auto author() const -> std::string = 0;
+
+    virtual auto description() const -> std::string = 0;
+
+    virtual auto version() const -> std::string = 0;
 
 public:
     virtual void reset() { };

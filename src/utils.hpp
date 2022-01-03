@@ -24,36 +24,35 @@
 #define CLARA_UTILS_HPP
 
 #include <string>
+#include <string_view>
 
-namespace clara {
 
-namespace msg::util {
+namespace clara::msg::util {
 
-std::string get_current_time();
+auto get_current_time() -> std::string;
 
 }
 
-namespace util {
+namespace clara::util {
 
 using msg::util::get_current_time;  // NOLINT
 
-std::string get_dpe_name(const std::string& canonical_name);
+auto get_dpe_name(std::string_view canonical_name) -> std::string_view;
 
-std::string get_container_name(const std::string& canonical_name);
+auto get_container_name(std::string_view canonical_name) -> std::string_view;
 
-std::string get_container_canonical_name(const std::string& canonical_name);
+auto get_container_canonical_name(std::string_view canonical_name) -> std::string_view;
 
-std::string get_engine_name(const std::string& canonical_name);
+auto get_engine_name(std::string_view canonical_name) -> std::string_view;
 
-std::string get_dpe_host(const std::string& canonical_name);
+auto get_dpe_host(std::string_view canonical_name) -> std::string_view;
 
-int get_dpe_port(const std::string& canonical_name);
+auto get_dpe_port(std::string_view canonical_name) -> int;
 
-std::string get_dpe_lang(const std::string& canonical_name);
+auto get_dpe_lang(std::string_view canonical_name) -> std::string_view;
 
-int get_default_port(const std::string& lang);
+auto get_default_port(std::string_view lang) -> int;
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util
 
 #endif // end of include guard: CLARA_UTILS_HPP

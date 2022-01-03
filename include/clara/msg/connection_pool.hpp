@@ -37,24 +37,24 @@ public:
     explicit ConnectionPool(std::shared_ptr<Context> ctx);
 
     ConnectionPool(const ConnectionPool&) = delete;
-    ConnectionPool& operator=(const ConnectionPool&) = delete;
-
     ConnectionPool(ConnectionPool&& rhs) noexcept;
-    ConnectionPool& operator=(ConnectionPool&& rhs) noexcept;
+
+    auto operator=(const ConnectionPool&) -> ConnectionPool& = delete;
+    auto operator=(ConnectionPool&& rhs) noexcept -> ConnectionPool&;
 
     virtual ~ConnectionPool();
 
 public:
-    ProxyConnection get_connection(const ProxyAddress& addr);
+    auto get_connection(const ProxyAddress& addr) -> ProxyConnection;
 
-    RegConnection get_connection(const RegAddress& addr);
+    auto get_connection(const RegAddress& addr) -> RegConnection;
 
 public:
     void set_default_setup(std::unique_ptr<ConnectionSetup> setup);
 
 private:
-    virtual detail::ProxyDriverPtr create_connection(const ProxyAddress& addr);
-    virtual detail::RegDriverPtr create_connection(const RegAddress& addr);
+    virtual auto create_connection(const ProxyAddress& addr) -> detail::ProxyDriverPtr;
+    virtual auto create_connection(const RegAddress& addr) -> detail::RegDriverPtr;
 
 private:
     template<typename A, typename U>

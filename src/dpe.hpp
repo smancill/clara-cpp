@@ -38,9 +38,9 @@ class Dpe final
 {
 public:
     Dpe(bool is_frontend,
-        const msg::ProxyAddress& local,
-        const msg::ProxyAddress& frontend,
-        const DpeConfig& config);
+        msg::ProxyAddress local,
+        msg::ProxyAddress frontend,
+        DpeConfig config);
 
     ~Dpe();
 

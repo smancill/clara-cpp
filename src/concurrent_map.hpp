@@ -27,8 +27,7 @@
 #include <mutex>
 #include <unordered_map>
 
-namespace clara {
-namespace util {
+namespace clara::util {
 
 template <typename K, typename T>
 class ConcurrentMap
@@ -47,7 +46,7 @@ public:
     ~ConcurrentMap() = default;
 
     template <typename... Args>
-    mapped_type insert(const key_type& name, Args&&... args)
+    auto insert(const key_type& name, Args&&... args) -> mapped_type
     {
         std::unique_lock<std::mutex> lock{mutex_};
 
@@ -59,7 +58,7 @@ public:
         return nullptr;
     }
 
-    mapped_type find(const key_type& name)
+    auto find(const key_type& name) -> mapped_type
     {
         std::unique_lock<std::mutex> lock{mutex_};
 
@@ -70,7 +69,7 @@ public:
         return nullptr;
     }
 
-    mapped_type remove(const key_type& name)
+    auto remove(const key_type& name) -> mapped_type
     {
         std::unique_lock<std::mutex> lock{mutex_};
 
@@ -102,7 +101,6 @@ private:
     std::unordered_map<key_type, mapped_type> cont_;
 };
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util
 
 #endif // end of include guard: CLARA_CONCURRENT_MAP_HPP

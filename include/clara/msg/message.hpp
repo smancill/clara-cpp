@@ -125,7 +125,9 @@ public:
       , data_{other.data_}
     { }
 
-    Message& operator=(const Message& other)
+    Message(Message&&) = default;
+
+    auto operator=(const Message& other) -> Message&
     {
         if (this != &other) {
             topic_ = other.topic_;
@@ -135,8 +137,7 @@ public:
         return *this;
     }
 
-    Message(Message&&) = default;
-    Message& operator=(Message&&) = default;
+    auto operator=(Message&&) -> Message& = default;
 
     ~Message() = default;
 
@@ -151,28 +152,28 @@ public:
 
 public:
     /// Read-only access to the topic
-    const Topic& topic() const { return topic_; }
+    auto topic() const -> const Topic& { return topic_; }
 
     /// Read-only access to the metadata
-    const proto::Meta* meta() const { return meta_.get(); }
+    auto meta() const -> const proto::Meta* { return meta_.get(); }
 
     /// Read-only access to the serialized data
-    const std::vector<std::uint8_t>& data() const { return data_; }
+    auto data() const -> const std::vector<std::uint8_t>& { return data_; }
 
 public:
     /// Gets the `datatype` identifier from the metadata.
-    const std::string& datatype() const { return meta_->datatype(); }
+    auto datatype() const -> const std::string& { return meta_->datatype(); }
 
     /// Checks if the metadata contains a `replyto` value
-    bool has_replyto() const { return meta_->has_replyto(); }
+    auto has_replyto() const -> bool { return meta_->has_replyto(); }
 
     /// Gets a %Topic using the `replyto` value from the metadata.
     /// Useful when creating a response message.
-    Topic replyto() const { return Topic::raw(meta_->replyto()); }
+    auto replyto() const -> Topic { return Topic::raw(meta_->replyto()); }
 
 public:
-    friend Message make_response(Message&& msg);
-    friend Message make_response(const Message& msg);
+    friend auto make_response(Message&& msg) -> Message;
+    friend auto make_response(const Message& msg) -> Message;
 
 private:
     friend Actor;
@@ -206,7 +207,7 @@ template<typename T,
             !std::is_same<proto::Data, std::decay_t<D>>::value
          >
         >
-inline Message make_message(T&& topic, D&& data)
+inline auto make_message(T&& topic, D&& data) -> Message
 {
     auto xdata = proto::make_data(std::forward<D>(data));
     return {std::forward<T>(topic),
@@ -232,7 +233,7 @@ inline Message make_message(T&& topic, D&& data)
  * \param data the object to be serialized in the message
  */
 template<typename T>
-inline Message make_message(T&& topic, const proto::Data& data)
+inline auto make_message(T&& topic, const proto::Data& data) -> Message
 {
     auto buffer = proto::serialize_data(data);
     return {std::forward<T>(topic), mimetype::plain_data, std::move(buffer)};
@@ -247,7 +248,7 @@ inline Message make_message(T&& topic, const proto::Data& data)
  * \return the value of type T contained in the message
  */
 template<typename T>
-inline T parse_message(const Message& msg)
+inline auto parse_message(const Message& msg) -> T
 {
     auto xdata = proto::parse_data(msg.data());
     return proto::parse_data<T>(xdata);
@@ -261,7 +262,7 @@ inline T parse_message(const Message& msg)
  * \return the deserialized %Data object
  */
 template<>
-inline proto::Data parse_message(const Message& msg)
+inline auto parse_message(const Message& msg) -> proto::Data
 {
     return proto::parse_data(msg.data());
 }
@@ -274,7 +275,7 @@ inline proto::Data parse_message(const Message& msg)
  * - The metadata will be reused (and the `replyto` field will be cleared)
  * - The data will be reused
  */
-inline Message make_response(Message&& msg)
+inline auto make_response(Message&& msg) -> Message
 {
     msg.topic_ = msg.replyto();
     msg.meta_->clear_replyto();
@@ -289,7 +290,7 @@ inline Message make_response(Message&& msg)
  * - The metadata will be copied (and the `replyto` field will be cleared)
  * - The data will be copied
  */
-inline Message make_response(const Message& msg)
+inline auto make_response(const Message& msg) -> Message
 {
     auto meta = proto::copy_meta(*msg.meta_);
     meta->clear_replyto();
@@ -297,13 +298,13 @@ inline Message make_response(const Message& msg)
 }
 
 
-inline bool operator==(const Message& lhs, const Message& rhs)
+inline auto operator==(const Message& lhs, const Message& rhs) -> bool
 {
     return std::tie(lhs.topic().str(), *lhs.meta(), lhs.data())
         == std::tie(rhs.topic().str(), *rhs.meta(), rhs.data());
 }
 
-inline bool operator!=(const Message& lhs, const Message& rhs)
+inline auto operator!=(const Message& lhs, const Message& rhs) -> bool
 {
     return !(lhs == rhs);
 }

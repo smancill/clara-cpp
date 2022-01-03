@@ -49,12 +49,12 @@ public:
         done_req_count.store(0);
     }
 
-    long data_count()
+    auto data_count() -> long
     {
         return data_req_count.load();
     }
 
-    long done_count()
+    auto done_count() -> long
     {
         return done_req_count.load();
     }
@@ -69,12 +69,12 @@ public:
         done_req_threshold.store(limit);
     }
 
-    long data_count_threshold()
+    auto data_count_threshold() -> long
     {
         return data_req_threshold.load();
     }
 
-    long done_count_threshold()
+    auto done_count_threshold() -> long
     {
         return done_req_threshold.load();
     }

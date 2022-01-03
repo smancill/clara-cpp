@@ -62,7 +62,11 @@ template<typename S,
          typename = std::enable_if_t<std::is_constructible_v<std::string, S>>>
 inline void set_datatype(Meta& meta, S&& datatype)
 {
-    meta.set_datatype(std::forward<S>(datatype));
+    if constexpr (std::is_same_v<std::decay_t<S>, std::string_view>) {
+        meta.set_datatype(datatype.data(), datatype.size());
+    } else {
+        meta.set_datatype(std::forward<S>(datatype));
+    }
 }
 
 } // end namespace detail
@@ -71,7 +75,7 @@ inline void set_datatype(Meta& meta, S&& datatype)
 /**
  * Creates an smart pointer to an empty %Meta object.
  */
-inline std::unique_ptr<Meta> make_meta()
+inline auto make_meta() -> std::unique_ptr<Meta>
 {
     return std::make_unique<Meta>();
 }
@@ -79,18 +83,18 @@ inline std::unique_ptr<Meta> make_meta()
 /**
  * Creates an smart pointer to a copy of the given %Meta object.
  */
-inline std::unique_ptr<Meta> copy_meta(const Meta& meta)
+inline auto copy_meta(const Meta& meta) -> std::unique_ptr<Meta>
 {
     return std::make_unique<Meta>(meta);
 }
 
 
-inline bool operator==(const Meta& lhs, const Meta& rhs)
+inline auto operator==(const Meta& lhs, const Meta& rhs) -> bool
 {
     return lhs.SerializeAsString() == rhs.SerializeAsString();
 }
 
-inline bool operator!=(const Meta& lhs, const Meta& rhs)
+inline auto operator!=(const Meta& lhs, const Meta& rhs) -> bool
 {
     return !(lhs == rhs);
 }

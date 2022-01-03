@@ -44,45 +44,45 @@ struct ServiceParameters
 class ServiceReport
 {
 public:
-    ServiceReport(const std::string& name,
+    ServiceReport(std::string_view name,
                   const ServiceParameters& params,
-                  const std::string& author,
-                  const std::string& version,
-                  const std::string& description);
+                  std::string_view author,
+                  std::string_view version,
+                  std::string_view description);
 
 public:
-    std::string name() const { return name_; };
+    auto name() const -> std::string_view { return name_; };
 
-    std::string engine() const { return engine_; };
+    auto engine() const -> std::string_view { return engine_; };
 
-    std::string library() const { return library_; };
+    auto library() const -> std::string_view { return library_; };
 
-    std::string author() const { return author_; };
+    auto author() const -> std::string_view { return author_; };
 
-    std::string lang() const { return constants::cpp_lang; };
+    auto lang() const -> std::string_view { return constants::cpp_lang; };
 
-    int pool_size() const { return pool_size_; };
+    auto pool_size() const -> int { return pool_size_; };
 
-    std::string description() const { return description_; };
+    auto description() const -> std::string_view { return description_; };
 
-    std::string version() const { return version_; };
+    auto version() const -> std::string_view { return version_; };
 
-    std::string start_time() const { return start_time_; };
+    auto start_time() const -> std::string_view { return start_time_; };
 
 public:
-    long n_requests() const { return n_requests_.load(); };
+    auto n_requests() const -> long { return n_requests_.load(); };
 
-    long n_failures() const { return n_failures_.load(); };
+    auto n_failures() const -> long { return n_failures_.load(); };
 
-    long shm_reads() const { return shm_reads_.load(); };
+    auto shm_reads() const -> long { return shm_reads_.load(); };
 
-    long shm_writes() const { return shm_writes_.load(); };
+    auto shm_writes() const -> long { return shm_writes_.load(); };
 
-    long bytes_recv() const { return bytes_recv_.load(); };
+    auto bytes_recv() const -> long { return bytes_recv_.load(); };
 
-    long bytes_sent() const { return bytes_sent_.load(); };
+    auto bytes_sent() const -> long { return bytes_sent_.load(); };
 
-    long exec_time() const { return exec_time_.load(); };
+    auto exec_time() const -> long { return exec_time_.load(); };
 
 public:
     void add_n_requests() { n_requests_.fetch_add(1); };

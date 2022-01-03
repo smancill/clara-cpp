@@ -44,22 +44,22 @@ namespace clara::msg {
 
 namespace proto {
 
-bool CompareRegistration::operator()(const Registration& lhs,
-                                     const Registration& rhs) const
+auto CompareRegistration::operator()(const Registration& lhs,
+                                     const Registration& rhs) const -> bool
 {
     int l_port, l_owner, r_port, r_owner;  // NOLINT
     return make_tie(lhs, l_port, l_owner) < make_tie(rhs, r_port, r_owner);
 }
 
 
-bool operator==(const Registration& lhs, const Registration& rhs)
+auto operator==(const Registration& lhs, const Registration& rhs) -> bool
 {
     int l_port, l_owner, r_port, r_owner;  // NOLINT
     return make_tie(lhs, l_port, l_owner) == make_tie(rhs, r_port, r_owner);
 }
 
 
-bool operator!=(const Registration& lhs, const Registration& rhs)
+auto operator!=(const Registration& lhs, const Registration& rhs) -> bool
 {
     return !(lhs == rhs);
 }
@@ -70,8 +70,8 @@ bool operator!=(const Registration& lhs, const Registration& rhs)
 
 namespace detail {
 
-Request::Request(const std::string& topic,
-                 const std::string& sender,
+Request::Request(std::string_view topic,
+                 std::string_view sender,
                  const proto::Registration& data)
   : msg_{zmq::message_t{topic},
          zmq::message_t{sender},
@@ -79,9 +79,9 @@ Request::Request(const std::string& topic,
 { }
 
 
-Request::Request(const std::string& topic,
-                 const std::string& sender,
-                 const std::string& text)
+Request::Request(std::string_view topic,
+                 std::string_view sender,
+                 std::string_view text)
   : msg_{zmq::message_t{topic},
          zmq::message_t{sender},
          zmq::message_t{text}}
@@ -93,7 +93,7 @@ Request::Request(RequestMsg&& msg)
 { }
 
 
-proto::Registration Request::data() const
+auto Request::data() const -> proto::Registration
 {
     auto rd = proto::Registration{};
     rd.ParseFromString(detail::to_string(msg_[2]));
@@ -102,8 +102,8 @@ proto::Registration Request::data() const
 
 
 
-Response::Response(const std::string& topic,
-                   const std::string& sender)
+Response::Response(std::string_view topic,
+                   std::string_view sender)
 {
     msg_.reserve(n_fields);
     msg_.emplace_back(topic);
@@ -112,8 +112,8 @@ Response::Response(const std::string& topic,
 }
 
 
-Response::Response(const std::string& topic,
-                   const std::string& sender,
+Response::Response(std::string_view topic,
+                   std::string_view sender,
                    const RegDataSet& data)
 {
     msg_.reserve(n_fields + data.size());
@@ -126,9 +126,9 @@ Response::Response(const std::string& topic,
 }
 
 
-Response::Response(const std::string& topic,
-                   const std::string& sender,
-                   const std::string& error_msg)
+Response::Response(std::string_view topic,
+                   std::string_view sender,
+                   std::string_view error_msg)
 {
     msg_.reserve(n_fields);
     msg_.emplace_back(topic);
@@ -142,7 +142,7 @@ Response::Response(ResponseMsg&& msg)
 { }
 
 
-RegDataSet Response::data() const
+auto Response::data() const -> RegDataSet
 {
     auto data = RegDataSet{};
     std::for_each(msg_.begin() + n_fields, msg_.end(), [&](const zmq::message_t& f) {
@@ -182,14 +182,14 @@ void RegDriver::remove(const proto::Registration& data, bool is_publisher)
 }
 
 
-void RegDriver::remove_all(const std::string& sender, const std::string& host)
+void RegDriver::remove_all(std::string_view sender, std::string_view host)
 {
     auto req = Request{constants::remove_all_registration, sender, host};
     request(req, constants::remove_request_timeout);
 }
 
 
-RegDataSet RegDriver::find(const proto::Registration& data, bool is_publisher)
+auto RegDriver::find(const proto::Registration& data, bool is_publisher) -> RegDataSet
 {
     auto topic = is_publisher ? constants::find_publisher
                               : constants::find_subscriber;
@@ -199,7 +199,7 @@ RegDataSet RegDriver::find(const proto::Registration& data, bool is_publisher)
 }
 
 
-Response RegDriver::request(Request& req, int timeout)
+auto RegDriver::request(Request& req, int timeout) -> Response
 {
     auto& out_msg = req.msg();
     socket_.send(out_msg[0], zmq::send_flags::sndmore);
@@ -224,25 +224,25 @@ Response RegDriver::request(Request& req, int timeout)
 
 
 
-bool operator==(const Request& lhs, const Request& rhs)
+auto operator==(const Request& lhs, const Request& rhs) -> bool
 {
     return lhs.msg_ == rhs.msg_;
 }
 
 
-bool operator!=(const Request& lhs, const Request& rhs)
+auto operator!=(const Request& lhs, const Request& rhs) -> bool
 {
     return !(lhs == rhs);
 }
 
 
-bool operator==(const Response& lhs, const Response& rhs)
+auto operator==(const Response& lhs, const Response& rhs) -> bool
 {
     return lhs.msg_ == rhs.msg_;
 }
 
 
-bool operator!=(const Response& lhs, const Response& rhs)
+auto operator!=(const Response& lhs, const Response& rhs) -> bool
 {
     return !(lhs == rhs);
 }
@@ -252,20 +252,20 @@ bool operator!=(const Response& lhs, const Response& rhs)
 
 namespace registration {
 
-proto::Registration create(const std::string& name,
-                           const std::string& description,
-                           const std::string& host,
-                           int port,
-                           const Topic& topic,
-                           bool is_publisher)
+auto create(std::string_view name,
+            std::string_view description,
+            std::string_view host,
+            int port,
+            const Topic& topic,
+            bool is_publisher) -> proto::Registration
 {
     auto data_type = is_publisher
             ? proto::Registration::PUBLISHER
             : proto::Registration::SUBSCRIBER;
     auto data = proto::Registration{};
-    data.set_name(name);
-    data.set_host(host);
-    data.set_description(description);
+    data.set_name(name.data(), name.size());
+    data.set_host(host.data(), host.size());
+    data.set_description(description.data(), description.size());
     data.set_port(port);
     data.set_domain(topic.domain());
     data.set_subject(topic.subject());

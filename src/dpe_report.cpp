@@ -29,7 +29,7 @@
 #include <cstdlib>
 #include <stdexcept>
 
-static std::string get_clara_home()
+static auto get_clara_home() -> std::string
 {
     auto* clara_home = std::getenv("CLARA_HOME");  // NOLINT(concurrency-mt-unsafe): setenv is never used
     if (clara_home == nullptr) {
@@ -39,9 +39,9 @@ static std::string get_clara_home()
 }
 
 
-static std::string get_alive_report(const std::string& name,
-                                    int cores,
-                                    const std::string& clara_home)
+static auto get_alive_report(std::string_view name,
+                             int cores,
+                             std::string_view clara_home) -> std::string
 {
     using namespace clara::util;
 
@@ -70,37 +70,37 @@ DpeReport::DpeReport(Base& base, DpeConfig& config)
 }
 
 
-std::string DpeReport::clara_home() const
+auto DpeReport::clara_home() const -> std::string_view
 {
     return clara_home_;
 }
 
 
-int DpeReport::core_count() const
+auto DpeReport::core_count() const -> int
 {
     return config_.max_cores;
 }
 
 
-long DpeReport::memory_size() const
+auto DpeReport::memory_size() const -> long
 {
     return 1;
 }
 
 
-long DpeReport::memory_usage() const
+auto DpeReport::memory_usage() const -> long
 {
     return 1;
 }
 
 
-double DpeReport::cpu_usage() const
+auto DpeReport::cpu_usage() const -> double
 {
     return 1.0;
 }
 
 
-double DpeReport::load() const
+auto DpeReport::load() const -> double
 {
     return 1.0;
 }
@@ -118,7 +118,7 @@ void DpeReport::remove_container(const element_type& container)
 }
 
 
-DpeReport::range_type DpeReport::containers() const
+auto DpeReport::containers() const -> DpeReport::range_type
 {
     return containers_.view();
 }

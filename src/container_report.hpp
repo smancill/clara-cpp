@@ -41,23 +41,23 @@ public:
 
 
 public:
-    ContainerReport(const std::string& name, const std::string& author);
+    ContainerReport(std::string_view name, std::string_view author);
 
 public:
-    std::string name() { return name_; };
+    auto name() -> std::string_view { return name_; };
 
-    std::string author() { return author_; };
+    auto author() -> std::string_view { return author_; };
 
-    std::string lang() { return constants::cpp_lang; };
+    auto lang() -> std::string_view { return constants::cpp_lang; };
 
-    std::string start_time() { return start_time_; };
+    auto start_time() -> std::string_view { return start_time_; };
 
 public:
     void add_service(const element_type& service);
 
     void remove_service(const element_type& service);
 
-    range_type services() const;
+    auto services() const -> range_type;
 
 private:
     std::string name_;

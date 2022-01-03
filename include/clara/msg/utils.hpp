@@ -35,7 +35,7 @@ namespace clara::msg::util {
  *
  * \throws std::system_error if an I/O error occurs.
  */
-std::string localhost();
+auto localhost() -> std::string;
 
 /**
  * Returns the IP addresses of the local node.
@@ -48,7 +48,7 @@ std::string localhost();
  * \return vector of IP addresses
  * \throws std::system_error if an I/O error occurs.
  */
-std::vector<std::string> get_localhost_addrs();
+auto get_localhost_addrs() -> std::vector<std::string>;
 
 /**
  * Updates the IP addresses of the local node.
@@ -68,7 +68,7 @@ void update_localhost_addrs();
  * \return dotted notation of the IP address
  * \throws std::system_error if the IP could not be obtained
  */
-std::string to_host_addr(const std::string& hostname);
+auto to_host_addr(const std::string& hostname) -> std::string;
 
 /**
  * Checks if the host name is an IPv4 address.
@@ -76,7 +76,7 @@ std::string to_host_addr(const std::string& hostname);
  * \param hostname Host name of the computing node.
  * \return true if host name has an IP form.
  */
-bool is_ipaddr(const std::string& hostname);
+auto is_ipaddr(std::string_view hostname) -> bool;
 
 /**
  * Thread sleep wrapper.

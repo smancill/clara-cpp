@@ -32,7 +32,7 @@
 #include <vector>
 
 namespace {
-    clara::msg::RegAddress get_fe_address(const clara::Component& fe)
+    auto get_fe_address(const clara::Component& fe) -> clara::msg::RegAddress
     {
         int reg_port = fe.addr().pub_port() + clara::constants::reg_port_shift;
         return {fe.addr().host(), reg_port};
@@ -73,7 +73,7 @@ void Base::send_response(const msg::Message& msg,
                          msg::proto::Meta::Status status)
 {
     auto meta = std::make_unique<msg::proto::Meta>();
-    meta->set_datatype(msg::mimetype::single_string);
+    msg::proto::detail::set_datatype(*meta, msg::mimetype::single_string);
     meta->set_author(name());
     meta->set_status(status);
     auto res = msg::Message{msg.replyto(), std::move(meta),

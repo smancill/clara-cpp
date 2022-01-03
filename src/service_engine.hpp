@@ -48,7 +48,8 @@ public:
                   ServiceConfig* config);
 
     ServiceEngine(const ServiceEngine&) = delete;
-    ServiceEngine& operator=(const ServiceEngine&) = delete;
+
+    auto operator=(const ServiceEngine&) -> ServiceEngine& = delete;
 
     ~ServiceEngine() override;
 
@@ -60,22 +61,26 @@ public:
     void execute(msg::Message& msg);
 
 private:
-    EngineData configure_engine(EngineData& input);
+    auto configure_engine(EngineData& input) -> EngineData;
 
-    EngineData execute_engine(EngineData& input);
+    auto execute_engine(EngineData& input) -> EngineData;
 
 private:
-    EngineData get_engine_data(msg::Message& msg);
+    auto get_engine_data(msg::Message& msg) -> EngineData;
 
-    msg::Message put_engine_data(const EngineData& output, const msg::Topic& topic);
-    msg::Message put_engine_data(const EngineData& output, const std::string& receiver);
+    auto put_engine_data(const EngineData& output,
+                         const msg::Topic& topic) -> msg::Message;
+
+    auto put_engine_data(const EngineData& output,
+                         const std::string& receiver) -> msg::Message;
 
     void update_metadata(const EngineData& input, EngineData& output);
 
 private:
     void parse_composition(const EngineData& input);
 
-    std::set<std::string> get_links(const EngineData& input, const EngineData& output);
+    auto get_links(const EngineData& input,
+                   const EngineData& output) -> std::set<std::string>;
 
 private:
     void send_response(EngineData& output, const msg::Topic& topic);
@@ -84,7 +89,7 @@ private:
     void report_problem(EngineData& output);
     void report_result(EngineData& output);
 
-    void report(const std::string& topic_prefix, EngineData& output);
+    void report(std::string_view topic_prefix, EngineData& output);
 
 private:
     std::mutex mutex_;

@@ -23,8 +23,7 @@
 #ifndef CLARA_DATA_SERIALIZATION_H
 #define CLARA_DATA_SERIALIZATION_H
 
-#include <clara/any.hpp>
-
+#include <any>
 #include <cstdint>
 #include <vector>
 
@@ -39,7 +38,7 @@ public:
      * @param data the user object stored on the {@link EngineData}
      * @throws ClaraException if the data could not be serialized
      */
-    virtual std::vector<std::uint8_t> write(const any& data) const = 0;
+    virtual auto write(const std::any& data) const -> std::vector<std::uint8_t> = 0;
 
     /**
      * De-serializes the byte buffer into the user object and returns it.
@@ -47,7 +46,7 @@ public:
      * @param buffer the serialized data
      * @throws ClaraException if the data could not be deserialized
      */
-    virtual any read(const std::vector<std::uint8_t>& buffer) const = 0;
+    virtual auto read(const std::vector<std::uint8_t>& buffer) const -> std::any = 0;
 
 public:
     /**
@@ -56,7 +55,7 @@ public:
      * @param data the user object stored on the {@link EngineData}
      * @throws ClaraException if the data could not be serialized
      */
-    virtual any read(std::vector<std::uint8_t>&& buffer) const
+    virtual auto read(std::vector<std::uint8_t>&& buffer) const -> std::any
     {
         return read(buffer);
     }
@@ -67,7 +66,7 @@ public:
      * @param buffer the serialized data
      * @throws ClaraException if the data could not be deserialized
      */
-    virtual std::vector<std::uint8_t> write(any&& data) const
+    virtual auto write(std::any&& data) const -> std::vector<std::uint8_t>
     {
         return write(data);
     }

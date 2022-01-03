@@ -26,21 +26,20 @@
 
 #include <clara/msg/message.hpp>
 
-namespace clara {
-namespace util {
 
-msg::Message build_request(const msg::Topic& topic, const std::string& data)
+namespace clara::util {
+
+auto build_request(const msg::Topic& topic, std::string_view data) -> msg::Message
 {
     return msg::Message{topic, type::STRING.mime_type(),
                         std::vector<std::uint8_t>{data.begin(), data.end()}};
 }
 
 
-std::string parse_message(const msg::Message& msg)
+auto parse_message(const msg::Message& msg) -> std::string
 {
     const auto& data = msg.data();
     return std::string{data.begin(), data.end()};
 }
 
-} // end namespace util
-} // end namespace clara
+} // end namespace clara::util

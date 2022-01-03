@@ -44,12 +44,12 @@ public:
     /**
      * Returns the global singleton context.
      */
-    static std::shared_ptr<Context> instance();
+    static auto instance() -> std::shared_ptr<Context>;
 
     /**
      * Creates a new context.
      */
-    static std::unique_ptr<Context> create();
+    static auto create() -> std::unique_ptr<Context>;
 
 public:
     /**
@@ -60,7 +60,7 @@ public:
     /**
      * Gets the size of the 0MQ thread pool to handle I/O operations.
      */
-    int io_threads();
+    auto io_threads() -> int;
 
     /**
      * Sets the maximum number of sockets allowed on the context.
@@ -70,17 +70,17 @@ public:
     /**
      * Gets the maximum number of sockets allowed on the context.
      */
-    int max_sockets();
+    auto max_sockets() -> int;
 
 private:
     Context();
 
 public:
     Context(const Context&) = delete;
-    Context& operator=(const Context&) = delete;
-
     Context(Context&&) = delete;
-    Context& operator=(Context&&) = delete;
+
+    auto operator=(const Context&) -> Context& = delete;
+    auto operator=(Context&&) -> Context& = delete;
 
     ~Context();
 

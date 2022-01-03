@@ -32,7 +32,7 @@ class DpeReport;
 class JsonReport
 {
 public:
-    std::string generate(const DpeReport& report) const;
+    auto generate(const DpeReport& report) const -> std::string;
 };
 
 } // end namespace clara

@@ -35,7 +35,7 @@ namespace clara::msg::detail {
 class Context
 {
 public:
-    zmq::socket_t create_socket(zmq::socket_type type)
+    auto create_socket(zmq::socket_type type) -> zmq::socket_t
     {
         auto out = zmq::socket_t{ctx_, type};
         out.set(zmq::sockopt::rcvhwm, 0);
@@ -51,7 +51,7 @@ public:
         }
     }
 
-    int get_option(int opt)
+    auto get_option(int opt) -> int
     {
         int rc = zmq_ctx_get(static_cast<void*>(ctx_), opt);
         if (rc < 0) {
@@ -77,7 +77,7 @@ public:
       : items_{zmq::pollitem_t{static_cast<void*>(socket), 0, ZMQ_POLLIN, 0}}
     { }
 
-    bool poll(int timeout)
+    auto poll(int timeout) -> bool
     {
         zmq::poll(items_.data(), 1, std::chrono::milliseconds{timeout});
         return (items_[0].revents & ZMQ_POLLIN) != 0;
@@ -93,12 +93,12 @@ class RawMessage {
 public:
     RawMessage(zmq::socket_t& socket);
 
-    auto& operator[](int idx)
+    auto operator[](int idx) -> auto&
     {
         return parts_[idx];
     }
 
-    int size() const
+    auto size() const -> int
     {
         return counter_;
     }
@@ -126,7 +126,7 @@ void connect(zmq::socket_t& socket, const std::string& host, int port)
 
 
 template<typename C>
-zmq::const_buffer buffer(const C& data)
+auto buffer(const C& data) -> zmq::const_buffer
 {
     return {data.data(), data.size()};
 }
@@ -136,27 +136,36 @@ auto buffer(C&& data) = delete;
 
 
 inline
-std::string to_string(const zmq::message_t& msg)
+auto to_string(const zmq::message_t& msg) -> std::string
 {
     return {msg.data<const char>(), msg.size()};
 }
 
+inline
+auto to_string_view(const zmq::message_t& msg) -> std::string_view
+{
+    return {msg.data<const char>(), msg.size()};
+}
+
+auto to_string_view(zmq::message_t&& msg) = delete;
+
 
 inline
-std::vector<std::uint8_t> to_bytes(const zmq::message_t& msg)
+auto to_bytes(const zmq::message_t& msg) -> std::vector<std::uint8_t>
 {
     const auto* ptr = msg.data<std::uint8_t>();
     return {ptr, ptr + msg.size()};
 }
 
 
-std::string get_unique_replyto(const std::string& subject);
+auto get_unique_replyto(const std::string& subject) -> std::string;
 
 void set_unique_replyto(std::uint_fast32_t value);
 
-std::string encode_identity(const std::string& address, const std::string& name);
+auto encode_identity(const std::string& address, const std::string& name)
+    -> std::string;
 
-std::string get_random_id();
+auto get_random_id() -> std::string;
 
 } // end namespace clara::msg::detail
 

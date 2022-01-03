@@ -23,6 +23,7 @@
 #define CLARA_MSG_TOPIC_H_
 
 #include <string>
+#include <string_view>
 #include <utility>
 
 
@@ -30,10 +31,10 @@ namespace clara::msg {
 
 namespace detail {
 
-std::string get_domain(const std::string& topic);
-std::string get_subject(const std::string& topic);
-std::string get_type(const std::string& topic);
-bool is_parent(const std::string& topic, const std::string& other);
+auto get_domain(std::string_view topic) -> std::string_view;
+auto get_subject(std::string_view topic) -> std::string_view;
+auto get_type(std::string_view topic) ->  std::string_view;
+auto is_parent(std::string_view topic, std::string_view other) -> bool;
 
 } // end namespace detail
 
@@ -90,7 +91,7 @@ public:
      *
      * \param domain the domain of the topic
      */
-    static Topic build(const std::string& domain)
+    static auto build(std::string_view domain) -> Topic
     {
         return build(domain, ANY, ANY);
     }
@@ -101,8 +102,8 @@ public:
      * \param domain the domain of the topic
      * \param subject the subject of the topic
      */
-    static Topic build(const std::string& domain,
-                       const std::string& subject)
+    static auto build(std::string_view domain,
+                      std::string_view subject) -> Topic
     {
         return build(domain, subject, ANY);
     }
@@ -114,9 +115,9 @@ public:
      * \param subject the subject of the topic
      * \param type the type of the subject
      */
-    static Topic build(const std::string& domain,
-                       const std::string& subject,
-                       const std::string& type);
+    static auto build(std::string_view domain,
+                      std::string_view subject,
+                      std::string_view type) -> Topic;
 
     /**
      * Use the given string as topic.
@@ -129,7 +130,7 @@ public:
      */
     template<typename T,
              typename = std::enable_if_t<std::is_constructible_v<std::string, T>>>
-    static Topic raw(T&& topic)
+    static auto raw(T&& topic) -> Topic
     {
         return {std::forward<T>(topic)};
     }
@@ -140,27 +141,27 @@ public:
     /**
      * Returns the domain part of the topic.
      */
-    std::string domain() const
+    auto domain() const -> std::string
     {
-        return detail::get_domain(topic_);
+        return std::string{detail::get_domain(topic_)};
     }
 
     /**
      * Returns the subject part of the topic.
      * If the topic has no subject, then \c "*" is returned.
      */
-    std::string subject() const
+    auto subject() const -> std::string
     {
-        return detail::get_subject(topic_);
+        return std::string{detail::get_subject(topic_)};
     }
 
     /**
      * Returns the type part of the topic.
      * If the topic has no type, then \c "*" is returned.
      */
-    std::string type() const
+    auto type() const -> std::string
     {
-        return detail::get_type(topic_);
+        return std::string{detail::get_type(topic_)};
     }
 
     /**
@@ -180,7 +181,7 @@ public:
      * \param other the topic to match as a children
      * \return true if this topic is a parent of the other
      */
-    bool is_parent(const Topic& other) const
+    auto is_parent(const Topic& other) const -> bool
     {
         return detail::is_parent(topic_, other.topic_);
     }
@@ -188,7 +189,7 @@ public:
     /**
      * Returns the string representation of this topic.
      */
-    const std::string& str() const
+    auto str() const -> const std::string&
     {
         return topic_;
     };
@@ -213,13 +214,13 @@ private:
 };
 
 
-inline bool operator==(const Topic& lhs, const Topic& rhs)
+inline auto operator==(const Topic& lhs, const Topic& rhs) -> bool
 {
     return lhs.str() == rhs.str();
 }
 
 
-inline bool operator!=(const Topic& lhs, const Topic& rhs)
+inline auto operator!=(const Topic& lhs, const Topic& rhs) -> bool
 {
     return !(lhs == rhs);
 }

@@ -45,37 +45,37 @@ public:
     DpeReport(Base& base, DpeConfig& config);
 
 public:
-    std::string name() const { return name_; };
+    auto name() const -> std::string_view { return name_; };
 
-    std::string session() const { return config_.session; };
+    auto session() const -> std::string_view { return config_.session; };
 
-    std::string lang() const { return constants::cpp_lang; };
+    auto lang() const -> std::string_view { return constants::cpp_lang; };
 
-    std::string description() const { return config_.description; };
+    auto description() const -> std::string_view { return config_.description; };
 
-    std::string start_time() const { return start_time_; };
+    auto start_time() const -> std::string_view { return start_time_; };
 
-    std::string clara_home() const;
+    auto clara_home() const -> std::string_view;
 
-    std::string alive_report() const { return alive_report_; };
+    auto alive_report() const -> std::string { return alive_report_; };
 
 public:
-    int core_count() const;
+    auto core_count() const -> int;
 
-    long memory_size() const;
+    auto memory_size() const -> long;
 
-    long memory_usage() const;
+    auto memory_usage() const -> long;
 
-    double cpu_usage() const;
+    auto cpu_usage() const -> double;
 
-    double load() const;
+    auto load() const -> double;
 
 public:
     void add_container(const element_type& container);
 
     void remove_container(const element_type& container);
 
-    range_type containers() const;
+    auto containers() const -> range_type;
 
 private:
     std::string name_;

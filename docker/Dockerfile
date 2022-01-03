@@ -1,4 +1,4 @@
-FROM debian:stretch-slim AS build
+FROM debian:bullseye-slim AS build
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install --assume-yes apt-utils
@@ -55,7 +55,7 @@ VOLUME ["${CLARA_HOME}/data/input", "${CLARA_HOME}/data/output", "${CLARA_HOME}/
 EXPOSE 7781-7785
 
 
-FROM debian:stretch-slim
+FROM debian:bullseye-slim
 
 # Useful packages
 RUN apt-get update && apt-get install -y \
@@ -65,7 +65,7 @@ RUN apt-get update && apt-get install -y \
 # Run dependencies
 RUN apt-get update && apt-get install -y \
         libzmq5 \
-        libprotobuf10 \
+        libprotobuf23 \
     && rm -rf /var/lib/apt/lists/*
 
 ENV CLARA_HOME="/usr/local/clara"

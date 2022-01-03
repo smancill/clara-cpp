@@ -19,7 +19,7 @@ using Response = cm::detail::Response;
 template<typename R>
 auto move_msg(R& r) -> R
 {
-    return R{r.msg()};
+    return R{std::move(r.msg())};
 }
 
 
@@ -110,13 +110,16 @@ struct DriverTest : public Test
       , publisher{t::new_registration("bradbury_pub", "localhost",
                                       "writer:scifi:books", true)}
     {
-        ON_CALL(driver, request(_, _))
-            .WillByDefault(Return(Response{"", "", ""}));
+        ON_CALL(driver, request(_, _)).WillByDefault([]() {
+            return Response{"", ""};
+        });
     }
 
     void set_response(const cm::RegDataSet& data)
     {
-        EXPECT_CALL(driver, request(_, _)).WillOnce(Return(Response{"", "", data}));
+        EXPECT_CALL(driver, request(_, _)).WillOnce([&]() {
+            return Response{"", "", data};
+        });
     }
 
     static auto make_request(const std::string& topic,
@@ -127,7 +130,7 @@ struct DriverTest : public Test
 
     void expect_request(const Request& reg, int timeout)
     {
-        EXPECT_CALL(driver, request(Eq(reg), Eq(timeout)));
+        EXPECT_CALL(driver, request(Eq(std::ref(reg)), Eq(timeout)));
     }
 
     MockContext ctx;

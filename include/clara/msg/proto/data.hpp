@@ -68,6 +68,8 @@ inline void set_value(Data& data, double value)
         { data.set_double_(value); }
 inline void set_value(Data& data, const std::string& value)
         { data.set_string(value); }
+inline void set_value(Data& data, std::string&& value)
+        { data.set_string(std::move(value)); }
 inline void set_value(Data& data, const char* value)
         { data.set_string(value); }
 
@@ -102,15 +104,15 @@ template<> inline std::string get_value(const Data& data)
         { return data.string(); }
 
 template<> inline std::vector<std::int32_t> get_value(const Data& data)
-        { auto& a = data.flsint32a(); return {a.begin(), a.end()}; }
+        { const auto& a = data.flsint32a(); return {a.begin(), a.end()}; }
 template<> inline std::vector<std::int64_t> get_value(const Data& data)
-        { auto& a = data.flsint64a(); return {a.begin(), a.end()}; }
+        { const auto& a = data.flsint64a(); return {a.begin(), a.end()}; }
 template<> inline std::vector<float> get_value(const Data& data)
-        { auto& a = data.floata(); return {a.begin(), a.end()}; }
+        { const auto& a = data.floata(); return {a.begin(), a.end()}; }
 template<> inline std::vector<double> get_value(const Data& data)
-        { auto& a = data.doublea(); return {a.begin(), a.end()}; }
+        { const auto& a = data.doublea(); return {a.begin(), a.end()}; }
 template<> inline std::vector<std::string> get_value(const Data& data)
-        { auto& a = data.stringa(); return {a.begin(), a.end()}; }
+        { const auto& a = data.stringa(); return {a.begin(), a.end()}; }
 
 template <typename T>
 inline std::string get_mimetype()
@@ -194,7 +196,7 @@ inline T parse_data(const Data& data)
 inline std::vector<std::uint8_t> serialize_data(const Data& data)
 {
     auto buffer = std::vector<std::uint8_t>(data.ByteSizeLong());
-    data.SerializeToArray(buffer.data(), buffer.size());
+    data.SerializeToArray(buffer.data(), static_cast<int>(buffer.size()));
     return buffer;
 }
 
@@ -210,7 +212,7 @@ inline std::vector<std::uint8_t> serialize_data(const Data& data)
 inline Data parse_data(const std::vector<std::uint8_t>& buffer)
 {
     auto xdata = Data{};
-    xdata.ParseFromArray(buffer.data(), buffer.size());
+    xdata.ParseFromArray(buffer.data(), static_cast<int>(buffer.size()));
     return xdata;
 }
 

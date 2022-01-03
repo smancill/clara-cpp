@@ -39,11 +39,11 @@ void SimpleCompiler::compile(const std::string& composition)
     prev_.clear();
     next_.clear();
 
-    auto sub_composition = &prev_;
-    bool service_found = false;
+    auto* sub_composition = &prev_;
+    auto service_found = false;
 
-    std::stringstream ss{composition};
-    std::string service{};
+    auto ss = std::stringstream{composition};
+    auto service = std::string{};
     while (std::getline(ss, service, '+')) {
         if (service.back() == ';') {
             service.pop_back();

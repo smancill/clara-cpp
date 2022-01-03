@@ -22,8 +22,9 @@
 
 #include "json_report.hpp"
 
-#include "dpe_report.hpp"
+#include "constants.hpp"
 #include "container_report.hpp"
+#include "dpe_report.hpp"
 #include "json_utils.hpp"
 #include "service_report.hpp"
 #include "utils.hpp"
@@ -37,8 +38,8 @@ std::string JsonReport::generate(const DpeReport& report) const
 {
     using namespace util;
 
-    Buffer buffer;
-    Writer writer{buffer};
+    auto buffer = Buffer{};
+    auto writer = Writer{buffer};
 
     auto snapshot_time = util::get_current_time();
 

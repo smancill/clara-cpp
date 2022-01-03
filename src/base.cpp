@@ -27,15 +27,15 @@
 
 #include <clara/msg/mimetype.hpp>
 
-#include <algorithm>
-#include <functional>
+#include <cstdint>
 #include <iostream>
+#include <vector>
 
 namespace {
     clara::msg::RegAddress get_fe_address(const clara::Component& fe)
     {
         int reg_port = fe.addr().pub_port() + clara::constants::reg_port_shift;
-        return { fe.addr().host(), reg_port };
+        return {fe.addr().host(), reg_port};
     }
 }
 
@@ -50,11 +50,7 @@ Base::Base(const Component& self, const Component& frontend)
     // nop
 }
 
-
-Base::~Base()
-{
-    // nothing
-}
+Base::~Base() = default;
 
 
 void Base::send(const Component& component, const std::string& data)
@@ -81,7 +77,7 @@ void Base::send_response(const msg::Message& msg,
     meta->set_author(name());
     meta->set_status(status);
     auto res = msg::Message{msg.replyto(), std::move(meta),
-                            std::vector<uint8_t>{data.begin(), data.end()}};
+                            std::vector<std::uint8_t>{data.begin(), data.end()}};
 
     auto con = connect();
     publish(con, res);

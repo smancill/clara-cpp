@@ -25,12 +25,13 @@
 #include "logging.hpp"
 
 #include <cstdlib>
+#include <exception>
 
 namespace {
 std::string default_author()
 {
-    auto* author = std::getenv("USER");
-    return author ? author : "clara";
+    auto* author = std::getenv("USER");  // NOLINT(concurrency-mt-unsafe): setenv is never used
+    return author != nullptr ? author : "clara";
 }
 } // end namespace
 

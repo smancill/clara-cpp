@@ -26,6 +26,7 @@
 #include <clara/msg/context.hpp>
 
 #include <atomic>
+#include <memory>
 #include <thread>
 
 namespace clara::msg::sys {

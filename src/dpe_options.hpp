@@ -87,7 +87,7 @@ public:
         options_.set_width(88);
     }
 
-    bool parse(int argc, char* argv[])
+    bool parse(int argc, char* argv[])  // NOLINT
     try {
         using namespace std::literals::string_literals;
 

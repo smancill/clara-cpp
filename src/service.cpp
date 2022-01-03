@@ -22,15 +22,17 @@
 
 #include "service.hpp"
 
-#include "data_utils.hpp"
 #include "logging.hpp"
+
+
+static constexpr auto default_queue_size = 1024;
 
 
 static tp::ThreadPoolOptions thread_pool_options(int pool_size, int queue_size)
 {
-    tp::ThreadPoolOptions opts;
-    opts.setThreadCount(static_cast<size_t>(pool_size));
-    opts.setQueueSize(static_cast<size_t>(queue_size));
+    auto opts = tp::ThreadPoolOptions{};
+    opts.setThreadCount(pool_size);
+    opts.setQueueSize(queue_size);
     return opts;
 }
 
@@ -42,7 +44,7 @@ Service::Service(const Component& self,
                  const ServiceParameters& params)
   : Base{self, frontend}
   , loader_{params.engine_lib}
-  , thread_pool_{thread_pool_options(params.pool_size, 1024)}
+  , thread_pool_{thread_pool_options(params.pool_size, default_queue_size)}
   , sys_config_{std::make_shared<ServiceConfig>()}
   , report_{std::make_shared<ServiceReport>(name(), params,
                                             loader_->author(),
@@ -134,7 +136,7 @@ void Service::callback(msg::Message& msg)
 {
     std::unique_lock<std::mutex> lock{cb_mutex_};
     try {
-        auto meta = msg.meta();
+        const auto* meta = msg.meta();
         if (!meta->has_action()) {
             setup(msg);
         } else if (meta->action() == msg::proto::Meta::CONFIGURE) {

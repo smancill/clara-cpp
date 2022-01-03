@@ -27,9 +27,7 @@
 #include "constants.hpp"
 #include "dpe_config.hpp"
 
-#include <memory>
 #include <string>
-#include <vector>
 
 namespace clara {
 

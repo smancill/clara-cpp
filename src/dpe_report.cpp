@@ -27,11 +27,12 @@
 #include "utils.hpp"
 
 #include <cstdlib>
+#include <stdexcept>
 
 static std::string get_clara_home()
 {
-    auto clara_home = std::getenv("CLARA_HOME");
-    if (!clara_home) {
+    auto* clara_home = std::getenv("CLARA_HOME");  // NOLINT(concurrency-mt-unsafe): setenv is never used
+    if (clara_home == nullptr) {
         throw std::runtime_error{"Missing CLARA_HOME env variable"};
     }
     return {clara_home};
@@ -44,8 +45,8 @@ static std::string get_alive_report(const std::string& name,
 {
     using namespace clara::util;
 
-    Buffer buffer;
-    Writer writer{buffer};
+    auto buffer = Buffer{};
+    auto writer = Writer{buffer};
 
     writer.StartObject();
     put(writer, "name", name);

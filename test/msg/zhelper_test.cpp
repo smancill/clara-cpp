@@ -10,6 +10,7 @@ namespace cm_ = clara::msg::detail;
 
 using namespace testing;
 
+
 TEST(UniqueReplyTo, GenerateUniqueReplyTo)
 {
     cm_::set_unique_replyto(-1);
@@ -60,7 +61,7 @@ TEST(UniqueReplyTo, EncodeIdentity)
 {
     auto encode = cm_::encode_identity("10.2.9.1", "test_actor");
 
-    ASSERT_EQ(8u, encode.size());
+    ASSERT_EQ(8U, encode.size());
 }
 
 
@@ -70,9 +71,9 @@ TEST(RandomControlId, NineDigitsLong)
     auto id2 = cm_::get_random_id();
     auto id3 = cm_::get_random_id();
 
-    ASSERT_EQ(9u, id1.size());
-    ASSERT_EQ(9u, id2.size());
-    ASSERT_EQ(9u, id3.size());
+    ASSERT_EQ(9U, id1.size());
+    ASSERT_EQ(9U, id2.size());
+    ASSERT_EQ(9U, id3.size());
 }
 
 

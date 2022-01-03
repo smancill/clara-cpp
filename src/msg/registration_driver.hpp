@@ -29,10 +29,7 @@
 #include "zhelper.hpp"
 
 #include <array>
-#include <memory>
-#include <set>
 #include <string>
-#include <utility>
 #include <vector>
 
 namespace clara::msg {
@@ -42,66 +39,69 @@ namespace detail {
 using RequestMsg = std::array<zmq::message_t, 3>;
 using ResponseMsg = std::vector<zmq::message_t>;
 
+
 class Request final
 {
 public:
-    Request(std::string topic,
-            std::string sender,
+    Request(const std::string& topic,
+            const std::string& sender,
             const proto::Registration& data);
 
-    Request(std::string topic,
-            std::string sender,
-            std::string text);
+    Request(const std::string& topic,
+            const std::string& sender,
+            const std::string& text);
 
-    explicit Request(const RequestMsg& msg);
+    explicit Request(RequestMsg&& msg);
 
-    RequestMsg msg();
+    RequestMsg& msg() { return msg_; };
 
-    const std::string& topic() const { return topic_; };
+    std::string topic() const { return to_string(msg_[0]); };
 
-    const std::string& sender() const { return sender_; };
+    std::string sender() const { return to_string(msg_[1]); };
 
-    const std::string& text() const { return data_; }
+    std::string text() const { return to_string(msg_[2]); }
 
     proto::Registration data() const;
 
+    friend bool operator==(const Request& lhs, const Request& rhs);
+
 private:
-    std::string topic_;
-    std::string sender_;
-    std::string data_;
+    RequestMsg msg_;
 };
 
 
 class Response final
 {
 public:
-    Response(std::string topic, std::string sender);
+    Response(const std::string& topic,
+             const std::string& sender);
 
-    Response(std::string topic, std::string sender, RegDataSet data);
+    Response(const std::string& topic,
+             const std::string& sender,
+             const RegDataSet& data);
 
-    Response(std::string topic, std::string sender, std::string error_msg);
+    Response(const std::string& topic,
+             const std::string& sender,
+             const std::string& error_msg);
 
-    explicit Response(const ResponseMsg& msg);
+    explicit Response(ResponseMsg&& msg);
 
-    ResponseMsg msg();
+    ResponseMsg& msg() { return msg_; };
 
-    const std::string& topic() const { return topic_; };
+    std::string topic() const { return to_string(msg_[0]); };
 
-    const std::string& sender() const { return sender_; };
+    std::string sender() const { return to_string(msg_[1]); };
 
-    const std::string& status() const { return status_; }
+    std::string status() const { return to_string(msg_[2]); }
 
-    const RegDataSet& data() const { return data_; }
+    RegDataSet data() const;
 
-    RegDataSet& data() { return data_; }
+    friend bool operator==(const Response& lhs, const Response& rhs);
 
 private:
-    static constexpr size_t n_fields = 3;
+    static constexpr int n_fields = 3;
 
-    std::string topic_;
-    std::string sender_;
-    std::string status_;
-    RegDataSet data_;
+    ResponseMsg msg_;
 };
 
 

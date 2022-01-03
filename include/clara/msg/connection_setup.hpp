@@ -49,7 +49,7 @@ public:
 
 public:
     /// Sets the value of a ØMQ socket option
-    void set_option(int opt, const void* val, size_t val_len);
+    void set_option(int opt, const void* val, std::size_t val_len);
 
     /// Sets the value of a ØMQ socket option
     template <typename Integer,
@@ -60,7 +60,7 @@ public:
     }
 
     /// Gets the value of a ØMQ socket option
-    void get_option(int opt, void* val, size_t* val_len) const;
+    void get_option(int opt, void* val, std::size_t* val_len) const;
 
     /// Gets the value of a ØMQ socket option
     template <typename Integer,
@@ -68,7 +68,7 @@ public:
     Integer get_option(int opt) const
     {
         Integer val;
-        size_t val_len = sizeof(Integer);
+        auto val_len = sizeof(Integer);
         get_option(opt, &val, &val_len);
         return val;
     }

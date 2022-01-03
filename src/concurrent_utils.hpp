@@ -39,7 +39,7 @@ template <typename Task>
 class BlockingQueue
 {
 public:
-    explicit BlockingQueue(size_t /*size*/)
+    explicit BlockingQueue(std::size_t /*size*/)
     {
         // TODO: use size parameter
     }
@@ -65,8 +65,7 @@ private:
 };
 
 
-using ThreadPool = tp::ThreadPoolImpl<tp::FixedFunction<void(), 128>,
-                                      BlockingQueue>;
+using ThreadPool = tp::ThreadPoolImpl<tp::FixedFunction<void()>, BlockingQueue>;
 
 
 template <typename T>

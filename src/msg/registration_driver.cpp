@@ -47,16 +47,14 @@ namespace proto {
 bool CompareRegistration::operator()(const Registration& lhs,
                                      const Registration& rhs) const
 {
-    int l_port, l_owner;
-    int r_port, r_owner;
+    int l_port, l_owner, r_port, r_owner;  // NOLINT
     return make_tie(lhs, l_port, l_owner) < make_tie(rhs, r_port, r_owner);
 }
 
 
 bool operator==(const Registration& lhs, const Registration& rhs)
 {
-    int l_port, l_owner;
-    int r_port, r_owner;
+    int l_port, l_owner, r_port, r_owner;  // NOLINT
     return make_tie(lhs, l_port, l_owner) == make_tie(rhs, r_port, r_owner);
 }
 
@@ -72,108 +70,87 @@ bool operator!=(const Registration& lhs, const Registration& rhs)
 
 namespace detail {
 
-Request::Request(std::string topic,
-                 std::string sender,
+Request::Request(const std::string& topic,
+                 const std::string& sender,
                  const proto::Registration& data)
-  : topic_ {std::move(topic)}
-  , sender_{std::move(sender)}
-  , data_  {data.SerializeAsString()}
-{
-    // nothing
-}
+  : msg_{zmq::message_t{topic},
+         zmq::message_t{sender},
+         zmq::message_t{data.SerializeAsString()}}
+{ }
 
 
-Request::Request(std::string topic, std::string sender, std::string text)
-  : topic_ {std::move(topic)}
-  , sender_{std::move(sender)}
-  , data_  {std::move(text)}
-{
-    // nothing
-}
+Request::Request(const std::string& topic,
+                 const std::string& sender,
+                 const std::string& text)
+  : msg_{zmq::message_t{topic},
+         zmq::message_t{sender},
+         zmq::message_t{text}}
+{ }
 
 
-Request::Request(const RequestMsg& msg)
-  : topic_ {detail::to_string(msg[0])}
-  , sender_{detail::to_string(msg[1])}
-  , data_  {detail::to_string(msg[2])}
-{
-    // nothing
-}
-
-
-RequestMsg Request::msg()
-{
-    return {
-        zmq::message_t{topic_.begin(), topic_.end()},
-        zmq::message_t{sender_.begin(), sender_.end()},
-        zmq::message_t{data_.begin(), data_.end()},
-    };
-}
+Request::Request(RequestMsg&& msg)
+  : msg_{std::move(msg)}
+{ }
 
 
 proto::Registration Request::data() const
 {
-    proto::Registration rd;
-    rd.ParseFromString(data_);
+    auto rd = proto::Registration{};
+    rd.ParseFromString(detail::to_string(msg_[2]));
     return rd;
 }
 
 
 
-Response::Response(std::string topic, std::string sender)
-  : topic_ {std::move(topic)}
-  , sender_{std::move(sender)}
-  , status_{constants::success}
+Response::Response(const std::string& topic,
+                   const std::string& sender)
 {
-    // nothing
+    msg_.reserve(n_fields);
+    msg_.emplace_back(topic);
+    msg_.emplace_back(sender);
+    msg_.emplace_back(constants::success);
 }
 
 
-Response::Response(std::string topic, std::string sender, RegDataSet data)
-  : topic_ {std::move(topic)}
-  , sender_{std::move(sender)}
-  , status_{constants::success}
-  , data_{std::move(data)}
+Response::Response(const std::string& topic,
+                   const std::string& sender,
+                   const RegDataSet& data)
 {
-    // nothing
-}
-
-
-Response::Response(std::string topic, std::string sender, std::string error_msg)
-  : topic_ {std::move(topic)}
-  , sender_{std::move(sender)}
-  , status_{std::move(error_msg)}
-{
-    // nothing
-}
-
-
-Response::Response(const ResponseMsg& msg)
-  : topic_ {detail::to_string(msg[0])}
-  , sender_{detail::to_string(msg[1])}
-  , status_{detail::to_string(msg[2])}
-{
-    using ZFrame = const zmq::message_t;
-    std::for_each(msg.begin() + n_fields, msg.end(), [=](ZFrame& f) {
-        auto reg = proto::Registration{};
-        reg.ParseFromArray(f.data(), f.size());
-        data_.insert(reg);
-    });
-}
-
-
-ResponseMsg Response::msg()
-{
-    ResponseMsg msg;
-    msg.reserve(n_fields + data_.size());
-    msg.emplace_back(topic_.begin(), topic_.end());
-    msg.emplace_back(sender_.begin(), sender_.end());
-    msg.emplace_back(status_.begin(), status_.end());
-    for (auto& reg : data_) {
-        auto buf = reg.SerializeAsString();
-        msg.emplace_back(buf.begin(), buf.end());
+    msg_.reserve(n_fields + data.size());
+    msg_.emplace_back(topic);
+    msg_.emplace_back(sender);
+    msg_.emplace_back(constants::success);
+    for (const auto& reg : data) {
+        msg_.emplace_back(reg.SerializeAsString());
     }
-    return msg;
+}
+
+
+Response::Response(const std::string& topic,
+                   const std::string& sender,
+                   const std::string& error_msg)
+{
+    msg_.reserve(n_fields);
+    msg_.emplace_back(topic);
+    msg_.emplace_back(sender);
+    msg_.emplace_back(error_msg);
+}
+
+
+Response::Response(ResponseMsg&& msg)
+  : msg_{std::move(msg)}
+{ }
+
+
+RegDataSet Response::data() const
+{
+    auto data = RegDataSet{};
+    std::for_each(msg_.begin() + n_fields, msg_.end(), [&](const zmq::message_t& f) {
+        auto reg = proto::Registration{};
+        reg.ParseFromArray(f.data(), static_cast<int>(f.size()));
+        data.insert(reg);
+    });
+    return data;
 }
 
 
@@ -191,8 +168,8 @@ void RegDriver::add(const proto::Registration& data, bool is_publisher)
 {
     auto topic = is_publisher ? constants::register_publisher
                               : constants::register_subscriber;
-    auto reg_req = Request{topic, data.name(), data};
-    request(reg_req, constants::register_request_timeout);
+    auto req = Request{topic, data.name(), data};
+    request(req, constants::register_request_timeout);
 }
 
 
@@ -200,15 +177,15 @@ void RegDriver::remove(const proto::Registration& data, bool is_publisher)
 {
     auto topic = is_publisher ? constants::remove_publisher
                               : constants::remove_subscriber;
-    auto reg_req = Request{topic, data.name(), data};
-    request(reg_req, constants::remove_request_timeout);
+    auto req = Request{topic, data.name(), data};
+    request(req, constants::remove_request_timeout);
 }
 
 
 void RegDriver::remove_all(const std::string& sender, const std::string& host)
 {
-    auto reg_req = Request{constants::remove_all_registration, sender, host};
-    request(reg_req, constants::remove_request_timeout);
+    auto req = Request{constants::remove_all_registration, sender, host};
+    request(req, constants::remove_request_timeout);
 }
 
 
@@ -216,15 +193,15 @@ RegDataSet RegDriver::find(const proto::Registration& data, bool is_publisher)
 {
     auto topic = is_publisher ? constants::find_publisher
                               : constants::find_subscriber;
-    auto reg_req = Request{topic, data.name(), data};
-    auto res = request(reg_req, constants::find_request_timeout);
-    return std::move(res.data());
+    auto req = Request{topic, data.name(), data};
+    auto res = request(req, constants::find_request_timeout);
+    return res.data();
 }
 
 
 Response RegDriver::request(Request& req, int timeout)
 {
-    auto out_msg = req.msg();
+    auto& out_msg = req.msg();
     socket_.send(out_msg[0], zmq::send_flags::sndmore);
     socket_.send(out_msg[1], zmq::send_flags::sndmore);
     socket_.send(out_msg[2], zmq::send_flags::none);
@@ -240,7 +217,7 @@ Response RegDriver::request(Request& req, int timeout)
                 break;
             }
         }
-        return Response{in_msg};
+        return Response{std::move(in_msg)};
     }
     throw std::runtime_error{"timeout"};
 }
@@ -249,8 +226,7 @@ Response RegDriver::request(Request& req, int timeout)
 
 bool operator==(const Request& lhs, const Request& rhs)
 {
-    return std::tie(lhs.topic(), lhs.sender(), lhs.text())
-        == std::tie(rhs.topic(), rhs.sender(), rhs.text());
+    return lhs.msg_ == rhs.msg_;
 }
 
 
@@ -262,8 +238,7 @@ bool operator!=(const Request& lhs, const Request& rhs)
 
 bool operator==(const Response& lhs, const Response& rhs)
 {
-    return std::tie(lhs.topic(), lhs.sender(), lhs.status(), lhs.data())
-        == std::tie(rhs.topic(), rhs.sender(), rhs.status(), rhs.data());
+    return lhs.msg_ == rhs.msg_;
 }
 
 

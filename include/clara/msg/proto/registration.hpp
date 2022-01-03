@@ -65,7 +65,7 @@ inline Topic parse_topic(const Registration& reg)
  */
 inline ProxyAddress parse_address(const Registration& reg)
 {
-    return { reg.host(), reg.port() };
+    return {reg.host(), reg.port()};
 }
 
 bool operator==(const Registration& lhs, const Registration& rhs);

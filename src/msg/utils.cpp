@@ -21,7 +21,10 @@
 
 #include <clara/msg/utils.hpp>
 
+#include <array>
+#include <ctime>
 #include <chrono>
+#include <mutex>
 #include <regex>
 #include <shared_mutex>
 #include <system_error>
@@ -45,23 +48,22 @@ std::vector<std::string> get_addresses()
     struct AddrList {
         AddrList() { getifaddrs(&ifl); }
 
-        ~AddrList() { if (ifl != nullptr) freeifaddrs(ifl); }
+        ~AddrList() { if (ifl != nullptr) { freeifaddrs(ifl); } }
 
         struct ifaddrs* ifl = nullptr;
     } ifl;
 
-    std::vector<std::string> all_addrs;
+    auto all_addrs = std::vector<std::string>{};
 
     for (struct ifaddrs* ifa = ifl.ifl; ifa != nullptr; ifa = ifa->ifa_next) {
         if (ifa->ifa_addr == nullptr) {
             continue;
         }
         if (ifa->ifa_addr->sa_family == AF_INET) {
-            void* s_addr = &((struct sockaddr_in*) ifa->ifa_addr)->sin_addr;
-            char addr_buf[INET_ADDRSTRLEN];
-            inet_ntop(AF_INET, s_addr, addr_buf, INET_ADDRSTRLEN);
-
-            auto addr = std::string{addr_buf};
+            void* addr_s = &reinterpret_cast<sockaddr_in*>(ifa->ifa_addr)->sin_addr;
+            auto addr_b = std::array<char, INET_ADDRSTRLEN>{};
+            inet_ntop(AF_INET, addr_s, addr_b.data(), addr_b.size());
+            auto addr = std::string{addr_b.data()};
             if (addr.compare(0, 3, "127") != 0) {
                 all_addrs.push_back(std::move(addr));
             }
@@ -74,11 +76,15 @@ std::vector<std::string> get_addresses()
 
 std::string get_host_address(const std::string& hostname)
 {
-    struct hostent* h = gethostbyname(hostname.data());
+    static auto mtx = std::mutex{};
+
+    auto lock = std::lock_guard(mtx);
+
+    struct hostent* h = gethostbyname(hostname.data());  // NOLINT(concurrency-mt-unsafe)
     if (h == nullptr) {
         throw std::system_error{EFAULT, std::system_category()};
     }
-    return { inet_ntoa(*((struct in_addr*) h->h_addr)) };
+    return {inet_ntoa(*reinterpret_cast<in_addr*>(h->h_addr))};  // NOLINT(concurrency-mt-unsafe)
 }
 
 
@@ -116,6 +122,16 @@ LocalAddrs& local_addrs()
     return *addrs;
 }
 
+
+inline
+auto safe_localtime(const std::time_t* time)
+{
+    static auto mtx = std::mutex{};
+
+    auto lock = std::lock_guard(mtx);
+    return std::localtime(time);  // NOLINT(concurrency-mt-unsafe)
+}
+
 }
 
 
@@ -141,9 +157,6 @@ void update_localhost_addrs()
 
 std::string to_host_addr(const std::string& hostname)
 {
-    if (is_ipaddr(hostname)) {
-        return { hostname };
-    }
     if (hostname == "localhost") {
         return local_addrs().get_first();
     }
@@ -157,17 +170,18 @@ bool is_ipaddr(const std::string& hostname)
 }
 
 
-void validate_ipaddr(const std::string& address)
-{
-    if (!is_ipaddr(address)) {
-        throw std::invalid_argument{"invalid IP address: " + address};
-    }
-}
-
-
 void sleep(long millis)
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(millis));
+}
+
+
+std::string get_current_time()
+{
+    auto now = std::time(nullptr);
+    auto buf = std::array<char, sizeof "2001-01-01 00:00:00">{};
+    std::strftime(buf.data(), buf.size(), "%Y-%m-%d %H:%M:%S", safe_localtime(&now));
+    return {buf.begin(), buf.end()};
 }
 
 } // end namespace clara::msg::util

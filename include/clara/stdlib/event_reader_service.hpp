@@ -27,7 +27,6 @@
 #include <clara/third_party/json11.hpp>
 
 #include <memory>
-#include <set>
 #include <stdexcept>
 
 namespace clara {
@@ -41,14 +40,14 @@ class EventReaderService : public Engine
 {
 public:
     EventReaderService();
-    virtual ~EventReaderService();
+     ~EventReaderService() override;
 
 public:
-    EngineData configure(EngineData&) override;
+    EngineData configure(EngineData& input) override;
 
     EngineData execute(EngineData& input) override;
 
-    EngineData execute_group(const std::vector<EngineData>&) override;
+    EngineData execute_group(const std::vector<EngineData>& inputs) override;
 
 protected:
     enum class Endian
@@ -110,7 +109,7 @@ private:
      * @return the total number of events in the file
      * @throws EventReaderError if the file could not be read
      */
-    virtual size_t read_event_count() = 0;
+    virtual int read_event_count() = 0;
 
     /**
      * Gets the byte order of the events stored in the input file.

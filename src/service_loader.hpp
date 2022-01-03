@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    using create_service_fn = std::unique_ptr<Engine> (*)(void);
+    using create_service_fn = std::unique_ptr<Engine> (*)();
 
 private:
     template<typename Fn>

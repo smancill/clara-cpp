@@ -25,8 +25,8 @@
 
 #include <clara/third_party/json11.hpp>
 
-#include <iostream>
-#include <sstream>
+#include <stdexcept>
+#include <string>
 
 namespace clara {
 
@@ -60,7 +60,7 @@ bool get_bool(const json11::Json& obj, const std::string& key);
 
 int get_int(const json11::Json& obj, const std::string& key);
 
-int get_double(const json11::Json& obj, const std::string& key);
+double get_double(const json11::Json& obj, const std::string& key);
 
 const std::string& get_string(const json11::Json& obj, const std::string& key);
 

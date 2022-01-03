@@ -26,7 +26,9 @@
 
 #include <array>
 #include <chrono>
+#include <cstdint>
 #include <string>
+#include <vector>
 
 namespace clara::msg::detail {
 
@@ -91,21 +93,21 @@ class RawMessage {
 public:
     RawMessage(zmq::socket_t& socket);
 
-    auto& operator[](std::size_t idx)
+    auto& operator[](int idx)
     {
-        return parts[idx];
+        return parts_[idx];
     }
 
-    std::size_t size()
+    int size() const
     {
-        return counter;
+        return counter_;
     }
 
 private:
-    static const size_t msg_size = 3;
+    static constexpr int msg_size = 3;
 
-    std::size_t counter = 0;
-    std::array<zmq::message_t, msg_size> parts;
+    int counter_ = 0;
+    std::array<zmq::message_t, msg_size> parts_;
 };
 
 
@@ -143,7 +145,7 @@ std::string to_string(const zmq::message_t& msg)
 inline
 std::vector<std::uint8_t> to_bytes(const zmq::message_t& msg)
 {
-    auto ptr = msg.data<std::uint8_t>();
+    const auto* ptr = msg.data<std::uint8_t>();
     return {ptr, ptr + msg.size()};
 }
 

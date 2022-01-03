@@ -43,7 +43,7 @@ TEST(PrimitiveSerializer, StringSerialization)
     const auto b = s->write(clara::any{std::string{"Master of Puppets"}});
     const auto d = clara::any_cast<std::string>(s->read(b));
 
-    ASSERT_THAT(d, Eq("Master of Puppets"));
+    ASSERT_THAT(d, StrEq("Master of Puppets"));
 }
 
 
@@ -109,7 +109,7 @@ TEST(RawBytesSerializer, MoveSemantics)
 
     using rnd_eng = std::default_random_engine;
     using rnd_byte_eng = std::independent_bits_engine<rnd_eng, CHAR_BIT, std::uint8_t>;
-    rnd_byte_eng rbe;
+    auto rbe = rnd_byte_eng{};
 
     auto r = std::vector<std::uint8_t>(100);
     std::generate(r.begin(), r.end(), std::ref(rbe));

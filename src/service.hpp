@@ -32,6 +32,7 @@
 #include "service_loader.hpp"
 #include "service_report.hpp"
 
+#include <memory>
 #include <mutex>
 
 namespace clara {

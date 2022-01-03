@@ -1,71 +1,52 @@
 #include <clara/msg/utils.hpp>
 
+#include "helper/utils.hpp"
+
 #include <gmock/gmock.h>
 
-#include <iostream>
 #include <thread>
+#include <utility>
 
+using namespace clara::msg;
 using namespace testing;
 
 
-AssertionResult is_ip(const std::string& address)
+using AddrParam = std::pair<std::string, bool>;
+
+PARAMETERIZED_SUITE(IpAddrSuite, AddrParam)
 {
-    return clara::msg::util::is_ipaddr(address)
-        ? AssertionSuccess() << address << " is a valid IP"
-        : AssertionFailure() << address << " is not a valid IP";
+    return {
+        // valid
+        {"1.1.1.1", true},
+        {"255.255.255.255", true},
+        {"192.168.1.1", true},
+        {"10.10.1.1", true},
+        {"132.254.111.10", true},
+        {"26.10.2.10", true},
+        {"127.0.0.1", true},
+        // invalid
+        {"10.10.10", false},
+        {"10.10", false},
+        {"10", false},
+        {"a.a.a.a", false},
+        {"10.10.10.a", false},
+        {"10.10.10.256", false},
+        {"222.222.2.999", false},
+        {"999.10.10.20", false},
+        {"2222.22.22.22", false},
+        {"22.2222.22.2", false},
+        // IPv6
+        {"2001:cdba:0000:0000:0000:0000:3257:9652", false},
+        {"2001:cdba:0:0:0:0:3257:9652", false},
+        {"2001:cdba::3257:9652", false},
+    };
 }
 
-
-TEST(IpUtils, CheckValidIPs)
+TEST_P(IpAddrSuite, CheckAddr)
 {
-    std::string addrs[] = {
-        "1.1.1.1",
-        "255.255.255.255",
-        "192.168.1.1",
-        "10.10.1.1",
-        "132.254.111.10",
-        "26.10.2.10",
-        "127.0.0.1",
-    };
+    const auto& [addr, expected] = GetParam();
 
-    for (auto& addr : addrs) {
-        ASSERT_TRUE(is_ip(addr));
-    }
-}
-
-
-TEST(IpUtils, CheckInvalidIPs)
-{
-    std::string addrs[] = {
-        "10.10.10",
-        "10.10",
-        "10",
-        "a.a.a.a",
-        "10.10.10.a",
-        "10.10.10.256",
-        "222.222.2.999",
-        "999.10.10.20",
-        "2222.22.22.22",
-        "22.2222.22.2",
-    };
-
-    for (auto& addr : addrs) {
-        ASSERT_FALSE(is_ip(addr));
-    }
-}
-
-
-TEST(IpUtils, CheckOnlyIPv4)
-{
-    std::string addrs[] = {
-        "2001:cdba:0000:0000:0000:0000:3257:9652",
-        "2001:cdba:0:0:0:0:3257:9652",
-        "2001:cdba::3257:9652",
-    };
-
-    for (auto& addr : addrs) {
-        ASSERT_FALSE(is_ip(addr));
-    }
+    ASSERT_THAT(util::is_ipaddr(addr), Eq(expected));
 }
 
 
@@ -88,7 +69,6 @@ TEST(IpUtils, ThreadSafeGeneration)
     updater_thread.join();
 }
 #endif
-
 
 
 int main(int argc, char* argv[])

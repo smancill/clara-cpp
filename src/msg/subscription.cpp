@@ -24,10 +24,7 @@
 #include "connection_driver.hpp"
 #include "likely.hpp"
 
-#include <clara/msg/message.hpp>
-#include <clara/msg/utils.hpp>
-
-#include <array>
+#include <exception>
 #include <iostream>
 
 namespace clara::msg {
@@ -57,7 +54,6 @@ Subscription::Subscription(const Topic& topic,
   : topic_{topic}
   , connection_{std::move(connection)}
   , handler_{std::move(handler)}
-  , thread_{}
   , is_alive_{false}
 {
     connection_->subscribe(topic_);

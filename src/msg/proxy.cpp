@@ -24,6 +24,7 @@
 #include "constants.hpp"
 #include "zhelper.hpp"
 
+#include <exception>
 #include <iostream>
 #include <mutex>
 
@@ -121,7 +122,7 @@ void Proxy::control()
 
             auto type = detail::to_string(type_msg);
 
-            if (type == constants::ctrl_connect) {
+            if (type == constants::ctrl_connect) {  // NOLINT(bugprone-branch-clone)
                 router.send(id_msg, zmq::send_flags::sndmore);
                 router.send(type_msg, zmq::send_flags::none);
             } else if (type == constants::ctrl_subscribe) {

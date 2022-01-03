@@ -23,16 +23,21 @@
 
 #include <clara/msg/utils.hpp>
 
-#include <algorithm>
 #include <csignal>
 #include <cstdlib>
-#include <ctime>
 #include <iostream>
 #include <string>
 
 #include <cxxopts.hpp>
 
 #include <unistd.h>
+
+namespace clara::msg::util {
+
+std::string get_current_time();
+
+}
+
 
 static volatile sig_atomic_t signal_value = 0;
 
@@ -63,24 +68,17 @@ static void wait_signals()
 }
 
 
-std::string current_time()
-{
-    time_t now;
-    std::time(&now);
-    char buf[sizeof "2001-01-01 00:00:00"];
-    std::strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S", std::localtime(&now));
-    return buf;
-}
+using namespace clara::msg;
 
 
-clara::msg::ProxyAddress get_address(const cxxopts::ParseResult& result)
+ProxyAddress get_address(const cxxopts::ParseResult& result)
 {
-    std::string host = clara::msg::util::localhost();
-    int port = clara::msg::ProxyAddress::default_port;
+    auto host = util::localhost();
+    auto port = ProxyAddress::default_port;
 
     if (result.count("host") > 0) {
         host = result["host"].as<std::string>();
-        host = clara::msg::util::to_host_addr(host);
+        host = util::to_host_addr(host);
     }
     if (result.count("port") > 0) {
         port = result["port"].as<int>();
@@ -115,11 +113,11 @@ int main(int argc, char** argv)
         }
 
         auto addr = get_address(result);
-        auto proxy = clara::msg::sys::Proxy{addr};
+        auto proxy = sys::Proxy{addr};
         proxy.start();
 
         printf("[%s] CLARA proxy INFO: running on host = %s  port = %d\n",
-               current_time().c_str(), addr.host().c_str(), addr.pub_port());
+               util::get_current_time().c_str(), addr.host().c_str(), addr.pub_port());
 
         wait_signals();
     } catch (std::exception& e) {

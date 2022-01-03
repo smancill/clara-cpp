@@ -52,9 +52,9 @@ public:
         std::unique_lock<std::mutex> lock{mutex_};
 
         auto data = std::make_shared<T>(std::forward<Args>(args)...);
-        auto rv = cont_.insert({name, data});
-        if (rv.second) {
-            return rv.first->second;
+        auto [val, ins] = cont_.insert({name, data});
+        if (ins) {
+            return val->second;
         }
         return nullptr;
     }

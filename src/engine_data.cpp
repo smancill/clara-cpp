@@ -25,10 +25,13 @@
 
 #include <clara/msg/proto/meta.hpp>
 
+#include <stdexcept>
+
+
 namespace clara {
 
 EngineData::EngineData()
-  : data_{}
+  : data_{}  // NOLINT
   , meta_{std::make_unique<Meta>()}
 {
     // nop
@@ -53,8 +56,10 @@ EngineData::EngineData(const EngineData& rhs)
 
 EngineData& EngineData::operator=(const EngineData& rhs)
 {
-    data_ = rhs.data_;
-    meta_ = msg::proto::copy_meta(*rhs.meta_);
+    if (this != &rhs) {
+        data_ = rhs.data_;
+        meta_ = msg::proto::copy_meta(*rhs.meta_);
+    }
     return *this;
 }
 
@@ -77,6 +82,12 @@ void EngineData::set_mime_type(const std::string& mime_type)
 }
 
 
+void EngineData::set_mime_type(std::string&& mime_type)
+{
+    meta_->set_datatype(std::move(mime_type));
+}
+
+
 void EngineData::set_mime_type(const EngineDataType& data_type)
 {
     meta_->set_datatype(data_type.mime_type());
@@ -86,6 +97,18 @@ void EngineData::set_mime_type(const EngineDataType& data_type)
 const std::string& EngineData::description() const
 {
     return meta_->description();
+}
+
+
+void EngineData::set_description(const std::string& description)
+{
+    meta_->set_description(description);
+}
+
+
+void EngineData::set_description(std::string&& description)
+{
+    meta_->set_description(std::move(description));
 }
 
 
@@ -111,12 +134,6 @@ int EngineData::status_severity() const
 }
 
 
-void EngineData::set_status(EngineStatus status)
-{
-    set_status(status, 1);
-}
-
-
 void EngineData::set_status(EngineStatus status, int severity)
 {
     switch (status) {
@@ -136,12 +153,6 @@ void EngineData::set_status(EngineStatus status, int severity)
 }
 
 
-void EngineData::set_description(const std::string& description)
-{
-    meta_->set_description(description);
-}
-
-
 const std::string& EngineData::engine_state() const
 {
     return meta_->senderstate();
@@ -151,6 +162,12 @@ const std::string& EngineData::engine_state() const
 void EngineData::set_engine_state(const std::string& state)
 {
     meta_->set_senderstate(state);
+}
+
+
+void EngineData::set_engine_state(std::string&& state)
+{
+    meta_->set_senderstate(std::move(state));
 }
 
 

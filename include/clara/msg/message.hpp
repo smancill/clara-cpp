@@ -28,6 +28,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <type_traits>
 #include <tuple>
 #include <vector>
 
@@ -88,13 +89,10 @@ public:
     template<typename T, typename V>
     Message(T&& topic, std::unique_ptr<proto::Meta>&& metadata, V&& data)
       : topic_{std::forward<T>(topic)}
-      , meta_{std::move(metadata)}
+      , meta_{metadata ? std::move(metadata)
+                       : throw std::invalid_argument{"null metadata"} }
       , data_{std::forward<V>(data)}
-    {
-        if (!meta_) {
-            throw std::invalid_argument{"null metadata"};
-        }
-    }
+    { }
 
     /**
      * Creates a new message with the given topic, data type and serialized
@@ -110,13 +108,15 @@ public:
      * \param mimetype the (literal) string identifier of the data
      * \param data serialized user data
      */
-    template<typename T, typename S, typename V>
+    template<typename T, typename S, typename V,
+             typename = std::enable_if_t<std::is_constructible_v<std::string, S>>>
     Message(T&& topic, S&& mimetype, V&& data)
       : topic_{std::forward<T>(topic)}
       , meta_{proto::make_meta()}
       , data_{std::forward<V>(data)}
     {
-        proto::detail::set_datatype(*meta_, mimetype);
+        static_assert(not std::is_null_pointer_v<std::remove_reference_t<S>>);
+        proto::detail::set_datatype(*meta_, std::forward<S>(mimetype));
     }
 
     Message(const Message& other)
@@ -127,9 +127,11 @@ public:
 
     Message& operator=(const Message& other)
     {
-        topic_ = other.topic_;
-        meta_ = proto::copy_meta(*other.meta_);
-        data_ = other.data_;
+        if (this != &other) {
+            topic_ = other.topic_;
+            meta_ = proto::copy_meta(*other.meta_);
+            data_ = other.data_;
+        }
         return *this;
     }
 

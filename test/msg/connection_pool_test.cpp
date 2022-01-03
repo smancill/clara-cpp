@@ -107,17 +107,18 @@ TEST_F(ProxyConnectionTest, GetConnection)
     create_connection();
 }
 
+
 TEST_F(ProxyConnectionTest, ReleaseConnection)
 {
     reuse_connection();
 }
 
 
-
 TEST_F(RegConnectionTest, GetConnection)
 {
     create_connection();
 }
+
 
 TEST_F(RegConnectionTest, ReleaseConnection)
 {

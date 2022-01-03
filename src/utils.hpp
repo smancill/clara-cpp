@@ -26,10 +26,16 @@
 #include <string>
 
 namespace clara {
-namespace util {
+
+namespace msg::util {
 
 std::string get_current_time();
 
+}
+
+namespace util {
+
+using msg::util::get_current_time;  // NOLINT
 
 std::string get_dpe_name(const std::string& canonical_name);
 

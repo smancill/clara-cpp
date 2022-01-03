@@ -24,9 +24,6 @@
 
 #include "utils.hpp"
 
-#include <algorithm>
-#include <atomic>
-
 namespace clara {
 
 ContainerReport::ContainerReport(const std::string& name,

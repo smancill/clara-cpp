@@ -55,35 +55,46 @@ const DataArray hosts = {
 };
 // clang-format on
 
-std::mt19937 rng{std::random_device{}()};
-std::bernoulli_distribution bdist{};
-std::uniform_int_distribution<int> udist{0, 16 * 26 * 10}; // size of data
-
 
 proto::Registration new_registration(const std::string& name,
                                      const std::string& host,
                                      const std::string& topic,
                                      bool is_publisher)
 {
-    return registration::create(name, name + "test data",
+    return registration::create(name, "test data",
                                 host, ProxyAddress::default_port,
                                 Topic::raw(topic), is_publisher);
 }
 
 
+template<typename D>
+typename D::result_type next(D& dist)
+{
+    static auto rng = std::mt19937{std::random_device{}()};
+
+    return dist(rng);
+}
+
+
 const std::string& random(const DataArray& data)
 {
-    int idx = udist(rng) % data.size();
+    static auto udist = std::uniform_int_distribution<std::size_t>{
+        0, topics.size() * names.size() * hosts.size()
+    };
+
+    auto idx = next(udist) % data.size();
     return data[idx];
 }
 
 
 proto::Registration random_registration()
 {
+    static auto bdist = std::bernoulli_distribution{};
+
     const auto& name = random(names);
     const auto& host = random(hosts);
     const auto& topic = random(topics);
-    auto is_publisher = bdist(rng);
+    auto is_publisher = next(bdist);
     return new_registration(name, host, topic, is_publisher);
 }
 

@@ -27,6 +27,7 @@
 #include "constants.hpp"
 #include "container.hpp"
 #include "data_utils.hpp"
+#include "dpe_config.hpp"
 #include "dpe_report.hpp"
 #include "json_report.hpp"
 #include "logging.hpp"
@@ -36,7 +37,12 @@
 #include <clara/msg/proxy.hpp>
 
 #include <condition_variable>
+#include <chrono>
+#include <cstdint>
+#include <exception>
+#include <iostream>
 #include <mutex>
+#include <vector>
 #include <thread>
 
 
@@ -173,7 +179,7 @@ private:
 };
 
 
-Dpe::Dpe(bool is_frontend,
+Dpe::Dpe(bool /*is_frontend*/,
          const msg::ProxyAddress& local,
          const msg::ProxyAddress& frontend,
          const DpeConfig& config)
@@ -209,8 +215,8 @@ void Dpe::stop()
 
 
 Dpe::DpeImpl::DpeImpl(const msg::ProxyAddress& local,
-                 const msg::ProxyAddress& frontend,
-                 const DpeConfig& config)
+                      const msg::ProxyAddress& frontend,
+                      const DpeConfig& config)
   : Base{Component::dpe(local),
          Component::dpe(frontend, constants::java_lang)}
   , proxy_{std::make_unique<msg::sys::Proxy>(local)}
@@ -458,7 +464,7 @@ ReportService::~ReportService()
 void ReportService::start()
 {
     thread_ = std::thread{[this]() {
-        std::this_thread::sleep_for(std::chrono::seconds{5});
+        std::this_thread::sleep_for(std::chrono::seconds{5});  // NOLINT
         run();
     }};
 }
@@ -494,13 +500,13 @@ void ReportService::run()
 
 
 msg::Message ReportService::build_message(const std::string& topic_prefix,
-                                          const std::string& data)
+                                          const std::string& json)
 {
     auto topic = msg::Topic::build(topic_prefix,
                                     config_.session,
                                     base_.name());
     return msg::Message{std::move(topic), type::JSON.mime_type(),
-                        std::vector<std::uint8_t>{data.begin(), data.end()}};
+                        std::vector<std::uint8_t>{json.begin(), json.end()}};
 }
 
 } // end namespace clara

@@ -23,10 +23,17 @@
 
 #include "constants.hpp"
 
-#include <clara/msg/utils.hpp>
-
-#include <array>
 #include <iostream>
+
+namespace {
+
+constexpr auto connect_max_retries = 10;
+constexpr auto connect_poll_timeout = 100;
+
+constexpr auto subscribe_max_retries = 10;
+constexpr auto subscribe_poll_timeout = 100;
+
+}
 
 namespace clara::msg::detail {
 
@@ -64,7 +71,7 @@ void ProxyDriver::connect()
 
     auto poller = detail::BasicPoller{control_};
     auto retry = 0;
-    while (retry < 10) {
+    while (retry < connect_max_retries) {
         retry++;
         try {
             using zmq::send_flags;
@@ -73,7 +80,7 @@ void ProxyDriver::connect()
             pub_.send(detail::buffer(request), send_flags::sndmore);
             pub_.send(detail::buffer(identity), send_flags::none);
 
-            if (poller.poll(100)) {
+            if (poller.poll(connect_poll_timeout)) {
                 auto response = detail::RawMessage{control_};
                 if (response.size() == 1) {
                     break;
@@ -84,7 +91,7 @@ void ProxyDriver::connect()
             std::cerr << e.what() << std::endl;
         }
     }
-    if (retry >= 10) {
+    if (retry >= connect_max_retries) {
         throw std::runtime_error{"Could not connect to " + addr_.host()};
     }
 
@@ -123,7 +130,7 @@ void ProxyDriver::subscribe(const Topic& topic)
 
     auto poller = detail::BasicPoller{sub_};
     auto retry = 0;
-    while (retry < 10) {
+    while (retry < subscribe_max_retries) {
         retry++;
         try {
             using zmq::send_flags;
@@ -132,7 +139,7 @@ void ProxyDriver::subscribe(const Topic& topic)
             pub_.send(detail::buffer(request), send_flags::sndmore);
             pub_.send(detail::buffer(identity), send_flags::none);
 
-            if (poller.poll(100)) {
+            if (poller.poll(subscribe_poll_timeout)) {
                 auto response = detail::RawMessage{sub_};
                 if (response.size() == 2) {
                     break;
@@ -143,7 +150,7 @@ void ProxyDriver::subscribe(const Topic& topic)
             std::cerr << e.what() << std::endl;
         }
     }
-    if (retry >= 10) {
+    if (retry >= subscribe_max_retries) {
         throw std::runtime_error{"Could not subscribe to " + addr_.host()};
     }
 }
@@ -165,11 +172,8 @@ Message parse_message(RawMessage& multi_msg)
 {
     auto topic = detail::to_string(multi_msg[0]);
     auto meta = proto::make_meta();
-    meta->ParseFromArray(multi_msg[1].data(), multi_msg[1].size());
-
-    auto data_ptr = multi_msg[2].data<std::uint8_t>();
-    auto data_size = multi_msg[2].size();
-    auto data = std::vector<std::uint8_t>(data_ptr, data_ptr + data_size);
+    meta->ParseFromArray(multi_msg[1].data(), static_cast<int>(multi_msg[1].size()));
+    auto data = detail::to_bytes(multi_msg[2]);
 
     return {Topic::raw(topic), std::move(meta), std::move(data)};
 }

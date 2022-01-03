@@ -58,18 +58,11 @@ namespace clara::msg::proto {
 
 namespace detail {
 
-inline void set_datatype(Meta& meta, const char* datatype)
+template<typename S,
+         typename = std::enable_if_t<std::is_constructible_v<std::string, S>>>
+inline void set_datatype(Meta& meta, S&& datatype)
 {
-    if (datatype != nullptr) {
-        meta.set_datatype(datatype);
-    } else {
-        throw std::invalid_argument{"null mime-type"};
-    }
-}
-
-inline void set_datatype(Meta& meta, const std::string& datatype)
-{
-    meta.set_datatype(datatype);
+    meta.set_datatype(std::forward<S>(datatype));
 }
 
 } // end namespace detail

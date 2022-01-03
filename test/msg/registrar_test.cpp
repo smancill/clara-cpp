@@ -9,11 +9,11 @@
 namespace cm = clara::msg;
 namespace t = clara::msg::test;
 
-cm::detail::Context ctx;
-cm::detail::RegDriver driver{ctx, {}};
+auto ctx = cm::detail::Context{};
+auto driver = cm::detail::RegDriver{ctx, {}};
 
-cm::RegDataSet reg_data;
-std::string name = "registrat_test";
+auto reg_data = cm::RegDataSet{};
+auto name = std::string{"registrat_test"};
 
 
 bool check_publisher(const cm::proto::Registration& reg)
@@ -26,7 +26,7 @@ cm::RegDataSet find(const std::string& topic, bool is_publisher)
 {
     auto data = cm::RegDataSet{};
     auto search_topic = cm::Topic::raw(topic);
-    for (auto& reg : reg_data) {
+    for (const auto& reg : reg_data) {
         if (is_publisher != check_publisher(reg)) {
             continue;
         }
@@ -60,10 +60,10 @@ void remove_random(int size)
 {
     printf("INFO: Removing %d random actors...\n", size);
 
-    std::uniform_int_distribution<int> gen(0, reg_data.size() - size);
-    auto first = gen(t::rng);
+    auto gen = std::uniform_int_distribution<std::size_t>(0, reg_data.size() - size);
+    auto first = t::next(gen);
     auto end = first + size;
-    auto i = 0;
+    auto i = 0U;
     for (auto reg_it = reg_data.begin(); reg_it != reg_data.end(); ) {
         if (i == end) {
             break;
@@ -102,7 +102,7 @@ void remove_random_host()
 void remove_all()
 {
     printf("INFO: Removing all actors\n");
-    for (auto& host : t::hosts) {
+    for (const auto& host : t::hosts) {
         driver.remove_all("test", host);
     }
     reg_data.clear();
@@ -118,7 +118,7 @@ cm::proto::Registration discovery_request(const std::string& topic,
 
 void check(bool is_publisher)
 {
-    for (auto& topic : t::topics) {
+    for (const auto& topic : t::topics) {
         auto data = discovery_request(topic, is_publisher);
 
         auto result = driver.find(data, is_publisher);

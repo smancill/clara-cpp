@@ -27,7 +27,6 @@
 #include <atomic>
 #include <functional>
 #include <memory>
-#include <string>
 #include <thread>
 
 namespace clara::msg {

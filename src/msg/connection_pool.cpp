@@ -111,7 +111,7 @@ ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr)
     auto del = [this](detail::ProxyDriverPtr&& c) {
         proxy_cache_->set(c->address(), std::move(c));
     };
-    return { ProxyAddress{addr}, std::move(con), std::move(del) };
+    return {ProxyAddress{addr}, std::move(con), std::move(del)};
 }
 
 
@@ -130,7 +130,7 @@ RegConnection ConnectionPool::get_connection(const RegAddress& addr)
     auto del = [this](detail::RegDriverPtr&& c) {
         reg_cache_->set(c->address(), std::move(c));
     };
-    return { RegAddress{addr}, std::move(con), std::move(del) };
+    return {RegAddress{addr}, std::move(con), std::move(del)};
 }
 
 

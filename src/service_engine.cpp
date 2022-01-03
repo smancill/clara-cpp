@@ -27,9 +27,8 @@
 #include "service_config.hpp"
 #include "service_report.hpp"
 
-#include <clara/msg/utils.hpp>
-
 #include <chrono>
+#include <stdexcept>
 
 
 namespace {
@@ -52,8 +51,8 @@ clara::EngineData build_done_data(clara::EngineDataAccessor& accessor,
     auto done_output = clara::EngineData{};
     done_output.set_data(clara::type::STRING.mime_type(), "done");
 
-    auto done_meta = accessor.view_meta(done_output);
-    auto out_meta = accessor.view_meta(output);
+    auto* done_meta = accessor.view_meta(done_output);
+    auto* out_meta = accessor.view_meta(output);
     done_meta->CopyFrom(*out_meta);
 
     return done_output;
@@ -81,10 +80,7 @@ ServiceEngine::ServiceEngine(const Component& self,
 }
 
 
-ServiceEngine::~ServiceEngine()
-{
-    // nop
-}
+ServiceEngine::~ServiceEngine() = default;
 
 
 void ServiceEngine::setup(msg::Message& msg)
@@ -192,7 +188,7 @@ EngineData ServiceEngine::execute_engine(EngineData& input)
 
 EngineData ServiceEngine::get_engine_data(msg::Message& msg)
 {
-    report_->add_bytes_recv(msg.data().size());
+    report_->add_bytes_recv(static_cast<std::int64_t>(msg.data().size()));
     return accessor_.deserialize(msg, input_types_);
 }
 
@@ -201,7 +197,7 @@ msg::Message ServiceEngine::put_engine_data(const EngineData& output,
                                             const msg::Topic& topic)
 {
     auto msg = accessor_.serialize(output, topic, output_types_);
-    report_->add_bytes_sent(msg.data().size());
+    report_->add_bytes_sent(static_cast<std::int64_t>(msg.data().size()));
     return msg;
 }
 
@@ -211,15 +207,15 @@ msg::Message ServiceEngine::put_engine_data(const EngineData& output,
 {
     auto topic = msg::Topic::raw(receiver);
     auto msg = accessor_.serialize(output, topic, output_types_);
-    report_->add_bytes_sent(msg.data().size());
+    report_->add_bytes_sent(static_cast<std::int64_t>(msg.data().size()));
     return msg;
 }
 
 
 void ServiceEngine::update_metadata(const EngineData& input, EngineData& output)
 {
-    auto in_meta = accessor_.view_meta(input);
-    auto out_meta = accessor_.view_meta(output);
+    const auto* in_meta = accessor_.view_meta(input);
+    auto* out_meta = accessor_.view_meta(output);
 
     out_meta->set_author(name());
     out_meta->set_version(engine_->version());
@@ -234,7 +230,7 @@ void ServiceEngine::update_metadata(const EngineData& input, EngineData& output)
 
 void ServiceEngine::parse_composition(const EngineData& input)
 {
-    auto& current_composition = input.composition();
+    const auto& current_composition = input.composition();
     if (current_composition != prev_composition_) {
         compiler_.compile(current_composition);
         prev_composition_ = current_composition;
@@ -242,8 +238,8 @@ void ServiceEngine::parse_composition(const EngineData& input)
 }
 
 
-std::set<std::string> ServiceEngine::get_links(const EngineData&,
-                                               const EngineData&)
+std::set<std::string> ServiceEngine::get_links(const EngineData& /*input*/,
+                                               const EngineData& /*output*/)
 {
     return compiler_.outputs();
 }

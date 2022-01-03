@@ -12,6 +12,7 @@ const std::string composition = R"(10.10.10.1_java:C:S1+)"
                                 R"(10.10.10.1_java:C:S3+)"
                                 R"(10.10.10.1_java:C:S4;)";
 
+
 TEST(SimpleCompiler, ServiceAtTheBeginning)
 {
     auto cc = SimpleCompiler{"10.10.10.1_java:C:S1"};

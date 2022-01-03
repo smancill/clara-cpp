@@ -58,9 +58,9 @@ template<> inline std::int64_t get_value(const Data& data)
         { return data.vlsint64(); }
 
 template<> inline std::vector<std::int32_t> get_value(const Data& data)
-        { auto& a = data.vlsint32a(); return {a.begin(), a.end()}; }
+        { const auto& a = data.vlsint32a(); return {a.begin(), a.end()}; }
 template<> inline std::vector<std::int64_t> get_value(const Data& data)
-        { auto& a = data.vlsint64a(); return {a.begin(), a.end()}; }
+        { const auto& a = data.vlsint64a(); return {a.begin(), a.end()}; }
 }
 
 // ---------------------------------------------------------------------------
@@ -79,7 +79,7 @@ public:
     clara::any read(const std::vector<std::uint8_t>& buffer) const override
     {
         const auto xdata = clara::msg::proto::parse_data(buffer);
-        return { clara::msg::proto::parse_data<T>(xdata) };
+        return {clara::msg::proto::parse_data<T>(xdata)};
     }
 };
 
@@ -99,7 +99,7 @@ public:
     clara::any read(const std::vector<std::uint8_t>& buffer) const override
     {
         const auto xdata = clara::msg::proto::parse_data(buffer);
-        return { vl::get_value<T>(xdata) };
+        return {vl::get_value<T>(xdata)};
     }
 };
 
@@ -119,12 +119,12 @@ public:
 
     clara::any read(const std::vector<std::uint8_t>& buffer) const override
     {
-        return { buffer };
+        return {buffer};
     }
 
     clara::any read(std::vector<std::uint8_t>&& buffer) const override
     {
-        return { std::move(buffer) };
+        return {std::move(buffer)};
     }
 };
 
@@ -140,7 +140,7 @@ public:
 
     clara::any read(const std::vector<std::uint8_t>& buffer) const override
     {
-        return { clara::msg::proto::parse_data(buffer) };
+        return {clara::msg::proto::parse_data(buffer)};
     }
 };
 
@@ -151,12 +151,12 @@ public:
     std::vector<std::uint8_t> write(const clara::any& data) const override
     {
         const auto& value = clara::any_cast<const std::string&>(data);
-        return { std::begin(value), std::end(value) };
+        return {std::begin(value), std::end(value)};
     }
 
     clara::any read(const std::vector<std::uint8_t>& buffer) const override
     {
-        return { std::string{std::begin(buffer), std::end(buffer)} };
+        return {std::string{std::begin(buffer), std::end(buffer)}};
     }
 };
 

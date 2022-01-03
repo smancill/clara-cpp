@@ -68,7 +68,12 @@ public:
     void set_data(S&& type, T&& data)
     {
         set_mime_type(std::forward<S>(type));
-        set_value(std::forward<T>(data));
+        if constexpr (std::is_constructible_v<std::string, T> &&
+                      not std::is_same_v<std::string, std::decay_t<T>>) {
+            data_ = std::string{std::forward<T>(data)};
+        } else {
+            data_ = std::forward<T>(data);
+        }
     }
 
     bool has_data()
@@ -80,11 +85,6 @@ private:
     void set_mime_type(const std::string& mime_type);
     void set_mime_type(std::string&& mime_type);
     void set_mime_type(const EngineDataType& data_type);
-
-    template<typename T>
-    void set_value(T&& data) { data_ = std::forward<T>(data); }
-
-    void set_value(const char* data) { data_ = std::string{data}; }
 
 public:
     const std::string& description() const;

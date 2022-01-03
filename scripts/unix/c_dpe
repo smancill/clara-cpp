@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 BASEDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)
 
 if [ -z "${CLARA_HOME}" ]; then

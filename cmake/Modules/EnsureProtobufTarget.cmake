@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: MIT
+
 if(NOT TARGET protobuf::libprotobuf)
   add_library(protobuf::libprotobuf UNKNOWN IMPORTED)
   set_target_properties(protobuf::libprotobuf PROPERTIES

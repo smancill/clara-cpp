@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 set(json11_BASE ${CMAKE_CURRENT_SOURCE_DIR})
 set(json11_SOURCE_DIR ${json11_BASE}/dropbox)
 
@@ -11,7 +15,6 @@ if(NOT TARGET json11)
 
   install(FILES
       ${json11_SOURCE_DIR}/json11.hpp
-      ${json11_SOURCE_DIR}/LICENSE.txt
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/clara/third_party/dropbox
     COMPONENT Clara_Devel
   )

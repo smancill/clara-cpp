@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: MIT
+
 #.rst:
 # FindZeroMQ
 # ----------

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/release-1.11.0.tar.gz

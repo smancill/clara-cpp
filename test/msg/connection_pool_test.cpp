@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: © The Clara Framework Authors
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include <clara/msg/connection_pool.hpp>
 
 #include "connection_driver.hpp"

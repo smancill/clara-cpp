@@ -1,5 +1,7 @@
 # Clara
 
+[![Build status](https://github.com/smancill/clara-cpp/actions/workflows/build.yaml/badge.svg)](https://github.com/smancill/clara-cpp/actions/workflows/build.yaml)
+
 A service-oriented framework to provide a computing environment for efficient
 Big Data processing.
 

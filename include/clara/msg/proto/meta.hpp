@@ -14,7 +14,7 @@
 
 /**
  * Protobuf data classes and helpers.
- * CLARA uses [Protocol Buffers](https://developers.google.com/protocol-buffers)
+ * Clara uses [Protocol Buffers](https://developers.google.com/protocol-buffers)
  * for storing and sending metadata, simple data and registration information
  * between actors. The protobuf classes are defined in this namespace, along
  * with some helper functions that simplify creating objects of those classes
@@ -36,7 +36,7 @@ namespace clara::msg::proto {
  * Most other fields are optional or reserved.
  * `byteorder` must be set in case endiannes is important for serialization.
  * `communicationid` can be set to identify messages.
- * `replyto` is set by CLARA to control sync communications.
+ * `replyto` is set by Clara to control sync communications.
  * The reserved fields like `status`, `composition`, `action` and `control`
  * should be set by higher-level layers.
  */

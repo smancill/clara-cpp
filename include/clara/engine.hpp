@@ -15,7 +15,7 @@
 #include <vector>
 
 /**
- * Core CLARA classes and functions.
+ * Core Clara classes and functions.
  */
 namespace clara {
 

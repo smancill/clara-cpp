@@ -77,7 +77,7 @@ private:
     /**
      * Reads an event from the input file.
      * The event should be a C++ object with the same type as the one defined
-     * by the CLARA engine data-type returned by {@link #get_data_type()}.
+     * by the Clara engine data-type returned by {@link #get_data_type()}.
      *
      * @param event_number the index of the event in the file (starts from zero)
      * @return the read event
@@ -102,7 +102,7 @@ private:
     virtual auto read_byte_order() -> Endian = 0;
 
     /**
-     * Gets the CLARA engine data-type for the type of the events.
+     * Gets the Clara engine data-type for the type of the events.
      * The data-type will be used to serialize the events when the engine data
      * result needs to be sent to services over the network.
      *

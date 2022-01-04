@@ -22,7 +22,7 @@ namespace proto {
  * \class Registration
  * \brief Information of a registered pub or sub actor.
  *
- * Objects of this class describe a registered pub or sub CLARA actor.
+ * Objects of this class describe a registered pub or sub Clara actor.
  * The `name` identifies an actor that is publishing or subscribed to
  * (`ownertype`) messages
  * of the specified topic (`domain`, `subject` and `type`)

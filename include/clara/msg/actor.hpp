@@ -21,7 +21,7 @@
 #include <string_view>
 
 /**
- * Core CLARA classes and functions.
+ * Core Clara classes and functions.
  */
 namespace clara::msg {
 
@@ -31,7 +31,7 @@ using CallbackFn = std::function<void(Message&)>;
 
 
 /**
- * The main CLARA pub/sub actor.
+ * The main Clara pub/sub actor.
  *
  * Actors send messages to each other using pub/sub communications
  * through a cloud of proxies.

@@ -23,11 +23,11 @@ namespace clara::msg {
 class Actor;
 
 /**
- * The standard message for CLARA pub/sub communications.
+ * The standard message for Clara pub/sub communications.
  *
  * Messages are composed of a topic, metadata and data.
  *
- * CLARA actors send (receive) messages to (from) other actors, using the
+ * Clara actors send (receive) messages to (from) other actors, using the
  * **topic** to identify and filter messages of interest.
  * See the Topic class documentation for details about topic matching.
  *

@@ -181,7 +181,7 @@ public:
     }
 
 private:
-    cxxopts::Options options_{"c_dpe", "CLARA C++ DPE\n"};
+    cxxopts::Options options_{"c_dpe", "Clara C++ DPE\n"};
     cxxopts::ParseResult result_;
 
     msg::ProxyAddress local_addr_;

@@ -25,14 +25,14 @@ auto is_parent(std::string_view topic, std::string_view other) -> bool;
 
 
 /**
- * The standard identification for CLARA pub/sub communications.
+ * The standard identification for Clara pub/sub communications.
  *
- * The CLARA messaging system is **topic-based**, and messages are published
+ * The Clara messaging system is **topic-based**, and messages are published
  * to given "topics", or named channels, defined by _publishers_.
  * _Subscribers_ can received the messages published to the "topics" to
  * which they are interested, by subscribing to them.
  *
- * In the CLARA messaging system, a topic is composed of three parts: a
+ * In the Clara messaging system, a topic is composed of three parts: a
  * *domain*, a *subject* and a *type*. Each part is separated by a semicolon
  * character. The subject and the type can be omitted. Thus, the following
  * topics are all valid:
@@ -44,7 +44,7 @@ auto is_parent(std::string_view topic, std::string_view other) -> bool;
  * The \ref #build factory methods help to create a proper topic with the
  * right format.
  *
- * When a CLARA pub-sub actor is subscribed to a given topic, it will only
+ * When a Clara pub-sub actor is subscribed to a given topic, it will only
  * receive messages published to that topic. To filter topics, the three parts
  * form a hierarchy, and all topics with the same prefix will be accepted.
  *

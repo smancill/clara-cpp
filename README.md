@@ -1,4 +1,4 @@
-# CLARA
+# Clara
 
 A service-oriented framework to provide a computing environment for efficient
 Big Data processing.
@@ -6,7 +6,7 @@ Big Data processing.
 
 ## Build notes
 
-CLARA requires a C++17 compiler and CMake 3.16+
+Clara requires a C++17 compiler and CMake 3.16+
 
 #### Ubuntu 20.04
 
@@ -26,7 +26,7 @@ Install CMake using [Homebrew](https://brew.sh/):
 
 ### Dependencies
 
-CLARA uses an internal pub-sub messaging library, which requires
+Clara uses an internal pub-sub messaging library, which requires
 [Protocol Buffers](https://developers.google.com/protocol-buffers/docs/downloads)
 and [ZeroMQ](http://zeromq.org/intro:get-the-software).
 
@@ -50,11 +50,11 @@ To build with CMake a configure wrapper script is provided:
     $ make
     $ make install
 
-This will install CLARA C++ into the location of your CLARA distribution.
+This will install Clara C++ into the location of your Clara distribution.
 
-The main [CLARA Java](https://github.com/smancill/clara-java) implementation
+The main [Clara Java](https://github.com/smancill/clara-java) implementation
 should also be already installed in `$CLARA_HOME`
-to run C++ services with the standard orchestrator and the CLARA shell.
+to run C++ services with the standard orchestrator and the Clara shell.
 
 
 ## Authors
@@ -66,4 +66,4 @@ to run C++ services with the standard orchestrator and the CLARA shell.
 
 ## License
 
-CLARA is licensed under the [Apache License, Version 2.0](./LICENSES/Apache-2.0.txt).
+Clara is licensed under the [Apache License, Version 2.0](./LICENSES/Apache-2.0.txt).

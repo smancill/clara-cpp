@@ -89,7 +89,7 @@ inline auto operator!=(std::string_view mime_type,
 
 
 /**
- * Predefined CLARA data types.
+ * Predefined Clara data types.
  */
 namespace type {
 
@@ -191,7 +191,7 @@ extern const EngineDataType ARRAY_STRING;
 extern const EngineDataType JSON;
 
 /**
- * A CLARA native data object.
+ * A Clara native data object.
  */
 extern const EngineDataType NATIVE;
 

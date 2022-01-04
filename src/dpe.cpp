@@ -238,7 +238,7 @@ void Dpe::DpeImpl::stop_containers()
 void Dpe::DpeImpl::print_startup()
 {
     std::cout << "=========================================" << std::endl;
-    std::cout << "                 CLARA DPE               " << std::endl;
+    std::cout << "                 Clara DPE               " << std::endl;
     std::cout << "=========================================" << std::endl;
     std::cout << " Name             = " << name() << std::endl;
     std::cout << " Date             = " << util::get_current_time() << std::endl;

@@ -67,10 +67,10 @@ private:
 
 
 /**
- * Advanced setup of a connection to a CLARA proxy.
+ * Advanced setup of a connection to a Clara proxy.
  *
  * This class can be used to customize the internal sockets of a new Connection
- * created by the CLARA actor.
+ * created by the Clara actor.
  */
 class ConnectionSetup
 {

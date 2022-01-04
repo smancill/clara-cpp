@@ -36,7 +36,7 @@ ENV LD_LIBRARY_PATH="${CLARA_HOME}/lib"
 RUN mkdir -p /usr/local/src
 WORKDIR /usr/local/src
 
-# Build CLARA
+# Build Clara
 ADD . clara-cpp
 RUN cd clara-cpp \
     && ./configure --prefix=${CLARA_HOME} --disable-tests \

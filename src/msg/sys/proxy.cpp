@@ -77,7 +77,7 @@ auto options_parser() -> cxxopts::Options
 {
     using namespace cxxopts;
 
-    auto options = Options{"c_proxy", "CLARA C++ pub-sub proxy\n"};
+    auto options = Options{"c_proxy", "Clara C++ pub-sub proxy\n"};
     options.add_options()
         ("host", "use the given host address", value<std::string>())
         ("port", "use the given port", value<int>())
@@ -101,7 +101,7 @@ int main(int argc, char** argv)
         auto proxy = sys::Proxy{addr};
         proxy.start();
 
-        printf("[%s] CLARA proxy INFO: running on host = %s  port = %d\n",
+        printf("[%s] Clara proxy INFO: running on host = %s  port = %d\n",
                util::get_current_time().c_str(), addr.host().c_str(), addr.pub_port());
 
         wait_signals();

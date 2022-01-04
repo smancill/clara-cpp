@@ -80,7 +80,7 @@ private:
     /**
      * Writes an event to the output file.
      * The event should be a C++ object with the same type as the one defined
-     * by the CLARA engine data-type returned by {@link #get_data_type()}.
+     * by the Clara engine data-type returned by {@link #get_data_type()}.
      *
      * @param event the event to be written
      * @throws EventWriterError if the file could not be read
@@ -88,7 +88,7 @@ private:
     virtual void write_event(const std::any& event) = 0;
 
     /**
-     * Gets the CLARA engine data-type for the type of the events.
+     * Gets the Clara engine data-type for the type of the events.
      * The data-type will be used to deserialize the events when the engine data
      * is received from services across the network.
      *

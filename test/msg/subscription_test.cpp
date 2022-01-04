@@ -68,7 +68,7 @@ TEST(Subscription, SuscribeReceivesAllMessages)
             auto sub = actor.subscribe(topic, std::move(connection), cb);
             sub_ready.notify_one();
 
-            all_msg.wait_for(4000);
+            all_msg.wait_for(5000);
             actor.unsubscribe(std::move(sub));
         } catch (std::exception& e) {
             std::cerr << "Subscriber error: " << e.what() << std::endl;
@@ -131,7 +131,7 @@ TEST(Subscription, SyncPublishReceivesAllResponses)
             auto sub = sub_actor.subscribe(sub_topic, std::move(sub_con), sub_cb);
             sub_ready.notify_one();
 
-            all_msg.wait_for(8000);
+            all_msg.wait_for(20000);
             sub_actor.unsubscribe(std::move(sub));
         } catch (std::exception& e) {
             std::cerr << "Subscriber error: " << e.what() << std::endl;
@@ -200,7 +200,7 @@ TEST(MultiThreadPublisher, SuscribeReceivesAllMessages)
             auto sub = actor.subscribe(topic, std::move(connection), cb);
             sub_ready.notify_all();
 
-            all_msg.wait_for(4000);
+            all_msg.wait_for(5000);
             actor.unsubscribe(std::move(sub));
         } catch (std::exception& e) {
             std::cerr << "Subscriber error: " << e.what() << std::endl;
@@ -271,7 +271,7 @@ TEST(MultiThreadPublisher, SyncPublishReceivesAllResponses)
             auto sub = sub_actor.subscribe(topic, std::move(sub_con), cb);
             sub_ready.notify_all();
 
-            all_msg.wait_for(8000);
+            all_msg.wait_for(10000);
             sub_actor.unsubscribe(std::move(sub));
         } catch (std::exception& e) {
             std::cerr << "Subscriber error: " << e.what() << std::endl;

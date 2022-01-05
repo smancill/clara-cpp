@@ -123,9 +123,14 @@ inline auto operator!=(const RegAddress& lhs, const RegAddress& rhs) -> bool
 }
 
 
-auto operator<<(std::ostream& os, const ProxyAddress& a) -> std::ostream&;
+auto to_string(const ProxyAddress& addr) -> std::string;
 
-auto operator<<(std::ostream& os, const RegAddress& a) -> std::ostream&;
+auto to_string(const RegAddress& addr) -> std::string;
+
+
+auto operator<<(std::ostream& os, const ProxyAddress& addr) -> std::ostream&;
+
+auto operator<<(std::ostream& os, const RegAddress& addr) -> std::ostream&;
 
 } // end namespace clara::msg
 

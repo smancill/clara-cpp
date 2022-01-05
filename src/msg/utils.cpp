@@ -166,7 +166,7 @@ auto get_current_time() -> std::string
     auto now = std::time(nullptr);
     auto buf = std::array<char, sizeof "2001-01-01 00:00:00">{};
     std::strftime(buf.data(), buf.size(), "%Y-%m-%d %H:%M:%S", safe_localtime(&now));
-    return {buf.begin(), buf.end()};
+    return buf.data();
 }
 
 } // end namespace clara::msg::util

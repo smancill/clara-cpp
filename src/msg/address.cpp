@@ -111,15 +111,27 @@ RegAddress::RegAddress(std::string&& host, int port)
 { }
 
 
-auto operator<<(std::ostream& os, const ProxyAddress& a) -> std::ostream&
+auto to_string(const ProxyAddress& addr) -> std::string
 {
-    return os << a.host() << ":" << a.pub_port();
+    return addr.host() + ":" + std::to_string(addr.pub_port());
 }
 
 
-auto operator<<(std::ostream& os, const RegAddress& a) -> std::ostream&
+auto to_string(const RegAddress& addr) -> std::string
 {
-    return os << a.host() << ":" << a.port();
+    return addr.host() + ":" + std::to_string(addr.port());
+}
+
+
+auto operator<<(std::ostream& os, const ProxyAddress& addr) -> std::ostream&
+{
+    return os << to_string(addr);
+}
+
+
+auto operator<<(std::ostream& os, const RegAddress& addr) -> std::ostream&
+{
+    return os << to_string(addr);
 }
 
 } // end namespace clara::msg

@@ -77,7 +77,7 @@ void ProxyDriver::connect()
         }
     }
     if (retry >= connect_max_retries) {
-        throw std::runtime_error{"Could not connect to " + addr_.host()};
+        throw std::runtime_error{"Could not connect to " + to_string(addr_)};
     }
 
     setup_->post_connection();
@@ -136,7 +136,7 @@ void ProxyDriver::subscribe(const Topic& topic)
         }
     }
     if (retry >= subscribe_max_retries) {
-        throw std::runtime_error{"Could not subscribe to " + addr_.host()};
+        throw std::runtime_error{"Could not subscribe to " + to_string(addr_)};
     }
 }
 

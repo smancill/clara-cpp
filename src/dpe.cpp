@@ -242,7 +242,7 @@ void Dpe::DpeImpl::print_startup()
     std::cout << "=========================================" << std::endl;
     std::cout << " Name             = " << name() << std::endl;
     std::cout << " Date             = " << util::get_current_time() << std::endl;
-    std::cout << " Version          = 4.3" << std::endl;
+    std::cout << " Version          = 5.0" << std::endl;
     std::cout << " Lang             = " << "C++" << std::endl;
     if (!config_.description.empty()) {
         std::cout << " Description      = " << config_.description << std::endl;

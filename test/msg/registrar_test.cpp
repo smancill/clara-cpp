@@ -10,40 +10,51 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <stdexcept>
 #include <string>
 
 namespace cm = clara::msg;
 namespace t = clara::msg::test;
 
+using Type = cm::proto::Registration::OwnerType;
+
+constexpr auto PUBLISHER = cm::proto::Registration::PUBLISHER;
+constexpr auto SUBSCRIBER = cm::proto::Registration::SUBSCRIBER;
+
 auto ctx = cm::detail::Context{};
 auto driver = cm::detail::RegDriver{ctx, {}};
 
-auto reg_data = cm::RegDataSet{};
+auto registration = cm::RegDataSet{};
 auto name = std::string{"registrat_test"};
 
 
-auto check_publisher(const cm::proto::Registration& reg) -> bool
+auto check_publisher(Type type) -> bool
 {
-    return reg.ownertype() == cm::proto::Registration::PUBLISHER;
+    return type == PUBLISHER;
 }
 
 
-auto find(std::string_view topic, bool is_publisher) -> cm::RegDataSet
+auto find(std::string_view topic, Type type) -> cm::RegDataSet
 {
     auto data = cm::RegDataSet{};
     auto search_topic = cm::Topic::raw(topic);
-    for (const auto& reg : reg_data) {
-        if (is_publisher != check_publisher(reg)) {
+    for (const auto& reg : registration) {
+        if (reg.ownertype() != type) {
             continue;
         }
         auto reg_topic = cm::Topic::build(reg.domain(), reg.subject(), reg.type());
-        if (is_publisher) {
-            if (search_topic.is_parent(reg_topic)) {
-                data.insert(reg);
+        switch (type) {
+            case PUBLISHER: {
+                if (search_topic.is_parent(reg_topic)) {
+                    data.insert(reg);
+                }
+                break;
             }
-        } else {
-            if (reg_topic.is_parent(search_topic)) {
-                data.insert(reg);
+            case SUBSCRIBER: {
+                if (reg_topic.is_parent(search_topic)) {
+                    data.insert(reg);
+                }
+                break;
             }
         }
     }
@@ -56,8 +67,8 @@ void add_random(int size)
     printf("INFO: Registering %d random actors...\n", size);
     for (int i = 0; i < size; i++) {
         auto reg = t::random_registration();
-        driver.add(reg, check_publisher(reg));
-        reg_data.insert(reg);
+        driver.add(reg, check_publisher(reg.ownertype()));
+        registration.insert(reg);
     }
 }
 
@@ -66,21 +77,21 @@ void remove_random(int size)
 {
     printf("INFO: Removing %d random actors...\n", size);
 
-    auto gen = std::uniform_int_distribution<std::size_t>(0, reg_data.size() - size);
+    auto gen = std::uniform_int_distribution<std::size_t>(0, registration.size() - size);
     auto first = t::next(gen);
     auto end = first + size;
-    auto i = 0U;
-    for (auto reg_it = reg_data.begin(); reg_it != reg_data.end(); ) {
-        if (i == end) {
+    auto j = 0U;
+    for (auto it = registration.begin(); it != registration.end(); ) {
+        if (j == end) {
             break;
         }
-        if (i >= first) {
-            driver.remove(*reg_it, check_publisher(*reg_it));
-            reg_it = reg_data.erase(reg_it);
+        if (j >= first) {
+            driver.remove(*it, check_publisher(it->ownertype()));
+            it = registration.erase(it);
         } else {
-            ++reg_it;
+            ++it;
         }
-        ++i;
+        ++j;
     }
 }
 
@@ -88,9 +99,9 @@ void remove_random(int size)
 void remove_host(std::string_view host)
 {
     printf("INFO: Removing host %s\n", host.data());
-    for (auto it = reg_data.begin(); it != reg_data.end(); ) {
+    for (auto it = registration.begin(); it != registration.end(); ) {
         if (it->host() == host) {
-            it = reg_data.erase(it);
+            it = registration.erase(it);
         } else {
             ++it;
         }
@@ -111,27 +122,27 @@ void remove_all()
     for (const auto& host : t::hosts) {
         driver.remove_all("test", host);
     }
-    reg_data.clear();
+    registration.clear();
 }
 
 
-auto discovery_request(std::string_view topic, bool is_publisher)
+auto discovery_request(std::string_view topic, Type type)
     -> cm::proto::Registration
 {
-    return t::new_registration(name, "localhost", topic, is_publisher);
+    return t::new_registration(name, "localhost", topic, check_publisher(type));
 }
 
 
-void check(bool is_publisher)
+void check(Type type)
 {
     for (const auto& topic : t::topics) {
-        auto data = discovery_request(topic, is_publisher);
+        auto data = discovery_request(topic, type);
 
-        auto result = driver.find(data, is_publisher);
-        auto expected = find(topic, is_publisher);
+        auto result = driver.find(data, check_publisher(type));
+        auto expected = find(topic, type);
 
         if (result == expected) {
-            auto owner = is_publisher ? "publishers" : "subscribers";
+            auto owner = type == PUBLISHER ? "publishers" : "subscribers";
             printf("Found %3zd %s for %s\n", result.size(), owner, topic.data());
         } else {
             printf("Topic: %s\n", topic.data());
@@ -146,8 +157,8 @@ void check(bool is_publisher)
 
 void check()
 {
-    check(true);
-    check(false);
+    check(PUBLISHER);
+    check(SUBSCRIBER);
 }
 
 

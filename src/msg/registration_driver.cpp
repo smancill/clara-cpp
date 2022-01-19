@@ -10,6 +10,9 @@
 #include "zhelper.hpp"
 
 #include <iostream>
+#include <registration.pb.h>
+#include <stdexcept>
+#include <string_view>
 #include <tuple>
 
 namespace {
@@ -55,21 +58,12 @@ auto operator!=(const Registration& lhs, const Registration& rhs) -> bool
 
 namespace detail {
 
-Request::Request(std::string_view topic,
+Request::Request(std::string_view action,
                  std::string_view sender,
                  const proto::Registration& data)
-  : msg_{zmq::message_t{topic},
+  : msg_{zmq::message_t{action},
          zmq::message_t{sender},
          zmq::message_t{data.SerializeAsString()}}
-{ }
-
-
-Request::Request(std::string_view topic,
-                 std::string_view sender,
-                 std::string_view text)
-  : msg_{zmq::message_t{topic},
-         zmq::message_t{sender},
-         zmq::message_t{text}}
 { }
 
 
@@ -87,22 +81,22 @@ auto Request::data() const -> proto::Registration
 
 
 
-Response::Response(std::string_view topic,
+Response::Response(std::string_view action,
                    std::string_view sender)
 {
     msg_.reserve(n_fields);
-    msg_.emplace_back(topic);
+    msg_.emplace_back(action);
     msg_.emplace_back(sender);
     msg_.emplace_back(constants::success);
 }
 
 
-Response::Response(std::string_view topic,
+Response::Response(std::string_view action,
                    std::string_view sender,
                    const RegDataSet& data)
 {
     msg_.reserve(n_fields + data.size());
-    msg_.emplace_back(topic);
+    msg_.emplace_back(action);
     msg_.emplace_back(sender);
     msg_.emplace_back(constants::success);
     for (const auto& reg : data) {
@@ -111,12 +105,12 @@ Response::Response(std::string_view topic,
 }
 
 
-Response::Response(std::string_view topic,
+Response::Response(std::string_view action,
                    std::string_view sender,
                    std::string_view error_msg)
 {
     msg_.reserve(n_fields);
-    msg_.emplace_back(topic);
+    msg_.emplace_back(action);
     msg_.emplace_back(sender);
     msg_.emplace_back(error_msg);
 }
@@ -149,37 +143,41 @@ RegDriver::RegDriver(Context& ctx, RegAddress addr)
 }
 
 
-void RegDriver::add(const proto::Registration& data, bool is_publisher)
+void RegDriver::add(std::string_view sender, const proto::Registration& data)
 {
-    auto topic = is_publisher ? constants::register_publisher
-                              : constants::register_subscriber;
-    auto req = Request{topic, data.name(), data};
-    request(req, constants::register_request_timeout);
+    auto req = Request{constants::reg_add, sender, data};
+    request(req, constants::reg_add_timeout);
 }
 
 
-void RegDriver::remove(const proto::Registration& data, bool is_publisher)
+void RegDriver::remove(std::string_view sender, const proto::Registration& data)
 {
-    auto topic = is_publisher ? constants::remove_publisher
-                              : constants::remove_subscriber;
-    auto req = Request{topic, data.name(), data};
-    request(req, constants::remove_request_timeout);
+    auto req = Request{constants::reg_remove, sender, data};
+    request(req, constants::reg_remove_timeout);
 }
 
 
 void RegDriver::remove_all(std::string_view sender, std::string_view host)
 {
-    auto req = Request{constants::remove_all_registration, sender, host};
-    request(req, constants::remove_request_timeout);
+    auto make_request = [&] (auto type) -> Request {
+        auto data = registration::filter(type);
+        data.set_host(host.data(), host.size());
+        return Request{constants::reg_remove_all, sender, data};
+    };
+
+    auto pub_req = make_request(proto::Registration::PUBLISHER);
+    auto sub_req = make_request(proto::Registration::SUBSCRIBER);
+
+    request(pub_req, constants::reg_remove_timeout);
+    request(sub_req, constants::reg_remove_timeout);
 }
 
 
-auto RegDriver::find(const proto::Registration& data, bool is_publisher) -> RegDataSet
+auto RegDriver::find(std::string_view sender, const proto::Registration& data)
+    -> RegDataSet
 {
-    auto topic = is_publisher ? constants::find_publisher
-                              : constants::find_subscriber;
-    auto req = Request{topic, data.name(), data};
-    auto res = request(req, constants::find_request_timeout);
+    auto req = Request{constants::reg_find_matching, sender, data};
+    auto res = request(req, constants::reg_find_timeout);
     return res.data();
 }
 

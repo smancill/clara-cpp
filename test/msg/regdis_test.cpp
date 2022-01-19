@@ -37,33 +37,22 @@ TEST(Request, CreateDataRequest)
 {
     auto data = t::new_reg_data("asimov", "10.2.9.1", "writer:scifi", PUBLISHER);
 
-    auto send_req = Request{"foo:bar", "foo_service", data};
+    auto send_req = Request{"reg_action", "test_actor", data};
     auto recv_req = move_msg(send_req);
 
-    EXPECT_THAT(recv_req.topic(), StrEq("foo:bar"));
-    EXPECT_THAT(recv_req.sender(), StrEq("foo_service"));
+    EXPECT_THAT(recv_req.action(), StrEq("reg_action"));
+    EXPECT_THAT(recv_req.sender(), StrEq("test_actor"));
     EXPECT_THAT(recv_req.data(), Eq(data));
-}
-
-
-TEST(Request, CreateTextRequest)
-{
-    auto send_req = Request{"foo:bar", "foo_service", "10.2.9.2"};
-    auto recv_req = move_msg(send_req);
-
-    EXPECT_THAT(recv_req.topic(), StrEq("foo:bar"));
-    EXPECT_THAT(recv_req.sender(), StrEq("foo_service"));
-    EXPECT_THAT(recv_req.text(), StrEq("10.2.9.2"));
 }
 
 
 TEST(Response, CreateSuccessResponse)
 {
-    auto send_res = Response{"foo:bar", "registration_fe"};
+    auto send_res = Response{"reg_action", "reg_fe"};
     auto recv_res = move_msg(send_res);
 
-    EXPECT_THAT(recv_res.topic(), StrEq("foo:bar"));
-    EXPECT_THAT(recv_res.sender(), StrEq("registration_fe"));
+    EXPECT_THAT(recv_res.action(), StrEq("reg_action"));
+    EXPECT_THAT(recv_res.sender(), StrEq("reg_fe"));
     EXPECT_THAT(recv_res.status(), StrEq(cc::success));
     EXPECT_THAT(recv_res.data(), SizeIs(0));
 }
@@ -72,10 +61,10 @@ TEST(Response, CreateSuccessResponse)
 TEST(Response, CreateErrorResponse)
 {
     auto error = "could not handle request";
-    auto send_res = Response{"foo:bar", "registration_fe", error};
+    auto send_res = Response{"reg_action", "reg_fe", error};
 
-    EXPECT_THAT(send_res.topic(), StrEq("foo:bar"));
-    EXPECT_THAT(send_res.sender(), StrEq("registration_fe"));
+    EXPECT_THAT(send_res.action(), StrEq("reg_action"));
+    EXPECT_THAT(send_res.sender(), StrEq("reg_fe"));
     EXPECT_THAT(send_res.status(), StrEq(error));
     EXPECT_THAT(send_res.data(), SizeIs(0));
 }
@@ -88,11 +77,11 @@ TEST(Response, CreateDataResponse)
         t::new_reg_data("bradbury", "10.2.9.1", "writer.scifi:books", SUBSCRIBER),
     };
 
-    auto send_res = Response{"foo:bar", "registration_fe", data};
+    auto send_res = Response{"reg_action", "reg_fe", data};
     auto recv_res = move_msg(send_res);
 
-    EXPECT_THAT(recv_res.topic(), StrEq("foo:bar"));
-    EXPECT_THAT(recv_res.sender(), StrEq("registration_fe"));
+    EXPECT_THAT(recv_res.action(), StrEq("reg_action"));
+    EXPECT_THAT(recv_res.sender(), StrEq("reg_fe"));
     EXPECT_THAT(recv_res.status(), StrEq(cc::success));
     EXPECT_THAT(recv_res.data(), ContainerEq(data));
 }
@@ -132,16 +121,12 @@ struct DriverTest : public Test
         });
     }
 
-    static auto make_request(std::string_view topic,
-                             const cm::proto::Registration& data) -> Request
-    {
-        return {topic, data.name(), data};
-    }
-
     void expect_request(const Request& reg, int timeout)
     {
         EXPECT_CALL(driver, request(Eq(std::ref(reg)), Eq(timeout)));
     }
+
+    static constexpr auto sender = std::string_view{"test_sender"};
 
     MockContext ctx;
     MockDriver driver;
@@ -153,86 +138,94 @@ struct DriverTest : public Test
 
 TEST_F(DriverTest, SendPublisherRegistration)
 {
-    auto req = make_request(cc::register_publisher, publisher);
+    auto req = Request(cc::reg_add, "test_sender", publisher);
 
-    expect_request(req, cc::register_request_timeout);
+    expect_request(req, cc::reg_add_timeout);
 
-    driver.add(publisher, true);
+    driver.add("test_sender", publisher);
 }
 
 
 TEST_F(DriverTest, SendSubscriberRegistration)
 {
-    auto req = make_request(cc::register_subscriber, subscriber);
+    auto req = Request(cc::reg_add, "test_sender", subscriber);
 
-    expect_request(req, cc::register_request_timeout);
+    expect_request(req, cc::reg_add_timeout);
 
-    driver.add(subscriber, false);
+    driver.add("test_sender", subscriber);
 }
 
 
 TEST_F(DriverTest, SendPublisherRemoval)
 {
-    auto req = make_request(cc::remove_publisher, publisher);
+    auto req = Request(cc::reg_remove, "test_sender", publisher);
 
-    expect_request(req, cc::remove_request_timeout);
+    expect_request(req, cc::reg_remove_timeout);
 
-    driver.remove(publisher, true);
+    driver.remove("test_sender", publisher);
 }
 
 
 TEST_F(DriverTest, SendSubscriberRemoval)
 {
-    auto req = make_request(cc::remove_subscriber, subscriber);
+    auto req = Request(cc::reg_remove, "test_sender", subscriber);
 
-    expect_request(req, cc::remove_request_timeout);
+    expect_request(req, cc::reg_remove_timeout);
 
-    driver.remove(subscriber, false);
+    driver.remove("test_sender", subscriber);
 }
 
 
 TEST_F(DriverTest, SendHostRemoval)
 {
-    auto req = Request{cc::remove_all_registration, "10.2.9.1_node", "10.2.9.1"};
+    auto pub_data = t::new_reg_filter(PUBLISHER);
+    auto sub_data = t::new_reg_filter(SUBSCRIBER);
 
-    expect_request(req, cc::remove_request_timeout);
+    pub_data.set_host("10.2.9.1");
+    sub_data.set_host("10.2.9.1");
 
-    driver.remove_all("10.2.9.1_node", "10.2.9.1");
+    auto pub_req = Request(cc::reg_remove_all, "test_sender", pub_data);
+    auto sub_req = Request(cc::reg_remove_all, "test_sender", sub_data);
+
+    expect_request(pub_req, cc::reg_remove_timeout);
+    expect_request(sub_req, cc::reg_remove_timeout);
+
+    driver.remove_all("test_sender", "10.2.9.1");
 }
 
 
 TEST_F(DriverTest, SendPublisherFind)
 {
     auto data = t::new_reg_filter(PUBLISHER, "bradbury:scifi:books");
-    auto req = make_request(cc::find_publisher, data);
+    auto req = Request(cc::reg_find_matching, "test_sender", data);
 
-    expect_request(req, cc::find_request_timeout);
+    expect_request(req, cc::reg_find_timeout);
 
-    driver.find(data, true);
+    driver.find("test_sender", data);
 }
 
 
 TEST_F(DriverTest, SendSubscriberFind)
 {
     auto data = t::new_reg_filter(SUBSCRIBER, "bradbury:scifi:books");
-    auto req = make_request(cc::find_subscriber, data);
+    auto req = Request(cc::reg_find_matching, "test_sender", data);
 
-    expect_request(req, cc::find_request_timeout);
+    expect_request(req, cc::reg_find_timeout);
 
-    driver.find(data, false);
+    driver.find("test_sender", data);
 }
 
 
 TEST_F(DriverTest, GetRegistration)
 {
     auto data = t::new_reg_filter(SUBSCRIBER);
-    auto all_reg = cm::RegDataSet{publisher, subscriber};
+    auto result = cm::RegDataSet{publisher, subscriber};
 
-    set_response(all_reg);
+    set_response(result);
 
-    auto res = driver.find(data, false);
+    auto res = driver.find(sender, data);
 
-    EXPECT_THAT(res, ContainerEq(all_reg));
+    EXPECT_THAT(res, ContainerEq(result));
 }
 
 

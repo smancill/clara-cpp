@@ -16,19 +16,15 @@ using namespace std::literals::string_view_literals;
 // clang-format off
 constexpr auto success = "success"sv;
 
-constexpr auto register_publisher = "registerPublisher"sv;
-constexpr auto register_subscriber = "registerSubscriber"sv;
+constexpr auto reg_add = "register"sv;
+constexpr auto reg_remove = "remove"sv;
+constexpr auto reg_remove_all = "remove_all"sv;
 
-constexpr auto remove_publisher = "removePublisherRegistration"sv;
-constexpr auto remove_subscriber = "removeSubscriberRegistration"sv;
-constexpr auto remove_all_registration = "removeAllRegistration"sv;
+constexpr auto reg_find_matching = "find_matching"sv;
 
-constexpr auto find_publisher = "findPublisher"sv;
-constexpr auto find_subscriber = "findSubscriber"sv;
-
-constexpr auto register_request_timeout = 3000;
-constexpr auto remove_request_timeout = 3000;
-constexpr auto find_request_timeout = 3000;
+constexpr auto reg_add_timeout = 3000;
+constexpr auto reg_remove_timeout = 3000;
+constexpr auto reg_find_timeout = 3000;
 
 constexpr auto ctrl_topic = "clara:msg:control"sv;
 constexpr auto ctrl_connect = "pub"sv;

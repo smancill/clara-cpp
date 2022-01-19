@@ -67,7 +67,7 @@ void add_random(int size)
     printf("INFO: Registering %d random actors...\n", size);
     for (int i = 0; i < size; i++) {
         auto reg = t::random_registration();
-        driver.add(reg, check_publisher(reg.ownertype()));
+        driver.add(name, reg);
         registration.insert(reg);
     }
 }
@@ -86,7 +86,7 @@ void remove_random(int size)
             break;
         }
         if (j >= first) {
-            driver.remove(*it, check_publisher(it->ownertype()));
+            driver.remove(name, *it);
             it = registration.erase(it);
         } else {
             ++it;
@@ -138,7 +138,7 @@ void check(Type type)
     for (const auto& topic : t::topics) {
         auto data = discovery_request(topic, type);
 
-        auto result = driver.find(data, check_publisher(type));
+        auto result = driver.find(name, data);
         auto expected = find(topic, type);
 
         if (result == expected) {

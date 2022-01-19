@@ -74,14 +74,16 @@ auto new_reg_data(std::string_view name,
 }
 
 
-auto new_reg_filter(Type type, std::string_view raw_topic = "*:*:*")
+auto new_reg_filter(Type type, std::string_view topic = "")
     -> proto::Registration
 {
     auto data = registration::filter(type);
-    auto topic = Topic::raw(raw_topic);
-    data.set_domain(topic.domain());
-    data.set_subject(topic.subject());
-    data.set_type(topic.type());
+    if (not topic.empty()) {
+        auto wrapped = Topic::raw(topic);
+        data.set_domain(wrapped.domain());
+        data.set_subject(wrapped.subject());
+        data.set_type(wrapped.type());
+    }
     return data;
 }
 

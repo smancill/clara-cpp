@@ -207,7 +207,7 @@ void Actor::register_as_publisher(const RegAddress& addr,
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto data = actor_->make_reg_data(Impl::PUBLISHER, topic, description);
-    driver->add(data, true);
+    driver->add(actor_->name, data);
 }
 
 
@@ -224,7 +224,7 @@ void Actor::register_as_subscriber(const RegAddress& addr,
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto data = actor_->make_reg_data(Impl::SUBSCRIBER, topic, description);
-    driver->add(data, false);
+    driver->add(actor_->name, data);
 }
 
 
@@ -238,7 +238,7 @@ void Actor::deregister_as_publisher(const RegAddress& addr, const Topic& topic)
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto data = actor_->make_reg_data(Impl::PUBLISHER, topic, "");
-    driver->remove(data, true);
+    driver->remove(actor_->name, data);
 }
 
 
@@ -253,7 +253,7 @@ void Actor::deregister_as_subscriber(const RegAddress& addr, const Topic& topic)
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto data = actor_->make_reg_data(Impl::SUBSCRIBER, topic, "");
-    driver->remove(data, false);
+    driver->remove(actor_->name, data);
 }
 
 
@@ -267,7 +267,7 @@ auto Actor::find_publishers(const RegAddress& addr, const Topic& topic) -> RegDa
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto data = actor_->make_reg_filter(Impl::PUBLISHER, topic);
-    return driver->find(data, true);
+    return driver->find(actor_->name, data);
 }
 
 
@@ -281,7 +281,7 @@ auto Actor::find_subscribers(const RegAddress& addr, const Topic& topic) -> RegD
 {
     auto driver = actor_->con_pool()->get_connection(addr);
     auto data = actor_->make_reg_filter(Impl::SUBSCRIBER, topic);
-    return driver->find(data, false);
+    return driver->find(actor_->name, data);
 }
 
 

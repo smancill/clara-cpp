@@ -29,26 +29,19 @@ using ResponseMsg = std::vector<zmq::message_t>;
 class Request final
 {
 public:
-    Request(std::string_view topic,
+    Request(std::string_view action,
             std::string_view sender,
             const proto::Registration& data);
-
-    Request(std::string_view topic,
-            std::string_view sender,
-            std::string_view text);
 
     explicit Request(RequestMsg&& msg);
 
     auto msg() -> RequestMsg& { return msg_; };
 
-    auto topic() const & -> std::string_view { return to_string_view(msg_[0]); }
-    auto topic() && = delete;
+    auto action() const & -> std::string_view { return to_string_view(msg_[0]); }
+    auto action() && = delete;
 
     auto sender() const & -> std::string_view { return to_string_view(msg_[1]); }
     auto sender() && = delete;
-
-    auto text() const & -> std::string_view { return to_string_view(msg_[2]); }
-    auto text() && = delete;
 
     auto data() const -> proto::Registration;
 
@@ -62,14 +55,14 @@ private:
 class Response final
 {
 public:
-    Response(std::string_view topic,
+    Response(std::string_view action,
              std::string_view sender);
 
-    Response(std::string_view topic,
+    Response(std::string_view action,
              std::string_view sender,
              const RegDataSet& data);
 
-    Response(std::string_view topic,
+    Response(std::string_view action,
              std::string_view sender,
              std::string_view error_msg);
 
@@ -77,8 +70,8 @@ public:
 
     auto msg() -> ResponseMsg& { return msg_; };
 
-    auto topic() const & -> std::string_view { return to_string_view(msg_[0]); }
-    auto topic() && = delete;
+    auto action() const & -> std::string_view { return to_string_view(msg_[0]); }
+    auto action() && = delete;
 
     auto sender() const & -> std::string_view { return to_string_view(msg_[1]); }
     auto sender() && = delete;
@@ -111,12 +104,12 @@ public:
     virtual ~RegDriver() = default;
 
 public:
-    void add(const proto::Registration& data, bool is_publisher);
+    void add(std::string_view sender, const proto::Registration& data);
 
-    void remove(const proto::Registration& data, bool is_publisher);
+    void remove(std::string_view sender, const proto::Registration& data);
     void remove_all(std::string_view sender, std::string_view host);
 
-    auto find(const proto::Registration& data, bool is_publisher) -> RegDataSet;
+    auto find(std::string_view sender, const proto::Registration& data) -> RegDataSet;
 
     auto address() const -> const RegAddress& { return addr_; }
 

@@ -17,6 +17,8 @@
 
 namespace clara::msg::test {
 
+using Type = proto::Registration::Type;
+
 using DataArray = std::vector<std::string>;
 
 // clang-format off
@@ -62,14 +64,24 @@ const DataArray hosts = {
 // clang-format on
 
 
-auto new_registration(std::string_view name,
-                      std::string_view host,
-                      std::string_view topic,
-                      bool is_publisher) -> proto::Registration
+auto new_reg_data(std::string_view name,
+                  std::string_view host,
+                  std::string_view topic,
+                  Type type)
+    -> proto::Registration
 {
-    return registration::create(name, "test data",
-                                host, ProxyAddress::default_port,
-                                Topic::raw(topic), is_publisher);
+    return registration::create(name, "", host, 7000, Topic::raw(topic), type);
+}
+
+
+auto new_reg_filter(Type type, std::string_view topic = "")
+    -> proto::Registration
+{
+    auto data = registration::filter(type);
+    if (not topic.empty()) {
+        data.set_topic(topic.data(), topic.size());
+    }
+    return data;
 }
 
 
@@ -100,8 +112,9 @@ auto random_registration() -> proto::Registration
     const auto& name = random(names);
     const auto& host = random(hosts);
     const auto& topic = random(topics);
-    auto is_publisher = next(bdist);
-    return new_registration(name, host, topic, is_publisher);
+    auto type = next(bdist) ? proto::Registration::PUBLISHER
+                            : proto::Registration::SUBSCRIBER;
+    return new_reg_data(name, host, topic, type);
 }
 
 } // end namespace clara::msg::test

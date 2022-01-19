@@ -35,7 +35,7 @@ struct Actor::Impl
         return &pool;
     }
 
-    auto make_reg_data(proto::Registration::OwnerType type,
+    auto make_reg_data(proto::Registration::Type type,
                        const Topic& topic,
                        std::string_view description) const
         -> proto::Registration
@@ -48,14 +48,12 @@ struct Actor::Impl
                                     type);
     }
 
-    static auto make_reg_filter(proto::Registration::OwnerType type,
+    static auto make_reg_filter(proto::Registration::Type type,
                                 const clara::msg::Topic& topic)
         -> proto::Registration
     {
         auto data = clara::msg::registration::filter(type);
-        data.set_domain(topic.domain());
-        data.set_subject(topic.subject());
-        data.set_type(topic.type());
+        data.set_topic(topic.str());
         return data;
     }
 

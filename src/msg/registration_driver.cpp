@@ -20,8 +20,8 @@ namespace {
 auto make_tie(const clara::msg::proto::Registration& reg, int& port, int& owner)
 {
     port = reg.port();
-    owner = int{reg.ownertype()};
-    return std::tie(reg.name(), reg.domain(), reg.subject(), reg.type(),
+    owner = int{reg.type()};
+    return std::tie(reg.name(), reg.topic(),
                     reg.host(), port, owner, reg.description());
 }
 
@@ -240,33 +240,23 @@ auto create(std::string_view name,
             std::string_view host,
             int port,
             const Topic& topic,
-            proto::Registration::OwnerType type) -> proto::Registration
+            proto::Registration::Type type) -> proto::Registration
 {
     auto data = proto::Registration{};
     data.set_name(name.data(), name.size());
     data.set_host(host.data(), host.size());
     data.set_description(description.data(), description.size());
     data.set_port(port);
-    data.set_domain(topic.domain());
-    data.set_subject(topic.subject());
-    data.set_type(topic.type());
-    data.set_ownertype(type);
+    data.set_topic(topic.str());
+    data.set_type(type);
     return data;
 }
 
 
-auto filter(proto::Registration::OwnerType type) -> proto::Registration
+auto filter(proto::Registration::Type type) -> proto::Registration
 {
-    static constexpr auto udf = std::string_view{"undefined"};
-
     auto data = proto::Registration{};
-    data.set_name(udf.data(), udf.size());
-    data.set_host(udf.data(), udf.size());
-    data.set_port(0);
-    data.set_domain("*");
-    data.set_subject("*");
-    data.set_type("*");
-    data.set_ownertype(type);
+    data.set_type(type);
     return data;
 }
 

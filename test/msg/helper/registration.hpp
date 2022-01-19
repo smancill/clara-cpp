@@ -17,7 +17,7 @@
 
 namespace clara::msg::test {
 
-using Type = proto::Registration::OwnerType;
+using Type = proto::Registration::Type;
 
 using DataArray = std::vector<std::string>;
 
@@ -79,10 +79,7 @@ auto new_reg_filter(Type type, std::string_view topic = "")
 {
     auto data = registration::filter(type);
     if (not topic.empty()) {
-        auto wrapped = Topic::raw(topic);
-        data.set_domain(wrapped.domain());
-        data.set_subject(wrapped.subject());
-        data.set_type(wrapped.type());
+        data.set_topic(topic.data(), topic.size());
     }
     return data;
 }

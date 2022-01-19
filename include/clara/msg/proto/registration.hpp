@@ -42,7 +42,7 @@ struct CompareRegistration
  */
 inline auto parse_topic(const Registration& reg) -> Topic
 {
-    return Topic::build(reg.domain(), reg.subject(), reg.type());
+    return Topic::raw(reg.topic());
 }
 
 /**

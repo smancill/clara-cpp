@@ -16,7 +16,7 @@
 namespace cm = clara::msg;
 namespace t = clara::msg::test;
 
-using Type = cm::proto::Registration::OwnerType;
+using Type = cm::proto::Registration::Type;
 
 constexpr auto PUBLISHER = cm::proto::Registration::PUBLISHER;
 constexpr auto SUBSCRIBER = cm::proto::Registration::SUBSCRIBER;
@@ -39,10 +39,10 @@ auto find(std::string_view topic, Type type) -> cm::RegDataSet
     auto data = cm::RegDataSet{};
     auto search_topic = cm::Topic::raw(topic);
     for (const auto& reg : registration) {
-        if (reg.ownertype() != type) {
+        if (reg.type() != type) {
             continue;
         }
-        auto reg_topic = cm::Topic::build(reg.domain(), reg.subject(), reg.type());
+        auto reg_topic = cm::Topic::raw(reg.topic());
         switch (type) {
             case PUBLISHER: {
                 if (search_topic.is_parent(reg_topic)) {

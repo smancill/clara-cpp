@@ -145,7 +145,9 @@ auto create(std::string_view name,
             std::string_view host,
             int port,
             const Topic& topic,
-            bool is_publisher) -> proto::Registration;
+            proto::Registration::OwnerType type) -> proto::Registration;
+
+auto filter(proto::Registration::OwnerType type) -> proto::Registration;
 
 } // end namespace registration
 

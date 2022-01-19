@@ -129,7 +129,7 @@ void remove_all()
 auto discovery_request(std::string_view topic, Type type)
     -> cm::proto::Registration
 {
-    return t::new_registration(name, "localhost", topic, check_publisher(type));
+    return t::new_reg_filter(type, topic);
 }
 
 

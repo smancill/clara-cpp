@@ -242,11 +242,8 @@ auto create(std::string_view name,
             std::string_view host,
             int port,
             const Topic& topic,
-            bool is_publisher) -> proto::Registration
+            proto::Registration::OwnerType type) -> proto::Registration
 {
-    auto data_type = is_publisher
-            ? proto::Registration::PUBLISHER
-            : proto::Registration::SUBSCRIBER;
     auto data = proto::Registration{};
     data.set_name(name.data(), name.size());
     data.set_host(host.data(), host.size());
@@ -255,9 +252,26 @@ auto create(std::string_view name,
     data.set_domain(topic.domain());
     data.set_subject(topic.subject());
     data.set_type(topic.type());
-    data.set_ownertype(data_type);
+    data.set_ownertype(type);
     return data;
 }
+
+
+auto filter(proto::Registration::OwnerType type) -> proto::Registration
+{
+    static constexpr auto udf = std::string_view{"undefined"};
+
+    auto data = proto::Registration{};
+    data.set_name(udf.data(), udf.size());
+    data.set_host(udf.data(), udf.size());
+    data.set_port(0);
+    data.set_domain("*");
+    data.set_subject("*");
+    data.set_type("*");
+    data.set_ownertype(type);
+    return data;
+}
+
 
 } // end namespace registration
 

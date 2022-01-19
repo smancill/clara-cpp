@@ -22,6 +22,10 @@ using Request = cm::detail::Request;
 using Response = cm::detail::Response;
 
 
+constexpr auto PUBLISHER = cm::proto::Registration::PUBLISHER;
+constexpr auto SUBSCRIBER = cm::proto::Registration::SUBSCRIBER;
+
+
 template<typename R>
 auto move_msg(R& r) -> R
 {
@@ -31,7 +35,7 @@ auto move_msg(R& r) -> R
 
 TEST(Request, CreateDataRequest)
 {
-    auto data = t::new_registration("asimov", "10.2.9.1", "writer:scifi", true);
+    auto data = t::new_reg_data("asimov", "10.2.9.1", "writer:scifi", PUBLISHER);
 
     auto send_req = Request{"foo:bar", "foo_service", data};
     auto recv_req = move_msg(send_req);
@@ -80,8 +84,8 @@ TEST(Response, CreateErrorResponse)
 TEST(Response, CreateDataResponse)
 {
     auto data = cm::RegDataSet{
-        t::new_registration("asimov", "10.2.9.1", "writer.scifi:books", true),
-        t::new_registration("bradbury", "10.2.9.1", "writer.scifi:books", true),
+        t::new_reg_data("asimov", "10.2.9.1", "writer.scifi:books", PUBLISHER),
+        t::new_reg_data("bradbury", "10.2.9.1", "writer.scifi:books", SUBSCRIBER),
     };
 
     auto send_res = Response{"foo:bar", "registration_fe", data};
@@ -111,10 +115,10 @@ struct DriverTest : public Test
 {
     DriverTest()
       : driver{ctx}
-      , subscriber{t::new_registration("bradbury_sub", "localhost",
-                                       "writer:scifi:books", false)}
-      , publisher{t::new_registration("bradbury_pub", "localhost",
-                                      "writer:scifi:books", true)}
+      , subscriber{t::new_reg_data("bradbury_sub", "localhost",
+                                   "writer:scifi:books", SUBSCRIBER)}
+      , publisher{t::new_reg_data("bradbury_pub", "localhost",
+                                  "writer:scifi:books", PUBLISHER)}
     {
         ON_CALL(driver, request(_, _)).WillByDefault([]() {
             return Response{"", ""};
@@ -199,8 +203,7 @@ TEST_F(DriverTest, SendHostRemoval)
 
 TEST_F(DriverTest, SendPublisherFind)
 {
-    auto data = t::new_registration(
-            "10.2.9.1_node", "10.2.9.1", "bradbury:scifi:books", true);
+    auto data = t::new_reg_filter(PUBLISHER, "bradbury:scifi:books");
     auto req = make_request(cc::find_publisher, data);
 
     expect_request(req, cc::find_request_timeout);
@@ -211,8 +214,7 @@ TEST_F(DriverTest, SendPublisherFind)
 
 TEST_F(DriverTest, SendSubscriberFind)
 {
-    auto data = t::new_registration(
-            "10.2.9.1_node", "10.2.9.1", "bradbury:scifi:books", false);
+    auto data = t::new_reg_filter(SUBSCRIBER, "bradbury:scifi:books");
     auto req = make_request(cc::find_subscriber, data);
 
     expect_request(req, cc::find_request_timeout);
@@ -223,8 +225,7 @@ TEST_F(DriverTest, SendSubscriberFind)
 
 TEST_F(DriverTest, GetRegistration)
 {
-    auto data = t::new_registration(
-            "10.2.9.1_node", "10.2.9.1", "bradbury:scifi:books", false);
+    auto data = t::new_reg_filter(SUBSCRIBER);
     auto all_reg = cm::RegDataSet{publisher, subscriber};
 
     set_response(all_reg);

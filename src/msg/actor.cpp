@@ -19,6 +19,9 @@ namespace clara::msg {
 /// \cond HIDDEN_SYMBOLS
 struct Actor::Impl
 {
+    static constexpr auto PUBLISHER = proto::Registration::PUBLISHER;
+    static constexpr auto SUBSCRIBER = proto::Registration::SUBSCRIBER;
+
     Impl(std::string&& name, ProxyAddress&& proxy_addr, RegAddress&& reg_addr)
       : name{std::move(name)}
       , id{detail::encode_identity(proxy_addr.host(), this->name)}
@@ -30,6 +33,30 @@ struct Actor::Impl
     {
         static thread_local ConnectionPool pool{};
         return &pool;
+    }
+
+    auto make_reg_data(proto::Registration::OwnerType type,
+                       const Topic& topic,
+                       std::string_view description) const
+        -> proto::Registration
+    {
+        return registration::create(name,
+                                    description,
+                                    default_proxy_addr.host(),
+                                    default_proxy_addr.pub_port(),
+                                    topic,
+                                    type);
+    }
+
+    static auto make_reg_filter(proto::Registration::OwnerType type,
+                                const clara::msg::Topic& topic)
+        -> proto::Registration
+    {
+        auto data = clara::msg::registration::filter(type);
+        data.set_domain(topic.domain());
+        data.set_subject(topic.subject());
+        data.set_type(topic.type());
+        return data;
     }
 
     std::string name;
@@ -179,10 +206,7 @@ void Actor::register_as_publisher(const RegAddress& addr,
                                   std::string_view description)
 {
     auto driver = actor_->con_pool()->get_connection(addr);
-    auto proxy = actor_->default_proxy_addr;
-    auto data = registration::create(actor_->name, description,
-                                     proxy.host(), proxy.pub_port(),
-                                     topic, true);
+    auto data = actor_->make_reg_data(Impl::PUBLISHER, topic, description);
     driver->add(data, true);
 }
 
@@ -199,10 +223,7 @@ void Actor::register_as_subscriber(const RegAddress& addr,
                                    std::string_view description)
 {
     auto driver = actor_->con_pool()->get_connection(addr);
-    auto proxy = actor_->default_proxy_addr;
-    auto data = registration::create(actor_->name, description,
-                                     proxy.host(), proxy.sub_port(),
-                                     topic, false);
+    auto data = actor_->make_reg_data(Impl::SUBSCRIBER, topic, description);
     driver->add(data, false);
 }
 
@@ -216,10 +237,7 @@ void Actor::deregister_as_publisher(const Topic& topic)
 void Actor::deregister_as_publisher(const RegAddress& addr, const Topic& topic)
 {
     auto driver = actor_->con_pool()->get_connection(addr);
-    auto proxy = actor_->default_proxy_addr;
-    auto data = registration::create(actor_->name, "",
-                                     proxy.host(), proxy.pub_port(),
-                                     topic, true);
+    auto data = actor_->make_reg_data(Impl::PUBLISHER, topic, "");
     driver->remove(data, true);
 }
 
@@ -234,10 +252,7 @@ void Actor::deregister_as_subscriber(const Topic& topic)
 void Actor::deregister_as_subscriber(const RegAddress& addr, const Topic& topic)
 {
     auto driver = actor_->con_pool()->get_connection(addr);
-    auto proxy = actor_->default_proxy_addr;
-    auto data = registration::create(actor_->name, "",
-                                     proxy.host(), proxy.sub_port(),
-                                     topic, false);
+    auto data = actor_->make_reg_data(Impl::SUBSCRIBER, topic, "");
     driver->remove(data, false);
 }
 
@@ -251,10 +266,7 @@ auto Actor::find_publishers(const Topic& topic) -> RegDataSet
 auto Actor::find_publishers(const RegAddress& addr, const Topic& topic) -> RegDataSet
 {
     auto driver = actor_->con_pool()->get_connection(addr);
-    auto proxy = actor_->default_proxy_addr;
-    auto data = registration::create(actor_->name, "",
-                                     proxy.host(), proxy.pub_port(),
-                                     topic, true);
+    auto data = actor_->make_reg_filter(Impl::PUBLISHER, topic);
     return driver->find(data, true);
 }
 
@@ -268,10 +280,7 @@ auto Actor::find_subscribers(const Topic& topic) -> RegDataSet
 auto Actor::find_subscribers(const RegAddress& addr, const Topic& topic) -> RegDataSet
 {
     auto driver = actor_->con_pool()->get_connection(addr);
-    auto proxy = actor_->default_proxy_addr;
-    auto data = registration::create(actor_->name, "",
-                                     proxy.host(), proxy.sub_port(),
-                                     topic, false);
+    auto data = actor_->make_reg_filter(Impl::SUBSCRIBER, topic);
     return driver->find(data, false);
 }
 

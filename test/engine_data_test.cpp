@@ -105,7 +105,7 @@ TEST(EngineData, CreateFromVector)
     auto d = clara::EngineData{};
     auto v = std::vector<std::int32_t>{1, 2, 3, 4, 5, 6};
 
-    d.set_data(clara::type::ARRAY_SFIXED32, v);
+    d.set_data("binary/int32-vector", v);
 
     EXPECT_THAT(clara::data_cast<std::vector<std::int32_t>>(d), Eq(v));
 }
@@ -117,7 +117,7 @@ TEST(EngineData, CreateFromMovedData)
     auto v = std::vector<std::int32_t>{1, 2, 3, 4, 5, 6};
     auto t = v;
 
-    d.set_data(clara::type::ARRAY_SFIXED32, std::move(t));
+    d.set_data("binary/int32-vector", std::move(t));
 
     EXPECT_THAT(t, IsEmpty());
     EXPECT_THAT(clara::data_cast<std::vector<std::int32_t>>(d), Eq(v));
@@ -129,7 +129,7 @@ TEST(EngineData, CopyConstruction)
     auto d = clara::EngineData{};
     auto v = std::vector<std::int32_t>{1, 2, 3, 4, 5, 6};
 
-    d.set_data(clara::type::ARRAY_SFIXED32, v);
+    d.set_data("binary/int32-vector", v);
     d.set_description("numbers");
 
     auto c = d;
@@ -148,7 +148,7 @@ TEST(EngineData, MoveConstruction)
     auto d = clara::EngineData{};
     auto v = std::vector<std::int32_t>{1, 2, 3, 4, 5, 6};
 
-    d.set_data(clara::type::ARRAY_SFIXED32, v);
+    d.set_data("binary/int32-vector", v);
     d.set_description("numbers");
 
     auto c = std::move(d);

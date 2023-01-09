@@ -143,49 +143,6 @@ extern const EngineDataType STRING;
 extern const EngineDataType BYTES;
 
 /**
- * An array of signed varints of 32 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType ARRAY_SINT32;
-
-/**
- * An array of signed varints of 64 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType ARRAY_SINT64;
-
-/**
- * An array of signed fixed integers of 32 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType ARRAY_SFIXED32;
-
-/**
- * An array of signed fixed integers of 64 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType ARRAY_SFIXED64;
-
-/**
- * An array of floats (32 bits floating-point numbers).
- */
-extern const EngineDataType ARRAY_FLOAT;
-
-/**
- * An array of doubles (64 bits floating-point numbers).
- */
-extern const EngineDataType ARRAY_DOUBLE;
-
-/**
- * An array of strings.
- */
-extern const EngineDataType ARRAY_STRING;
-
-/**
  * JSON text.
  */
 extern const EngineDataType JSON;

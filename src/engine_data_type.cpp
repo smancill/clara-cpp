@@ -16,7 +16,6 @@ namespace {
 namespace vl { // variable lenght integers (not provided by clara-msg helpers)
 
 using clara::msg::proto::Data;
-using clara::msg::proto::detail::set_repeated;
 
 template <typename T>
 inline void set_value(Data& /*data*/, const T& /*value*/)
@@ -27,11 +26,6 @@ inline void set_value(Data& data, std::int32_t value)
 inline void set_value(Data& data, std::int64_t value)
         { data.set_vlsint64(value); }
 
-inline void set_value(Data& data, const std::vector<std::int32_t>& value)
-        { set_repeated(data.mutable_vlsint32a(), value); }
-inline void set_value(Data& data, const std::vector<std::int64_t>& value)
-        { set_repeated(data.mutable_vlsint64a(), value); }
-
 template <typename T>
 inline auto get_value(const Data& /*data*/) -> T
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return T{}; }
@@ -40,11 +34,6 @@ template<> inline auto get_value(const Data& data) -> std::int32_t
         { return data.vlsint32(); }
 template<> inline auto get_value(const Data& data) -> std::int64_t
         { return data.vlsint64(); }
-
-template<> inline auto get_value(const Data& data) -> std::vector<std::int32_t>
-        { const auto& a = data.vlsint32a(); return {a.begin(), a.end()}; }
-template<> inline auto get_value(const Data& data) -> std::vector<std::int64_t>
-        { const auto& a = data.vlsint64a(); return {a.begin(), a.end()}; }
 }
 
 // ---------------------------------------------------------------------------
@@ -153,21 +142,9 @@ auto s_primitive() -> std::unique_ptr<clara::Serializer>
 }
 
 template<typename T>
-auto s_vector() -> std::unique_ptr<clara::Serializer>
-{
-    return std::make_unique<PrimitiveSerializer<std::vector<T>>>();
-}
-
-template<typename T>
 auto vl_primitive() -> std::unique_ptr<clara::Serializer>
 {
     return std::make_unique<VariableLengthSerializer<T>>();
-}
-
-template<typename T>
-auto vl_vector() -> std::unique_ptr<clara::Serializer>
-{
-    return std::make_unique<VariableLengthSerializer<std::vector<T>>>();
 }
 
 } // end namespace
@@ -187,14 +164,6 @@ const EngineDataType DOUBLE { mt::single_double, s_primitive<double>() };
 const EngineDataType STRING { mt::single_string, s_primitive<std::string>() };
 
 const EngineDataType BYTES { "binary/bytes", std::make_unique<RawBytesSerializer>() };
-
-const EngineDataType ARRAY_SINT32 { mt::array_sint32, vl_vector<std::int32_t>() };
-const EngineDataType ARRAY_SINT64 { mt::array_sint64, vl_vector<std::int64_t>() };
-const EngineDataType ARRAY_SFIXED32 { mt::array_sfixed32, s_vector<std::int32_t>() };
-const EngineDataType ARRAY_SFIXED64 { mt::array_sfixed64, s_vector<std::int64_t>() };
-const EngineDataType ARRAY_FLOAT { mt::array_float, s_vector<float>() };
-const EngineDataType ARRAY_DOUBLE { mt::array_double, s_vector<double>() };
-const EngineDataType ARRAY_STRING { mt::array_string, s_vector<std::string>() };
 
 const EngineDataType JSON { "application/json", std::make_unique<StringSerializer>() };
 const EngineDataType NATIVE { "native", std::make_unique<NativeSerializer>() };

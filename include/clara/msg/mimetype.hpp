@@ -35,15 +35,6 @@ constexpr auto single_double = "binary/double"sv;               ///< Double prec
 constexpr auto single_string = "text/string"sv;                 ///< An UTF-8 encoded or 7-bit ASCII text.
 constexpr auto bytes = "binary/bytes"sv;                        ///< An arbitrary sequence of bytes.
 
-constexpr auto array_sint32 = "binary/array-sint32"sv;          ///< Repeated signed integers. Uses variable-length encoding.
-constexpr auto array_sint64 = "binary/array-sint64"sv;          ///< Repeated signed integers. Uses variable-length encoding.
-constexpr auto array_sfixed32 = "binary/array-sfixed32"sv;      ///< Repeated signed integers. Always use 4 bytes.
-constexpr auto array_sfixed64 = "binary/array-sfixed32"sv;      ///< Repeated signed integers. Always use 8 bytes.
-constexpr auto array_float = "binary/array-float"sv;            ///< Repeated single precision floating point types.
-constexpr auto array_double = "binary/array-double"sv;          ///< Repeated double precision floating point types.
-constexpr auto array_string = "binary/array-string"sv;          ///< Repeated UTF-8 encoded or 7-bit ASCII texts.
-constexpr auto array_bytes = "binary/array-bytes"sv;            ///< Repeated arbitrary sequences of bytes.
-
 constexpr auto plain_data = "binary/native"sv;                  ///< A serialized \ref clara::msg::proto::Data "Data" object
 constexpr auto java_object = "binary/java"sv;                   ///< A serialized Java object
 constexpr auto cpp_object = "binary/cpp"sv;                     ///< A serialized C++ object

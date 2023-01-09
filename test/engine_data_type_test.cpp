@@ -53,44 +53,6 @@ TEST(PrimitiveSerializer, StringSerialization)
 }
 
 
-TEST(ArraySerializer, IntegerSerialization)
-{
-    const auto* s = clara::type::ARRAY_SFIXED32.serializer();
-
-    const auto v = std::vector<std::int32_t>{4, 5, 6};
-    const auto b = s->write(std::any{v});
-    const auto d = std::any_cast<decltype(v)>(s->read(b));
-
-    ASSERT_THAT(d, ContainerEq(v));
-}
-
-
-TEST(ArraySerializer, FloatingPointSerialization)
-{
-    const auto* s = clara::type::ARRAY_DOUBLE.serializer();
-
-    const auto v = std::vector<double>{4.1, 5.6};
-    const auto b = s->write(std::any{v});
-    const auto d = std::any_cast<decltype(v)>(s->read(b));
-
-    ASSERT_THAT(d, ContainerEq(v));
-}
-
-
-TEST(ArraySerializer, StringSerialization)
-{
-    const auto* s = clara::type::ARRAY_STRING.serializer();
-
-    const auto v = std::vector<std::string>{ "Ride the Lightning",
-                                             "Master of Puppets",
-                                             "...And Justice for All"};
-    const auto b = s->write(std::any{v});
-    const auto d = std::any_cast<decltype(v)>(s->read(b));
-
-    ASSERT_THAT(d, ContainerEq(v));
-}
-
-
 TEST(RawBytesSerializer, RawBytesSerialization)
 {
     const auto* s = clara::type::BYTES.serializer();

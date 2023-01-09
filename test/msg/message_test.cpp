@@ -149,39 +149,6 @@ TEST(Message, CreateWithStringData)
 }
 
 
-TEST(Message, CreateWithIntegerArray)
-{
-    auto data = std::vector<std::int64_t>{1000L, 2000L, 3000L};
-    auto msg = cm::make_message(topic, data);
-    auto result = cm::parse_message<std::vector<std::int64_t>>(msg);
-
-    EXPECT_THAT(result, ContainerEq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_sfixed64));
-}
-
-
-TEST(Message, CreateWithFloatArray)
-{
-    auto data = std::vector<double>{1000., 2000., 3000.};
-    auto msg = cm::make_message(topic, data);
-    auto result = cm::parse_message<std::vector<double>>(msg);
-
-    EXPECT_THAT(result, ContainerEq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_double));
-}
-
-
-TEST(Message, CreateWithStringArray)
-{
-    auto data = std::vector<std::string>{"one", "two", "three"};
-    auto msg = cm::make_message(topic, data);
-    auto result = cm::parse_message<std::vector<std::string>>(msg);
-
-    EXPECT_THAT(result, ContainerEq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_string));
-}
-
-
 TEST(Message, CreateCopyResponse)
 {
     auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};

@@ -58,21 +58,6 @@ inline void set_value(Data& data, std::string&& value)
 inline void set_value(Data& data, const char* value)
         { data.set_string(value); }
 
-template <typename R, typename C>
-inline void set_repeated(R* repeated, const C& values)
-        { R data{values.cbegin(), values.cend()}; repeated->Swap(&data); }
-
-inline void set_value(Data& data, const std::vector<std::int32_t>& value)
-        { set_repeated(data.mutable_flsint32a(), value); }
-inline void set_value(Data& data, const std::vector<std::int64_t>& value)
-        { set_repeated(data.mutable_flsint64a(), value); }
-inline void set_value(Data& data, const std::vector<float>& value)
-        { set_repeated(data.mutable_floata(), value); }
-inline void set_value(Data& data, const std::vector<double>& value)
-        { set_repeated(data.mutable_doublea(), value); }
-inline void set_value(Data& data, const std::vector<std::string>& value)
-        { set_repeated(data.mutable_stringa(), value); }
-
 template <typename T>
 inline auto get_value(const Data& /*data*/) -> T
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return T{}; }
@@ -87,17 +72,6 @@ template<> inline auto get_value(const Data& data) -> double
         { return data.double_(); }
 template<> inline auto get_value(const Data& data) -> std::string
         { return data.string(); }
-
-template<> inline auto get_value(const Data& data) -> std::vector<std::int32_t>
-        { const auto& a = data.flsint32a(); return {a.begin(), a.end()}; }
-template<> inline auto get_value(const Data& data) -> std::vector<std::int64_t>
-        { const auto& a = data.flsint64a(); return {a.begin(), a.end()}; }
-template<> inline auto get_value(const Data& data) -> std::vector<float>
-        { const auto& a = data.floata(); return {a.begin(), a.end()}; }
-template<> inline auto get_value(const Data& data) -> std::vector<double>
-        { const auto& a = data.doublea(); return {a.begin(), a.end()}; }
-template<> inline auto get_value(const Data& data) -> std::vector<std::string>
-        { const auto& a = data.stringa(); return {a.begin(), a.end()}; }
 
 template <typename T>
 inline auto get_mimetype() -> std::string_view
@@ -115,17 +89,6 @@ template<> inline auto get_mimetype<std::string>() -> std::string_view
         { return mimetype::single_string; }
 template<> inline auto get_mimetype<const char*>() -> std::string_view
         { return mimetype::single_string; }
-
-template<> inline auto get_mimetype<std::vector<std::int32_t>>() -> std::string_view
-        { return mimetype::array_sfixed32; }
-template<> inline auto get_mimetype<std::vector<std::int64_t>>() -> std::string_view
-        { return mimetype::array_sfixed64; }
-template<> inline auto get_mimetype<std::vector<float>>() -> std::string_view
-        { return mimetype::array_float; }
-template<> inline auto get_mimetype<std::vector<double>>() -> std::string_view
-        { return mimetype::array_double; }
-template<> inline auto get_mimetype<std::vector<std::string>>() -> std::string_view
-        { return mimetype::array_string; }
 
 } // end namespace detail
 // clang-format on

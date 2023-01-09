@@ -50,7 +50,7 @@ TEST(EngineData, ReadFromMessage)
 TEST(EngineData, SetMimeTypeFromString)
 {
     auto d = clara::EngineData{};
-    auto m = clara::type::SFIXED32.mime_type();
+    auto m = clara::type::INT32.mime_type();
 
     d.set_data(m, 600);
 
@@ -61,7 +61,7 @@ TEST(EngineData, SetMimeTypeFromString)
 TEST(EngineData, SetMimeTypeFromDataType)
 {
     auto d = clara::EngineData{};
-    auto t = clara::type::SFIXED32;
+    auto t = clara::type::INT32;
 
     d.set_data(t, 600);
 
@@ -73,7 +73,7 @@ TEST(EngineData, CreateFromPrimitive)
 {
     auto d = clara::EngineData{};
 
-    d.set_data(clara::type::SFIXED32, 800);
+    d.set_data(clara::type::INT32, 800);
 
     EXPECT_THAT(clara::data_cast<std::int32_t>(d), Eq(800));
 }

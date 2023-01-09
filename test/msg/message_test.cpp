@@ -123,7 +123,7 @@ TEST(Message, CreateWithIntegerData)
     auto result = cm::parse_message<std::int32_t>(msg);
 
     EXPECT_THAT(result, Eq(42));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_sfixed32));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_int32));
 }
 
 

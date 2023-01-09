@@ -26,10 +26,8 @@ namespace clara::msg::mimetype {
 using namespace std::literals::string_view_literals;
 
 // clang-format off
-constexpr auto single_sint32 = "binary/sint32"sv;               ///< Signed integer. Uses variable-length encoding.
-constexpr auto single_sint64 = "binary/sint64"sv;               ///< Signed integer. Uses variable-length encoding.
-constexpr auto single_sfixed32 = "binary/sfixed32"sv;           ///< Signed integer. Always use 4 bytes.
-constexpr auto single_sfixed64 = "binary/sfixed64"sv;           ///< Signed integer. Always use 8 bytes.
+constexpr auto single_int32 = "binary/int32"sv;                 ///< Integer of 32 bits.
+constexpr auto single_int64 = "binary/int64"sv;                 ///< Integer of 64 bits.
 constexpr auto single_float = "binary/float"sv;                 ///< Single precision floating point type.
 constexpr auto single_double = "binary/double"sv;               ///< Double precision floating point type.
 constexpr auto single_string = "text/string"sv;                 ///< An UTF-8 encoded or 7-bit ASCII text.

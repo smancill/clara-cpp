@@ -94,32 +94,14 @@ inline auto operator!=(std::string_view mime_type,
 namespace type {
 
 /**
- * Signed int of 32 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
+ * An integer of 32 bits.
  */
-extern const EngineDataType SINT32;
+extern const EngineDataType INT32;
 
 /**
- * Signed int of 64 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
+ * An integer of 64 bits.
  */
-extern const EngineDataType SINT64;
-
-/**
- * Signed fixed integer of 32 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType SFIXED32;
-
-/**
- * Signed fixed integer of 64 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType SFIXED64;
+extern const EngineDataType INT64;
 
 /**
  * A float (32 bits floating-point number).

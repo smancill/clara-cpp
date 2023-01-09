@@ -22,7 +22,7 @@ using namespace testing;
 
 TEST(PrimitiveSerializer, IntegerSerialization)
 {
-    const auto* s = clara::type::SINT32.serializer();
+    const auto* s = clara::type::INT32.serializer();
 
     const auto b = s->write(std::any{18});
     const auto d = std::any_cast<std::int32_t>(s->read(b));

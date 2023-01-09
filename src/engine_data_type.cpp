@@ -13,31 +13,6 @@
 
 namespace {
 
-namespace vl { // variable lenght integers (not provided by clara-msg helpers)
-
-using clara::msg::proto::Data;
-
-template <typename T>
-inline void set_value(Data& /*data*/, const T& /*value*/)
-        { static_assert(sizeof(T) == 0, "Unsupported data type"); }
-
-inline void set_value(Data& data, std::int32_t value)
-        { data.set_vlsint32(value); }
-inline void set_value(Data& data, std::int64_t value)
-        { data.set_vlsint64(value); }
-
-template <typename T>
-inline auto get_value(const Data& /*data*/) -> T
-        { static_assert(sizeof(T) == 0, "Unsupported data type"); return T{}; }
-
-template<> inline auto get_value(const Data& data) -> std::int32_t
-        { return data.vlsint32(); }
-template<> inline auto get_value(const Data& data) -> std::int64_t
-        { return data.vlsint64(); }
-}
-
-// ---------------------------------------------------------------------------
-
 template<typename T>
 class PrimitiveSerializer : public clara::Serializer
 {
@@ -53,26 +28,6 @@ public:
     {
         const auto xdata = clara::msg::proto::parse_data(buffer);
         return {clara::msg::proto::parse_data<T>(xdata)};
-    }
-};
-
-
-template<typename T>
-class VariableLengthSerializer : public clara::Serializer
-{
-public:
-    auto write(const std::any& data) const -> std::vector<std::uint8_t> override
-    {
-        const T& value = std::any_cast<const T&>(data);
-        auto xdata = clara::msg::proto::Data{};
-        vl::set_value(xdata, value);
-        return clara::msg::proto::serialize_data(xdata);
-    }
-
-    auto read(const std::vector<std::uint8_t>& buffer) const -> std::any override
-    {
-        const auto xdata = clara::msg::proto::parse_data(buffer);
-        return {vl::get_value<T>(xdata)};
     }
 };
 
@@ -141,12 +96,6 @@ auto s_primitive() -> std::unique_ptr<clara::Serializer>
     return std::make_unique<PrimitiveSerializer<T>>();
 }
 
-template<typename T>
-auto vl_primitive() -> std::unique_ptr<clara::Serializer>
-{
-    return std::make_unique<VariableLengthSerializer<T>>();
-}
-
 } // end namespace
 
 // ---------------------------------------------------------------------------
@@ -155,10 +104,8 @@ namespace clara::type {
 
 namespace mt = msg::mimetype;
 
-const EngineDataType SINT32 { mt::single_sint32, vl_primitive<std::int32_t>() };
-const EngineDataType SINT64 { mt::single_sint64, vl_primitive<std::int64_t>() };
-const EngineDataType SFIXED32 { mt::single_sfixed32, s_primitive<std::int32_t>() };
-const EngineDataType SFIXED64 { mt::single_sfixed64, s_primitive<std::int64_t>() };
+const EngineDataType INT32 { mt::single_int32, s_primitive<std::int32_t>() };
+const EngineDataType INT64 { mt::single_int64, s_primitive<std::int64_t>() };
 const EngineDataType FLOAT { mt::single_float, s_primitive<float>() };
 const EngineDataType DOUBLE { mt::single_double, s_primitive<double>() };
 const EngineDataType STRING { mt::single_string, s_primitive<std::string>() };

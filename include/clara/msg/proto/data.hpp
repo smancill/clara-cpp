@@ -78,9 +78,9 @@ inline auto get_mimetype() -> std::string_view
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return ""; }
 
 template<> inline auto get_mimetype<std::int32_t>() -> std::string_view
-        { return mimetype::single_sfixed32; }
+        { return mimetype::single_int32; }
 template<> inline auto get_mimetype<std::int64_t>() -> std::string_view
-        { return mimetype::single_sfixed64; }
+        { return mimetype::single_int64; }
 template<> inline auto get_mimetype<float>() -> std::string_view
         { return mimetype::single_float; }
 template<> inline auto get_mimetype<double>() -> std::string_view

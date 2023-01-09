@@ -10,6 +10,9 @@
 
 #include <gmock/gmock.h>
 
+using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
+
 using namespace testing;
 
 namespace cm = clara::msg;
@@ -140,7 +143,29 @@ TEST(Message, CreateWithFloatData)
 
 TEST(Message, CreateWithStringData)
 {
+    auto data = "some_string"s;
+    auto msg = cm::make_message(topic, data);
+    auto result = cm::parse_message<std::string>(msg);
+
+    EXPECT_THAT(result, Eq(data));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::string));
+}
+
+
+TEST(Message, CreateWithLiteralStringData)
+{
     auto data = "some_string";
+    auto msg = cm::make_message(topic, data);
+    auto result = cm::parse_message<std::string>(msg);
+
+    EXPECT_THAT(result, Eq(data));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::string));
+}
+
+
+TEST(Message, CreateWithStringViewData)
+{
+    auto data = "some_string"sv;
     auto msg = cm::make_message(topic, data);
     auto result = cm::parse_message<std::string>(msg);
 

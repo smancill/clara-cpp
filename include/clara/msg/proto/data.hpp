@@ -40,55 +40,66 @@ namespace clara::msg::proto {
 namespace detail {
 
 template <typename T>
-inline void set_value(Data& /*data*/, const T& /*value*/)
-        { static_assert(sizeof(T) == 0, "Unsupported data type"); }
+inline void set_value(Data& data, T&& value)
+{
+    using U = std::decay_t<T>;
 
-inline void set_value(Data& data, std::int32_t value)
-        { data.set_flsint32(value); }
-inline void set_value(Data& data, std::int64_t value)
-        { data.set_flsint64(value); }
-inline void set_value(Data& data, float value)
-        { data.set_float_(value); }
-inline void set_value(Data& data, double value)
-        { data.set_double_(value); }
-inline void set_value(Data& data, const std::string& value)
-        { data.set_string(value); }
-inline void set_value(Data& data, std::string&& value)
-        { data.set_string(std::move(value)); }
-inline void set_value(Data& data, const char* value)
-        { data.set_string(value); }
+    if constexpr(std::is_same_v<U, std::string>) {
+        data.set_string(std::forward<T>(value));
+    } else if constexpr(std::is_constructible_v<std::string, T>) {
+        data.set_string(std::string{std::forward<T>(value)});
+    } else if constexpr(std::is_same_v<U, std::int32_t>) {
+        data.set_flsint32(value);
+    } else if constexpr(std::is_same_v<U, std::int64_t>) {
+        data.set_flsint64(value);
+    } else if constexpr(std::is_same_v<U, float>) {
+        data.set_float_(value);
+    } else if constexpr(std::is_same_v<U, double>) {
+        data.set_double_(value);
+    } else {
+        static_assert(sizeof(T) == 0, "Unsupported type");
+    }
+}
+
 
 template <typename T>
-inline auto get_value(const Data& /*data*/) -> T
-        { static_assert(sizeof(T) == 0, "Unsupported data type"); return T{}; }
+inline auto get_value(const Data& data) -> T
+{
+    if constexpr(std::is_same_v<T, std::string>) {
+        return data.string();
+    } else if constexpr(std::is_same_v<T, std::int32_t>) {
+        return data.flsint32();
+    } else if constexpr(std::is_same_v<T, std::int64_t>) {
+        return data.flsint64();
+    } else if constexpr(std::is_same_v<T, float>) {
+        return data.float_();
+    } else if constexpr(std::is_same_v<T, double>) {
+        return data.double_();
+    } else {
+        static_assert(sizeof(T) == 0, "Unsupported type");
+    }
+}
 
-template<> inline auto get_value(const Data& data) -> std::int32_t
-        { return data.flsint32(); }
-template<> inline auto get_value(const Data& data) -> std::int64_t
-        { return data.flsint64(); }
-template<> inline auto get_value(const Data& data) -> float
-        { return data.float_(); }
-template<> inline auto get_value(const Data& data) -> double
-        { return data.double_(); }
-template<> inline auto get_value(const Data& data) -> std::string
-        { return data.string(); }
 
 template <typename T>
 inline auto get_mimetype() -> std::string_view
-        { static_assert(sizeof(T) == 0, "Unsupported data type"); return ""; }
-
-template<> inline auto get_mimetype<std::int32_t>() -> std::string_view
-        { return mimetype::int32_number; }
-template<> inline auto get_mimetype<std::int64_t>() -> std::string_view
-        { return mimetype::int64_number; }
-template<> inline auto get_mimetype<float>() -> std::string_view
-        { return mimetype::float_number; }
-template<> inline auto get_mimetype<double>() -> std::string_view
-        { return mimetype::double_number; }
-template<> inline auto get_mimetype<std::string>() -> std::string_view
-        { return mimetype::string; }
-template<> inline auto get_mimetype<const char*>() -> std::string_view
-        { return mimetype::string; }
+{
+    if constexpr(std::is_constructible_v<std::string, T>) {
+        return mimetype::string;
+    } else if constexpr(std::is_same_v<T, std::int32_t>) {
+        return mimetype::int32_number;
+    } else if constexpr(std::is_same_v<T, std::int64_t>) {
+        return mimetype::int64_number;
+    } else if constexpr(std::is_same_v<T, float>) {
+        return mimetype::float_number;
+    } else if constexpr(std::is_same_v<T, double>) {
+        return mimetype::double_number;
+    } else if constexpr(std::is_same_v<T, std::vector<std::uint8_t>>) {
+        return mimetype::bytes;
+    } else {
+        static_assert(sizeof(T) == 0, "Unsupported data type");
+    }
+}
 
 } // end namespace detail
 // clang-format on

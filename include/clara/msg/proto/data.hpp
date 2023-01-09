@@ -39,41 +39,78 @@ namespace clara::msg::proto {
 // clang-format off
 namespace detail {
 
+using buffer_t = std::vector<std::uint8_t>;
+
+
+inline auto serialize_data(const Data& data) -> buffer_t
+{
+    auto buffer = buffer_t(data.ByteSizeLong());
+    data.SerializeToArray(buffer.data(), static_cast<int>(buffer.size()));
+    return buffer;
+}
+
+
+inline auto parse_data(const buffer_t& buffer) -> Data
+{
+    auto data = Data{};
+    data.ParseFromArray(buffer.data(), static_cast<int>(buffer.size()));
+    return data;
+}
+
+
 template <typename T>
-inline void set_value(Data& data, T&& value)
+inline auto serialize_value(T&& value) -> buffer_t
 {
     using U = std::decay_t<T>;
 
     if constexpr(std::is_same_v<U, std::string>) {
+        auto data = Data{};
         data.set_string(std::forward<T>(value));
+        return serialize_data(data);
     } else if constexpr(std::is_constructible_v<std::string, T>) {
+        auto data = Data{};
         data.set_string(std::string{std::forward<T>(value)});
+        return serialize_data(data);
     } else if constexpr(std::is_same_v<U, std::int32_t>) {
+        auto data = Data{};
         data.set_flsint32(value);
+        return serialize_data(data);
     } else if constexpr(std::is_same_v<U, std::int64_t>) {
+        auto data = Data{};
         data.set_flsint64(value);
+        return serialize_data(data);
     } else if constexpr(std::is_same_v<U, float>) {
+        auto data = Data{};
         data.set_float_(value);
+        return serialize_data(data);
     } else if constexpr(std::is_same_v<U, double>) {
+        auto data = Data{};
         data.set_double_(value);
+        return serialize_data(data);
     } else {
         static_assert(sizeof(T) == 0, "Unsupported type");
     }
 }
 
 
-template <typename T>
-inline auto get_value(const Data& data) -> T
+template <typename T, typename V,
+          typename = std::enable_if_t<std::is_same_v<std::decay_t<V>, buffer_t>>>
+inline auto parse_value(V&& buffer) -> T
 {
     if constexpr(std::is_same_v<T, std::string>) {
+        auto data = parse_data(buffer);
         return data.string();
     } else if constexpr(std::is_same_v<T, std::int32_t>) {
+        auto data = parse_data(buffer);
         return data.flsint32();
     } else if constexpr(std::is_same_v<T, std::int64_t>) {
+        auto data = parse_data(buffer);
         return data.flsint64();
     } else if constexpr(std::is_same_v<T, float>) {
+        auto data = parse_data(buffer);
         return data.float_();
     } else if constexpr(std::is_same_v<T, double>) {
+        auto data = parse_data(buffer);
         return data.double_();
     } else {
         static_assert(sizeof(T) == 0, "Unsupported type");
@@ -94,7 +131,7 @@ inline auto get_mimetype() -> std::string_view
         return mimetype::float_number;
     } else if constexpr(std::is_same_v<T, double>) {
         return mimetype::double_number;
-    } else if constexpr(std::is_same_v<T, std::vector<std::uint8_t>>) {
+    } else if constexpr(std::is_same_v<T, buffer_t>) {
         return mimetype::bytes;
     } else {
         static_assert(sizeof(T) == 0, "Unsupported data type");
@@ -104,43 +141,6 @@ inline auto get_mimetype() -> std::string_view
 } // end namespace detail
 // clang-format on
 
-
-/**
- * Creates a %Data object with a single value of type T.
- * The proper field to be set will be deduced from the parameter type.
- *
- * The object should be serialized in order to create a Message.
- * This is useful when more control is needed over the metadata.
- * In that case, the data type should be set carefully.
- * Otherwise, it is simpler to use \ref make_message.
- *
- * \tparam T a type that can be set on proto::Data objects
- * \param data the value to be set in the created object
- * \return the created %Data object with only the value of type T set
- */
-template<typename T>
-inline auto make_data(T&& data) -> Data
-{
-    auto xdata = Data{};
-    detail::set_value(xdata, std::forward<T>(data));
-    return xdata;
-}
-
-/**
- * Reads the value of type T from the given %Data object.
- * The proper field will be deduced from the return type.
- *
- * With all probability \ref parse_message could be used instead of this.
- *
- * \tparam T a type that can be get from proto::Data objects
- * \param data the protobuf object
- * \return the value of type T in the data
- */
-template<typename T>
-inline auto parse_data(const Data& data) -> T
-{
-    return detail::get_value<T>(data);
-}
 
 /**
  * Serializes the given %Data into a buffer.
@@ -154,9 +154,7 @@ inline auto parse_data(const Data& data) -> T
  */
 inline auto serialize_data(const Data& data) -> std::vector<std::uint8_t>
 {
-    auto buffer = std::vector<std::uint8_t>(data.ByteSizeLong());
-    data.SerializeToArray(buffer.data(), static_cast<int>(buffer.size()));
-    return buffer;
+    return detail::serialize_data(data);
 }
 
 /**
@@ -170,9 +168,7 @@ inline auto serialize_data(const Data& data) -> std::vector<std::uint8_t>
  */
 inline auto parse_data(const std::vector<std::uint8_t>& buffer) -> Data
 {
-    auto xdata = Data{};
-    xdata.ParseFromArray(buffer.data(), static_cast<int>(buffer.size()));
-    return xdata;
+    return detail::parse_data(buffer);
 }
 
 

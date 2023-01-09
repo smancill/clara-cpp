@@ -20,14 +20,12 @@ public:
     auto write(const std::any& data) const -> std::vector<std::uint8_t> override
     {
         const T& value = std::any_cast<const T&>(data);
-        const auto xdata = clara::msg::proto::make_data(value);
-        return clara::msg::proto::serialize_data(xdata);
+        return clara::msg::proto::detail::serialize_value(value);
     }
 
     auto read(const std::vector<std::uint8_t>& buffer) const -> std::any override
     {
-        const auto xdata = clara::msg::proto::parse_data(buffer);
-        return {clara::msg::proto::parse_data<T>(xdata)};
+        return clara::msg::proto::detail::parse_value<T>(buffer);
     }
 };
 

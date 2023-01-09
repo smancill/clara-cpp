@@ -169,35 +169,27 @@ private:
 
 
 /**
- * Creates a simple message with a data value of type D.
+ * Creates a simple message with a data value of type U.
  *
- * D must be one of the types that can be set on proto::Data objects.
  * The meta field `datatype` will be set accordingly.
  * Use \ref parse_message(const Message&) "parse_message" to get the value back.
  *
- * This is just a one line wrapper to create a message using
- * proto::make_data and proto::serialize_data.
- * Call the same functions and the message constructor directly
- * if more setup is needed with the metadata field,
- * and `datatype` must be set carefully.
- *
  * \tparam T Topic
- * \tparam D a type that can be set on proto::Data objects
+ * \tparam U a simple primitive or string type
  * \param topic the topic of the message
  * \param data the value to be set in the message
  */
 template<typename T,
-         typename D,
+         typename U,
          typename = std::enable_if_t<
-            !std::is_same<proto::Data, std::decay_t<D>>::value
+            !std::is_same<proto::Data, std::decay_t<U>>::value
          >
         >
-inline auto make_message(T&& topic, D&& data) -> Message
+inline auto make_message(T&& topic, U&& data) -> Message
 {
-    auto xdata = proto::make_data(std::forward<D>(data));
     return {std::forward<T>(topic),
-            proto::detail::get_mimetype<std::decay_t<D>>(),
-            proto::serialize_data(xdata)};
+            proto::detail::get_mimetype<std::decay_t<U>>(),
+            proto::detail::serialize_value(std::forward<U>(data))};
 }
 
 
@@ -226,17 +218,16 @@ inline auto make_message(T&& topic, const proto::Data& data) -> Message
 
 
 /**
- * Deserializes a data of type T from the given message.
+ * Deserializes a data of type U from the given message.
  *
- * \tparam T a type that can be get from proto::Data objects
+ * \tparam U a simple primitive or string type
  * \param msg the message
- * \return the value of type T contained in the message
+ * \return the value of type U contained in the message
  */
-template<typename T>
-inline auto parse_message(const Message& msg) -> T
+template<typename U>
+inline auto parse_message(const Message& msg) -> U
 {
-    auto xdata = proto::parse_data(msg.data());
-    return proto::parse_data<T>(xdata);
+    return proto::detail::parse_value<U>(msg.data());
 }
 
 

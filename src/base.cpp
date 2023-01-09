@@ -57,7 +57,7 @@ void Base::send_response(const msg::Message& msg,
                          msg::proto::Meta::Status status)
 {
     auto meta = std::make_unique<msg::proto::Meta>();
-    msg::proto::detail::set_datatype(*meta, msg::mimetype::single_string);
+    msg::proto::detail::set_datatype(*meta, msg::mimetype::string);
     meta->set_author(name());
     meta->set_status(status);
     auto res = msg::Message{msg.replyto(), std::move(meta),

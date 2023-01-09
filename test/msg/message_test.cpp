@@ -123,7 +123,7 @@ TEST(Message, CreateWithIntegerData)
     auto result = cm::parse_message<std::int32_t>(msg);
 
     EXPECT_THAT(result, Eq(42));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_int32));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::int32_number));
 }
 
 
@@ -134,7 +134,7 @@ TEST(Message, CreateWithFloatData)
     auto result = cm::parse_message<float>(msg);
 
     EXPECT_THAT(result, Eq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_float));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::float_number));
 }
 
 
@@ -145,7 +145,7 @@ TEST(Message, CreateWithStringData)
     auto result = cm::parse_message<std::string>(msg);
 
     EXPECT_THAT(result, Eq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_string));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::string));
 }
 
 

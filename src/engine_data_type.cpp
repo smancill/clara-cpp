@@ -104,11 +104,11 @@ namespace clara::type {
 
 namespace mt = msg::mimetype;
 
-const EngineDataType INT32 { mt::single_int32, s_primitive<std::int32_t>() };
-const EngineDataType INT64 { mt::single_int64, s_primitive<std::int64_t>() };
-const EngineDataType FLOAT { mt::single_float, s_primitive<float>() };
-const EngineDataType DOUBLE { mt::single_double, s_primitive<double>() };
-const EngineDataType STRING { mt::single_string, s_primitive<std::string>() };
+const EngineDataType INT32 { mt::int32_number, s_primitive<std::int32_t>() };
+const EngineDataType INT64 { mt::int64_number, s_primitive<std::int64_t>() };
+const EngineDataType FLOAT { mt::float_number, s_primitive<float>() };
+const EngineDataType DOUBLE { mt::double_number, s_primitive<double>() };
+const EngineDataType STRING { mt::string, s_primitive<std::string>() };
 
 const EngineDataType BYTES { "binary/bytes", std::make_unique<RawBytesSerializer>() };
 

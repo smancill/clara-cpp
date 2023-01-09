@@ -78,17 +78,17 @@ inline auto get_mimetype() -> std::string_view
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return ""; }
 
 template<> inline auto get_mimetype<std::int32_t>() -> std::string_view
-        { return mimetype::single_int32; }
+        { return mimetype::int32_number; }
 template<> inline auto get_mimetype<std::int64_t>() -> std::string_view
-        { return mimetype::single_int64; }
+        { return mimetype::int64_number; }
 template<> inline auto get_mimetype<float>() -> std::string_view
-        { return mimetype::single_float; }
+        { return mimetype::float_number; }
 template<> inline auto get_mimetype<double>() -> std::string_view
-        { return mimetype::single_double; }
+        { return mimetype::double_number; }
 template<> inline auto get_mimetype<std::string>() -> std::string_view
-        { return mimetype::single_string; }
+        { return mimetype::string; }
 template<> inline auto get_mimetype<const char*>() -> std::string_view
-        { return mimetype::single_string; }
+        { return mimetype::string; }
 
 } // end namespace detail
 // clang-format on

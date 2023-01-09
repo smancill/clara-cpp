@@ -26,12 +26,12 @@ namespace clara::msg::mimetype {
 using namespace std::literals::string_view_literals;
 
 // clang-format off
-constexpr auto single_int32 = "binary/int32"sv;                 ///< Integer of 32 bits.
-constexpr auto single_int64 = "binary/int64"sv;                 ///< Integer of 64 bits.
-constexpr auto single_float = "binary/float"sv;                 ///< Single precision floating point type.
-constexpr auto single_double = "binary/double"sv;               ///< Double precision floating point type.
-constexpr auto single_string = "text/string"sv;                 ///< An UTF-8 encoded or 7-bit ASCII text.
-constexpr auto bytes = "binary/bytes"sv;                        ///< An arbitrary sequence of bytes.
+constexpr auto int32_number = "binary/int32"sv;     ///< Integer of 32 bits.
+constexpr auto int64_number = "binary/int64"sv;     ///< Integer of 64 bits.
+constexpr auto float_number = "binary/float"sv;     ///< Single precision floating point type.
+constexpr auto double_number = "binary/double"sv;   ///< Double precision floating point type.
+constexpr auto string = "text/string"sv;            ///< An UTF-8 encoded or 7-bit ASCII text.
+constexpr auto bytes = "binary/bytes"sv;            ///< An arbitrary sequence of bytes.
 
 constexpr auto plain_data = "binary/native"sv;                  ///< A serialized \ref clara::msg::proto::Data "Data" object
 constexpr auto java_object = "binary/java"sv;                   ///< A serialized Java object

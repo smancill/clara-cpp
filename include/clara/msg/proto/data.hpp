@@ -11,6 +11,8 @@
 
 #include <clara/msg/mimetype.hpp>
 
+#include <google/protobuf/wrappers.pb.h>
+
 #include <cstdint>
 #include <memory>
 #include <vector>
@@ -58,6 +60,26 @@ inline auto parse_data(const buffer_t& buffer) -> Data
 }
 
 
+template <typename P, typename T>
+inline auto serialize_proto_value(const T& value) -> buffer_t
+{
+    auto proto = P{};
+    proto.set_value(value);
+    auto buffer = buffer_t(proto.ByteSizeLong());
+    proto.SerializeToArray(buffer.data(), static_cast<int>(buffer.size()));
+    return buffer;
+}
+
+
+template <typename P, typename V>
+inline auto parse_proto_value(const V& data)
+{
+    auto p = P{};
+    p.ParseFromArray(data.data(), data.size());
+    return p.value();
+}
+
+
 template <typename T>
 inline auto serialize_value(T&& value) -> buffer_t
 {
@@ -67,21 +89,13 @@ inline auto serialize_value(T&& value) -> buffer_t
         auto v = std::string_view{value};
         return {v.begin(), v.end()};
     } else if constexpr(std::is_same_v<U, std::int32_t>) {
-        auto data = Data{};
-        data.set_flsint32(value);
-        return serialize_data(data);
+        return serialize_proto_value<google::protobuf::Int32Value>(value);
     } else if constexpr(std::is_same_v<U, std::int64_t>) {
-        auto data = Data{};
-        data.set_flsint64(value);
-        return serialize_data(data);
+        return serialize_proto_value<google::protobuf::Int64Value>(value);
     } else if constexpr(std::is_same_v<U, float>) {
-        auto data = Data{};
-        data.set_float_(value);
-        return serialize_data(data);
+        return serialize_proto_value<google::protobuf::FloatValue>(value);
     } else if constexpr(std::is_same_v<U, double>) {
-        auto data = Data{};
-        data.set_double_(value);
-        return serialize_data(data);
+        return serialize_proto_value<google::protobuf::DoubleValue>(value);
     } else {
         static_assert(sizeof(T) == 0, "Unsupported type");
     }
@@ -95,17 +109,13 @@ inline auto parse_value(V&& buffer) -> T
     if constexpr(std::is_same_v<T, std::string>) {
         return std::string{std::begin(buffer), std::end(buffer)};
     } else if constexpr(std::is_same_v<T, std::int32_t>) {
-        auto data = parse_data(buffer);
-        return data.flsint32();
+        return parse_proto_value<google::protobuf::Int32Value>(buffer);
     } else if constexpr(std::is_same_v<T, std::int64_t>) {
-        auto data = parse_data(buffer);
-        return data.flsint64();
+        return parse_proto_value<google::protobuf::Int64Value>(buffer);
     } else if constexpr(std::is_same_v<T, float>) {
-        auto data = parse_data(buffer);
-        return data.float_();
+        return parse_proto_value<google::protobuf::FloatValue>(buffer);
     } else if constexpr(std::is_same_v<T, double>) {
-        auto data = parse_data(buffer);
-        return data.double_();
+        return parse_proto_value<google::protobuf::DoubleValue>(buffer);
     } else {
         static_assert(sizeof(T) == 0, "Unsupported type");
     }

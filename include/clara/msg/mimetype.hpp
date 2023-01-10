@@ -14,8 +14,6 @@
  * Most of these types represent the values that can be stored in
  * proto::Data objects, and are set automatically
  * when a message is created with \ref make_message.
- * For more information about the Protocol Buffer value types, check
- * [here](https://developers.google.com/protocol-buffers/docs/proto#scalar).
  *
  * Clients must define their own strings for custom data types.
  * The identifier should be used to check that the message contains

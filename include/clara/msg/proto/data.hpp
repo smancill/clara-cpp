@@ -63,14 +63,9 @@ inline auto serialize_value(T&& value) -> buffer_t
 {
     using U = std::decay_t<T>;
 
-    if constexpr(std::is_same_v<U, std::string>) {
-        auto data = Data{};
-        data.set_string(std::forward<T>(value));
-        return serialize_data(data);
-    } else if constexpr(std::is_constructible_v<std::string, T>) {
-        auto data = Data{};
-        data.set_string(std::string{std::forward<T>(value)});
-        return serialize_data(data);
+    if constexpr(std::is_constructible_v<std::string_view, T>) {
+        auto v = std::string_view{value};
+        return {v.begin(), v.end()};
     } else if constexpr(std::is_same_v<U, std::int32_t>) {
         auto data = Data{};
         data.set_flsint32(value);
@@ -98,8 +93,7 @@ template <typename T, typename V,
 inline auto parse_value(V&& buffer) -> T
 {
     if constexpr(std::is_same_v<T, std::string>) {
-        auto data = parse_data(buffer);
-        return data.string();
+        return std::string{std::begin(buffer), std::end(buffer)};
     } else if constexpr(std::is_same_v<T, std::int32_t>) {
         auto data = parse_data(buffer);
         return data.flsint32();

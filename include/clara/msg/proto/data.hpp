@@ -96,6 +96,8 @@ inline auto serialize_value(T&& value) -> buffer_t
         return serialize_proto_value<google::protobuf::FloatValue>(value);
     } else if constexpr(std::is_same_v<U, double>) {
         return serialize_proto_value<google::protobuf::DoubleValue>(value);
+    } else if constexpr(std::is_same_v<U, buffer_t>) {
+        return std::forward<T>(value);
     } else {
         static_assert(sizeof(T) == 0, "Unsupported type");
     }
@@ -116,6 +118,8 @@ inline auto parse_value(V&& buffer) -> T
         return parse_proto_value<google::protobuf::FloatValue>(buffer);
     } else if constexpr(std::is_same_v<T, double>) {
         return parse_proto_value<google::protobuf::DoubleValue>(buffer);
+    } else if constexpr(std::is_same_v<T, buffer_t>) {
+        return std::forward<V>(buffer);
     } else {
         static_assert(sizeof(T) == 0, "Unsupported type");
     }

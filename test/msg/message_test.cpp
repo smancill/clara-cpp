@@ -18,32 +18,7 @@ using namespace testing;
 namespace cm = clara::msg;
 namespace mt = clara::msg::mimetype;
 
-namespace {
-
-auto make_test_data()
-{
-    auto data = cm::proto::Data{};
-    data.set_flsint32(29);
-    data.set_float_(42.F);
-    data.set_string("november");
-    data.add_doublea(0.);
-    data.add_doublea(9.);
-    return data;
-}
-
 const auto topic = cm::Topic::raw("test/topic");
-
-}
-
-
-TEST(Data, Serialize)
-{
-    auto data = make_test_data();
-    auto buffer = cm::proto::serialize_data(data);
-    auto result = cm::proto::parse_data(buffer);
-
-    EXPECT_THAT(result, Eq(data));
-}
 
 
 TEST(Message, CreateWithBytes)
@@ -106,17 +81,6 @@ TEST(Message, SwapMessages)
 
     ASSERT_THAT(copy1, Eq(msg2));
     ASSERT_THAT(copy2, Eq(msg1));
-}
-
-
-TEST(Message, CreateWithProtoData)
-{
-    auto data = make_test_data();
-    auto msg = cm::make_message(topic, data);
-    auto result = cm::parse_message<cm::proto::Data>(msg);
-
-    EXPECT_THAT(result, Eq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::plain_data));
 }
 
 

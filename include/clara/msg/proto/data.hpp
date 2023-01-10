@@ -7,8 +7,6 @@
 #ifndef CLARA_MSG_PROTO_DATA_H_
 #define CLARA_MSG_PROTO_DATA_H_
 
-#include "data.pb.h"
-
 #include <clara/msg/mimetype.hpp>
 
 #include <google/protobuf/wrappers.pb.h>
@@ -19,45 +17,10 @@
 
 namespace clara::msg::proto {
 
-/**
- * \class Data
- * \brief Simple data for pub/sub communications
- *        (simple types or array of simple types).
- *
- * On pub/sub communications, data is sent serialized.
- * This class helps to publish simple types (integers, floats or strings),
- * or arrays of simple types, by using protocol buffers serialization.
- * For more information about the Protocol Buffer value types, check
- * [here](https://developers.google.com/protocol-buffers/docs/proto#scalar).
- * Use the proper accessor to set and access the required type(s).
- *
- * Normally, \ref make_message, or \ref make_data and
- * \ref serialize_data should be used to construct messages with simple
- * data. Manual creation of objects of this class should be rare.
- * For more complex data types, the client should provide its own objects
- * and serialization routines.
- */
-
 // clang-format off
 namespace detail {
 
 using buffer_t = std::vector<std::uint8_t>;
-
-
-inline auto serialize_data(const Data& data) -> buffer_t
-{
-    auto buffer = buffer_t(data.ByteSizeLong());
-    data.SerializeToArray(buffer.data(), static_cast<int>(buffer.size()));
-    return buffer;
-}
-
-
-inline auto parse_data(const buffer_t& buffer) -> Data
-{
-    auto data = Data{};
-    data.ParseFromArray(buffer.data(), static_cast<int>(buffer.size()));
-    return data;
-}
 
 
 template <typename P, typename T>
@@ -148,47 +111,6 @@ inline auto get_mimetype() -> std::string_view
 
 } // end namespace detail
 // clang-format on
-
-
-/**
- * Serializes the given %Data into a buffer.
- * The returned buffer should be used to create a Message,
- * when more control is needed over the data and/or the metadata.
- * In that case, the data type should be set carefully.
- * Otherwise, it is simpler to use \ref make_message.
- *
- * \param data the protobuf object
- * \return the serialized data
- */
-inline auto serialize_data(const Data& data) -> std::vector<std::uint8_t>
-{
-    return detail::serialize_data(data);
-}
-
-/**
- * Deserializes the %Data from the given buffer.
- * Use this to get the %Data object when the buffer is not in a message
- * for some reason.
- * Otherwise, it is simpler to use \ref parse_message.
- *
- * \param buffer the serialized data
- * \return the deserialized %Data object
- */
-inline auto parse_data(const std::vector<std::uint8_t>& buffer) -> Data
-{
-    return detail::parse_data(buffer);
-}
-
-
-inline auto operator==(const Data& lhs, const Data& rhs) -> bool
-{
-    return lhs.SerializeAsString() == rhs.SerializeAsString();
-}
-
-inline auto operator!=(const Data& lhs, const Data& rhs) -> bool
-{
-    return !(lhs == rhs);
-}
 
 } // end namespace clara::msg::proto
 

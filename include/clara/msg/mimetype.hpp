@@ -11,9 +11,9 @@
 
 /**
  * Identifiers for base data types.
- * Most of these types represent the values that can be stored in
- * proto::Data objects, and are set automatically
- * when a message is created with \ref make_message.
+ *
+ * These types represent simple types that can be stored in a message
+ * with the \ref make_message helper function.
  *
  * Clients must define their own strings for custom data types.
  * The identifier should be used to check that the message contains
@@ -30,8 +30,6 @@ constexpr auto float_number = "binary/float"sv;     ///< Single precision floati
 constexpr auto double_number = "binary/double"sv;   ///< Double precision floating point type.
 constexpr auto string = "text/string"sv;            ///< An UTF-8 encoded or 7-bit ASCII text.
 constexpr auto bytes = "binary/bytes"sv;            ///< An arbitrary sequence of bytes.
-
-constexpr auto plain_data = "binary/native"sv;                  ///< A serialized \ref clara::msg::proto::Data "Data" object
 // clang-format on
 
 } // end namespace clara::msg::mimetype

@@ -96,24 +96,6 @@ TEST(RawBytesSerializer, MoveSemantics)
 }
 
 
-TEST(NativeSerializer, NativeSerialization)
-{
-    const auto* s = clara::type::NATIVE.serializer();
-
-    auto xd = clara::msg::proto::Data{};
-    xd.set_flsint32(56);
-    xd.set_double_(5.6);
-    xd.add_stringa("Ride the Lightning");
-    xd.add_stringa("Master of Puppets");
-    xd.add_stringa("...And Justice for All");
-
-    const auto b = s->write(std::any{xd});
-    const auto d = std::any_cast<decltype(xd)>(s->read(b));
-
-    ASSERT_THAT(d, Eq(xd));
-}
-
-
 TEST(JSONSerializer, JSONSerialization)
 {
     const auto* s = clara::type::JSON.serializer();

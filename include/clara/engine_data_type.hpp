@@ -129,11 +129,6 @@ extern const EngineDataType BYTES;
  */
 extern const EngineDataType JSON;
 
-/**
- * A Clara native data object.
- */
-extern const EngineDataType NATIVE;
-
 } // end namespace mime
 
 } // end namespace clara

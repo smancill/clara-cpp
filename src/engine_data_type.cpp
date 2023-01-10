@@ -55,22 +55,6 @@ public:
 };
 
 
-class NativeSerializer : public clara::Serializer
-{
-public:
-    auto write(const std::any& data) const -> std::vector<std::uint8_t> override
-    {
-        const auto& value = std::any_cast<const clara::msg::proto::Data&>(data);
-        return clara::msg::proto::serialize_data(value);
-    }
-
-    auto read(const std::vector<std::uint8_t>& buffer) const -> std::any override
-    {
-        return {clara::msg::proto::parse_data(buffer)};
-    }
-};
-
-
 class StringSerializer : public clara::Serializer
 {
 public:
@@ -111,6 +95,5 @@ const EngineDataType STRING { mt::string, std::make_unique<StringSerializer>() }
 const EngineDataType BYTES { "binary/bytes", std::make_unique<RawBytesSerializer>() };
 
 const EngineDataType JSON { "application/json", std::make_unique<StringSerializer>() };
-const EngineDataType NATIVE { "native", std::make_unique<NativeSerializer>() };
 
 } // end namespace clara::type

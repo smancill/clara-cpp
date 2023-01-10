@@ -22,7 +22,7 @@ using namespace testing;
 
 TEST(PrimitiveSerializer, IntegerSerialization)
 {
-    const auto* s = clara::type::SINT32.serializer();
+    const auto* s = clara::type::INT32.serializer();
 
     const auto b = s->write(std::any{18});
     const auto d = std::any_cast<std::int32_t>(s->read(b));
@@ -50,44 +50,6 @@ TEST(PrimitiveSerializer, StringSerialization)
     const auto d = std::any_cast<std::string>(s->read(b));
 
     ASSERT_THAT(d, StrEq("Master of Puppets"));
-}
-
-
-TEST(ArraySerializer, IntegerSerialization)
-{
-    const auto* s = clara::type::ARRAY_SFIXED32.serializer();
-
-    const auto v = std::vector<std::int32_t>{4, 5, 6};
-    const auto b = s->write(std::any{v});
-    const auto d = std::any_cast<decltype(v)>(s->read(b));
-
-    ASSERT_THAT(d, ContainerEq(v));
-}
-
-
-TEST(ArraySerializer, FloatingPointSerialization)
-{
-    const auto* s = clara::type::ARRAY_DOUBLE.serializer();
-
-    const auto v = std::vector<double>{4.1, 5.6};
-    const auto b = s->write(std::any{v});
-    const auto d = std::any_cast<decltype(v)>(s->read(b));
-
-    ASSERT_THAT(d, ContainerEq(v));
-}
-
-
-TEST(ArraySerializer, StringSerialization)
-{
-    const auto* s = clara::type::ARRAY_STRING.serializer();
-
-    const auto v = std::vector<std::string>{ "Ride the Lightning",
-                                             "Master of Puppets",
-                                             "...And Justice for All"};
-    const auto b = s->write(std::any{v});
-    const auto d = std::any_cast<decltype(v)>(s->read(b));
-
-    ASSERT_THAT(d, ContainerEq(v));
 }
 
 
@@ -131,24 +93,6 @@ TEST(RawBytesSerializer, MoveSemantics)
     ASSERT_THAT(*m, IsEmpty());
     ASSERT_THAT(b, IsEmpty());
     ASSERT_THAT(d, ContainerEq(r));
-}
-
-
-TEST(NativeSerializer, NativeSerialization)
-{
-    const auto* s = clara::type::NATIVE.serializer();
-
-    auto xd = clara::msg::proto::Data{};
-    xd.set_flsint32(56);
-    xd.set_double_(5.6);
-    xd.add_stringa("Ride the Lightning");
-    xd.add_stringa("Master of Puppets");
-    xd.add_stringa("...And Justice for All");
-
-    const auto b = s->write(std::any{xd});
-    const auto d = std::any_cast<decltype(xd)>(s->read(b));
-
-    ASSERT_THAT(d, Eq(xd));
 }
 
 

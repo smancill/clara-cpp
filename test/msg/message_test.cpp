@@ -10,37 +10,15 @@
 
 #include <gmock/gmock.h>
 
+using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
+
 using namespace testing;
 
 namespace cm = clara::msg;
 namespace mt = clara::msg::mimetype;
 
-namespace {
-
-auto make_test_data()
-{
-    auto data = cm::proto::Data{};
-    data.set_flsint32(29);
-    data.set_float_(42.F);
-    data.set_string("november");
-    data.add_doublea(0.);
-    data.add_doublea(9.);
-    return data;
-}
-
 const auto topic = cm::Topic::raw("test/topic");
-
-}
-
-
-TEST(Data, Serialize)
-{
-    auto data = make_test_data();
-    auto buffer = cm::proto::serialize_data(data);
-    auto result = cm::proto::parse_data(buffer);
-
-    EXPECT_THAT(result, Eq(data));
-}
 
 
 TEST(Message, CreateWithBytes)
@@ -106,24 +84,13 @@ TEST(Message, SwapMessages)
 }
 
 
-TEST(Message, CreateWithProtoData)
-{
-    auto data = make_test_data();
-    auto msg = cm::make_message(topic, data);
-    auto result = cm::parse_message<cm::proto::Data>(msg);
-
-    EXPECT_THAT(result, Eq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::plain_data));
-}
-
-
 TEST(Message, CreateWithIntegerData)
 {
     auto msg = cm::make_message(topic, 42);
     auto result = cm::parse_message<std::int32_t>(msg);
 
     EXPECT_THAT(result, Eq(42));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_sfixed32));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::int32_number));
 }
 
 
@@ -134,51 +101,40 @@ TEST(Message, CreateWithFloatData)
     auto result = cm::parse_message<float>(msg);
 
     EXPECT_THAT(result, Eq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_float));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::float_number));
 }
 
 
 TEST(Message, CreateWithStringData)
+{
+    auto data = "some_string"s;
+    auto msg = cm::make_message(topic, data);
+    auto result = cm::parse_message<std::string>(msg);
+
+    EXPECT_THAT(result, Eq(data));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::string));
+}
+
+
+TEST(Message, CreateWithLiteralStringData)
 {
     auto data = "some_string";
     auto msg = cm::make_message(topic, data);
     auto result = cm::parse_message<std::string>(msg);
 
     EXPECT_THAT(result, Eq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_string));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::string));
 }
 
 
-TEST(Message, CreateWithIntegerArray)
+TEST(Message, CreateWithStringViewData)
 {
-    auto data = std::vector<std::int64_t>{1000L, 2000L, 3000L};
+    auto data = "some_string"sv;
     auto msg = cm::make_message(topic, data);
-    auto result = cm::parse_message<std::vector<std::int64_t>>(msg);
+    auto result = cm::parse_message<std::string>(msg);
 
-    EXPECT_THAT(result, ContainerEq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_sfixed64));
-}
-
-
-TEST(Message, CreateWithFloatArray)
-{
-    auto data = std::vector<double>{1000., 2000., 3000.};
-    auto msg = cm::make_message(topic, data);
-    auto result = cm::parse_message<std::vector<double>>(msg);
-
-    EXPECT_THAT(result, ContainerEq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_double));
-}
-
-
-TEST(Message, CreateWithStringArray)
-{
-    auto data = std::vector<std::string>{"one", "two", "three"};
-    auto msg = cm::make_message(topic, data);
-    auto result = cm::parse_message<std::vector<std::string>>(msg);
-
-    EXPECT_THAT(result, ContainerEq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_string));
+    EXPECT_THAT(result, Eq(data));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::string));
 }
 
 

@@ -94,32 +94,14 @@ inline auto operator!=(std::string_view mime_type,
 namespace type {
 
 /**
- * Signed int of 32 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
+ * An integer of 32 bits.
  */
-extern const EngineDataType SINT32;
+extern const EngineDataType INT32;
 
 /**
- * Signed int of 64 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
+ * An integer of 64 bits.
  */
-extern const EngineDataType SINT64;
-
-/**
- * Signed fixed integer of 32 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType SFIXED32;
-
-/**
- * Signed fixed integer of 64 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType SFIXED64;
+extern const EngineDataType INT64;
 
 /**
  * A float (32 bits floating-point number).
@@ -143,57 +125,9 @@ extern const EngineDataType STRING;
 extern const EngineDataType BYTES;
 
 /**
- * An array of signed varints of 32 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType ARRAY_SINT32;
-
-/**
- * An array of signed varints of 64 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType ARRAY_SINT64;
-
-/**
- * An array of signed fixed integers of 32 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType ARRAY_SFIXED32;
-
-/**
- * An array of signed fixed integers of 64 bits.
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
- */
-extern const EngineDataType ARRAY_SFIXED64;
-
-/**
- * An array of floats (32 bits floating-point numbers).
- */
-extern const EngineDataType ARRAY_FLOAT;
-
-/**
- * An array of doubles (64 bits floating-point numbers).
- */
-extern const EngineDataType ARRAY_DOUBLE;
-
-/**
- * An array of strings.
- */
-extern const EngineDataType ARRAY_STRING;
-
-/**
  * JSON text.
  */
 extern const EngineDataType JSON;
-
-/**
- * A Clara native data object.
- */
-extern const EngineDataType NATIVE;
 
 } // end namespace mime
 

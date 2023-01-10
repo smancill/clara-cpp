@@ -33,7 +33,6 @@ class Actor;
  *
  * The **data** is always a byte buffer containing the serialized representation
  * of the value or object to be sent. For simple data types, the
- * proto::Data class can be used to store and serialize data, and the
  * \ref make_message helper should be preferred to create messages.
  * Otherwise it is up to the client to define the serialization of custom
  * complex objects.
@@ -169,87 +168,37 @@ private:
 
 
 /**
- * Creates a simple message with a data value of type D.
+ * Creates a simple message with a data value of type U.
  *
- * D must be one of the types that can be set on proto::Data objects.
  * The meta field `datatype` will be set accordingly.
  * Use \ref parse_message(const Message&) "parse_message" to get the value back.
  *
- * This is just a one line wrapper to create a message using
- * proto::make_data and proto::serialize_data.
- * Call the same functions and the message constructor directly
- * if more setup is needed with the metadata field,
- * and `datatype` must be set carefully.
- *
  * \tparam T Topic
- * \tparam D a type that can be set on proto::Data objects
+ * \tparam U a simple primitive or string type
  * \param topic the topic of the message
  * \param data the value to be set in the message
  */
-template<typename T,
-         typename D,
-         typename = std::enable_if_t<
-            !std::is_same<proto::Data, std::decay_t<D>>::value
-         >
-        >
-inline auto make_message(T&& topic, D&& data) -> Message
+template<typename T, typename U>
+inline auto make_message(T&& topic, U&& data) -> Message
 {
-    auto xdata = proto::make_data(std::forward<D>(data));
     return {std::forward<T>(topic),
-            proto::detail::get_mimetype<std::decay_t<D>>(),
-            proto::serialize_data(xdata)};
+            proto::detail::get_mimetype<std::decay_t<U>>(),
+            proto::detail::serialize_value(std::forward<U>(data))};
 }
 
 
-/**
- * Creates a message with data of type proto::Data.
- * The meta field `datatype` will be set to mimetype::plain_data,
- * and the protobuf data will be serialized.
- * Use \ref parse_message to deserialized the object back.
- *
- * This is just a one line wrapper to create a message using
- * proto::serialize_data.
- * Call the same function and the message constructor directly
- * if more setup is needed with the metadata field,
- * and `datatype` must be set carefully.
- *
- * \tparam T Topic
- * \param topic the topic of the message
- * \param data the object to be serialized in the message
- */
-template<typename T>
-inline auto make_message(T&& topic, const proto::Data& data) -> Message
-{
-    auto buffer = proto::serialize_data(data);
-    return {std::forward<T>(topic), mimetype::plain_data, std::move(buffer)};
-}
-
 
 /**
- * Deserializes a data of type T from the given message.
+ * Deserializes a data of type U from the given message.
  *
- * \tparam T a type that can be get from proto::Data objects
+ * \tparam U a simple primitive or string type
  * \param msg the message
- * \return the value of type T contained in the message
+ * \return the value of type U contained in the message
  */
-template<typename T>
-inline auto parse_message(const Message& msg) -> T
+template<typename U>
+inline auto parse_message(const Message& msg) -> U
 {
-    auto xdata = proto::parse_data(msg.data());
-    return proto::parse_data<T>(xdata);
-}
-
-
-/**
- * Deserializes a proto::Data object from the given message.
- *
- * \param msg the message
- * \return the deserialized %Data object
- */
-template<>
-inline auto parse_message(const Message& msg) -> proto::Data
-{
-    return proto::parse_data(msg.data());
+    return proto::detail::parse_value<U>(msg.data());
 }
 
 

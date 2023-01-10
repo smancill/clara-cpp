@@ -284,12 +284,12 @@ void EventReaderService::Impl::get_next_event(const EngineData& input,
             if (processing_events_.empty()) {
                 eof_request_count_++;
                 util::set_error(output, end_of_file, eof_request_count_ + 1);
-                output.set_data(type::SFIXED32, eof_request_count_);
+                output.set_data(type::INT32, eof_request_count_);
             } else {
-                output.set_data(type::SFIXED32, eof_waiting_rec);
+                output.set_data(type::INT32, eof_waiting_rec);
             }
         } else {
-            output.set_data(type::SFIXED32, eof_not_from_writer);
+            output.set_data(type::INT32, eof_not_from_writer);
         }
     }
 }
@@ -354,7 +354,7 @@ void EventReaderService::Impl::get_event_count(EngineData& output)
     std::unique_lock<std::mutex> lock{mutex_};
 
     if (has_file()) {
-        output.set_data(type::SFIXED32, event_count_);
+        output.set_data(type::INT32, event_count_);
         output.set_description("event count");
     } else {
         util::set_error(output, open_error_, 1);
@@ -377,7 +377,7 @@ auto EventReaderService::input_data_types() const -> std::vector<EngineDataType>
 
 auto EventReaderService::output_data_types() const -> std::vector<EngineDataType>
 {
-    return {get_data_type(), type::STRING, type::SFIXED32};
+    return {get_data_type(), type::STRING, type::INT32};
 }
 
 

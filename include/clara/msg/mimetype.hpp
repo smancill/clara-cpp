@@ -32,9 +32,6 @@ constexpr auto string = "text/string"sv;            ///< An UTF-8 encoded or 7-b
 constexpr auto bytes = "binary/bytes"sv;            ///< An arbitrary sequence of bytes.
 
 constexpr auto plain_data = "binary/native"sv;                  ///< A serialized \ref clara::msg::proto::Data "Data" object
-constexpr auto java_object = "binary/java"sv;                   ///< A serialized Java object
-constexpr auto cpp_object = "binary/cpp"sv;                     ///< A serialized C++ object
-constexpr auto python_object = "binary/python"sv;               ///< A serialized Python object
 // clang-format on
 
 } // end namespace clara::msg::mimetype

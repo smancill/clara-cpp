@@ -5,6 +5,10 @@
 cmake_minimum_required(VERSION 3.16.3)
 project(Clara LANGUAGES CXX)
 
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 NEW)
+endif()
+
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, default to Release")
   set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
